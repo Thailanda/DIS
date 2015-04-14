@@ -1,6 +1,5 @@
 package de.dis2011.data;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +10,7 @@ import java.sql.SQLException;
  */
 public class Apartment extends Estate {
     private String floor;
-    private BigDecimal rent;
+    private double rent;
     private Integer rooms;
     private boolean balcony;
     private boolean builtInKitchen;
@@ -24,11 +23,11 @@ public class Apartment extends Estate {
         this.floor = floor;
     }
 
-    public BigDecimal getRent() {
+    public double getRent() {
         return rent;
     }
 
-    public void setRent(BigDecimal rent) {
+    public void setRent(double rent) {
         this.rent = rent;
     }
 
@@ -61,7 +60,7 @@ public class Apartment extends Estate {
         super.applyResultSet(resultSet);
 
         this.setFloor(resultSet.getString("floor"));
-        this.setRent(resultSet.getBigDecimal("rent"));
+        this.setRent(resultSet.getDouble("rent"));
         this.setRooms(resultSet.getInt("rooms"));
         this.setBalcony(resultSet.getBoolean("balcony"));
         this.setBuiltInKitchen(resultSet.getBoolean("built_in_kitchen"));
@@ -74,7 +73,7 @@ public class Apartment extends Estate {
 
         preparedStatement.setInt(1, insertedId);
         preparedStatement.setString(2, floor);
-        preparedStatement.setBigDecimal(3, rent);
+        preparedStatement.setDouble(3, rent);
         preparedStatement.setInt(4, rooms);
         preparedStatement.setBoolean(5, balcony);
         preparedStatement.setBoolean(6, builtInKitchen);
@@ -88,7 +87,7 @@ public class Apartment extends Estate {
         PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
 
         preparedStatement.setString(1, floor);
-        preparedStatement.setBigDecimal(2, rent);
+        preparedStatement.setDouble(2, rent);
         preparedStatement.setInt(3, rooms);
         preparedStatement.setBoolean(4, balcony);
         preparedStatement.setBoolean(5, builtInKitchen);

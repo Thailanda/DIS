@@ -1,6 +1,5 @@
 package de.dis2011.data;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +10,7 @@ import java.sql.SQLException;
  */
 public class House extends Estate {
     private String floors;
-    private BigDecimal price;
+    private double price;
     private boolean garden;
 
     public String getFloors() {
@@ -22,11 +21,11 @@ public class House extends Estate {
         this.floors = floors;
     }
 
-    public BigDecimal getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -43,7 +42,7 @@ public class House extends Estate {
         super.applyResultSet(resultSet);
 
         this.setFloors(resultSet.getString("floors"));
-        this.setPrice(resultSet.getBigDecimal("price"));
+        this.setPrice(resultSet.getDouble("price"));
         this.setGarden(resultSet.getBoolean("garden"));
     }
 
@@ -54,7 +53,7 @@ public class House extends Estate {
 
         preparedStatement.setInt(1, insertedId);
         preparedStatement.setString(2, floors);
-        preparedStatement.setBigDecimal(3, price);
+        preparedStatement.setDouble(3, price);
         preparedStatement.setBoolean(4, garden);
 
         preparedStatement.executeUpdate();
@@ -66,7 +65,7 @@ public class House extends Estate {
         PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
 
         preparedStatement.setString(1, floors);
-        preparedStatement.setBigDecimal(2, price);
+        preparedStatement.setDouble(2, price);
         preparedStatement.setBoolean(3, garden);
         preparedStatement.setInt(4, updatedId);
 

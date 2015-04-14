@@ -3,6 +3,8 @@ package de.dis2011.gui;
 import de.dis2011.data.Apartment;
 import de.dis2011.data.Estate;
 import de.dis2011.data.House;
+import de.dis2011.gui.estate.ApartmentForm;
+import de.dis2011.gui.estate.HouseForm;
 import de.dis2011.model.EstateAgentSecurityContext;
 import de.dis2011.model.EstateModel;
 import java.awt.BorderLayout;
@@ -66,12 +68,30 @@ public class EstateFrame extends JFrame implements Observer {
         }
     }
 
+    public void centerFrame(JFrame frame) {
+        frame.setLocation(getX() + getWidth() / 2 - frame.getWidth() / 2, getY() + getHeight() / 2 - frame.getHeight()
+                / 2);
+    }
+
     private void initGui() {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
         table.setModel(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(table);
+
+        JButton btnEdit = new JButton("Edit");
+        btnEdit.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/pencil.png"));
+        btnEdit.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    Estate estate = model.findByRow(row);
+                    editEstate(estate);
+                }
+            }
+        });
 
         JButton btnNewHouse = new JButton("New House");
         btnNewHouse.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/house.png"));
@@ -83,6 +103,7 @@ public class EstateFrame extends JFrame implements Observer {
                 house.save();
 
                 model.add(house);
+                editEstate(house);
             }
         });
 
@@ -96,6 +117,7 @@ public class EstateFrame extends JFrame implements Observer {
                 apartment.save();
 
                 model.add(apartment);
+                editEstate(apartment);
             }
         });
 
@@ -117,6 +139,7 @@ public class EstateFrame extends JFrame implements Observer {
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        buttonPane.add(btnEdit);
         buttonPane.add(Box.createHorizontalGlue());
         buttonPane.add(btnNewHouse);
         buttonPane.add(btnNewApartment);
@@ -129,5 +152,18 @@ public class EstateFrame extends JFrame implements Observer {
         pack();
 
         setMinimumSize(new Dimension(800, getHeight()));
+    }
+
+    private void editEstate(Estate estate) {
+        if (estate instanceof Apartment) {
+            ApartmentForm form = new ApartmentForm(this);
+            form.setEntity(estate);
+            form.showGui();
+        }
+        else if (estate instanceof House) {
+            HouseForm form = new HouseForm(this);
+            form.setEntity(estate);
+            form.showGui();
+        }
     }
 }
