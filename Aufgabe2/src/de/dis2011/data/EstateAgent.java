@@ -56,6 +56,23 @@ public class EstateAgent extends Entity {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    public boolean verifyLogin(String login, String password) throws SQLException {
+    	String selectSQL = "SELECT * FROM ESTATE_AGENT WHERE LOGIN = ? AND PASSOWRD = ?";
+    	PreparedStatement preparedStatement = getConnection().prepareStatement(selectSQL);
+    	
+    	preparedStatement.setString(1, login);
+    	preparedStatement.setString(2, password);
+    	
+    	ResultSet resultSet = preparedStatement.executeQuery();
+      	
+    	if (!resultSet.next()) {
+    		return false;
+    	}
+    	
+    	applyResultSet(resultSet);
+    	return true;
+    }
 
     @Override
     protected String getFindAllSql() {

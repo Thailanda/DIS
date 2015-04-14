@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import de.dis2011.data.DB2ConnectionManager;
 
 /**
  * Makler-Bean

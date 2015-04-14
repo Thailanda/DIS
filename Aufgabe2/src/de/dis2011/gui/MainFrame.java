@@ -8,11 +8,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import de.dis2011.gui.estate.EstateLogin;
+
 public class MainFrame extends JFrame {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private EstateLogin estateLoginFrame;
 
 	private PersonFrame personFrame = new PersonFrame();
 
@@ -62,7 +66,8 @@ public class MainFrame extends JFrame {
 	}
 
 	private void actionMangementEstate() {
-		// TODO Do Stuff
+		estateLoginFrame = new EstateLogin();
+		estateLoginFrame.setVisible(true);
 	}
 
 	private void actionmManagementContract() {
