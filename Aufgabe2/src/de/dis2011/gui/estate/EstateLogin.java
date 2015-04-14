@@ -7,6 +7,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -25,6 +27,7 @@ public class EstateLogin extends JFrame {
 
 	public EstateLogin(MainFrame mainFrame) {
 		super("Please enter Estate Agent Login");
+		final JButton btnLogin = new JButton("Login");
 
 		this.mainFrame = mainFrame;
 
@@ -32,8 +35,17 @@ public class EstateLogin extends JFrame {
 		final JLabel xPass = new JLabel("Password");
 		final JTextField txtFieldName = new JTextField();
 		txtFieldPassword = new JPasswordField();
+		txtFieldPassword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent keyEvent) {
+				if (keyEvent.getKeyCode() == 10) {
+					btnLogin.doClick();
+				} else if (keyEvent.getKeyCode() == 27) {
+					setVisible(false);
+				}
+			}
+		});
 
-		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

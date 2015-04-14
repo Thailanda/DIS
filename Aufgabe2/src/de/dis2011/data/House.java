@@ -81,4 +81,24 @@ public class House extends Estate {
 
         return preparedStatement;
     }
+
+    @Override
+    public boolean drop() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM HOUSE WHERE ESTATE_ID=?");
+            preparedStatement.setInt(1, getId());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return super.drop();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public String getKind() {
+        return "House";
+    }
 }

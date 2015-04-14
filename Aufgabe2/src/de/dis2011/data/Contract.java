@@ -23,7 +23,7 @@ public class Contract extends Entity {
 
     @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
-
+        this.setId(resultSet.getInt("id"));
         this.setContractNo(resultSet.getString("contract_no"));
         this.setDate(resultSet.getDate("date"));
         this.setPlace(resultSet.getString("place"));
@@ -62,6 +62,20 @@ public class Contract extends Entity {
 
 
         return preparedStatement;
+    }
+
+    public boolean drop() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM CONTRACT WHERE ID=?");
+            preparedStatement.setInt(1, getId());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

@@ -97,12 +97,12 @@ public abstract class Entity {
 	 */
 	public boolean load(int id) {
 		try {
+			setId(id);
 			PreparedStatement selectStatement = createSelectStatement();
 
 			// Execute select query.
 			ResultSet resultSet = selectStatement.executeQuery();
 			if (resultSet.next()) {
-				setId(id);
 				applyResultSet(resultSet);
 
 				resultSet.close();

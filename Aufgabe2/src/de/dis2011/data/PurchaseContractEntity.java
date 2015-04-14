@@ -54,6 +54,20 @@ public class PurchaseContractEntity extends Contract {
         preparedStatement.executeUpdate();
     }
 
+    public boolean drop() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM PURCHASE_CONTRACT WHERE CONTRACT_ID=?");
+            preparedStatement.setInt(1, getId());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return super.drop();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public int getNoOfInstallments() {
         return noOfInstallments;
     }

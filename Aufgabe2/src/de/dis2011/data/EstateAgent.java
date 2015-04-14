@@ -81,6 +81,7 @@ public class EstateAgent extends Entity {
 
     @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
+        this.setId(resultSet.getInt("id"));
         this.setName(resultSet.getString("name"));
         this.setAddress(resultSet.getString("address"));
         this.setLogin(resultSet.getString("login"));

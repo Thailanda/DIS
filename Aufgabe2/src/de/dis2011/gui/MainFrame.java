@@ -26,9 +26,10 @@ public class MainFrame extends JFrame implements Observer {
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "Estate Agent Software";
 
-	final private PersonFrame personFrame = new PersonFrame(this);
-	final private EstateLogin estateLoginFrame = new EstateLogin(this);
 	final private EstateAgentSecurityContext context = new EstateAgentSecurityContext(this);
+	final private PersonFrame personFrame = new PersonFrame(this);
+	final private EstateFrame estateFrame = new EstateFrame(this);
+	final private EstateLogin estateLoginFrame = new EstateLogin(this);
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;
@@ -119,7 +120,7 @@ public class MainFrame extends JFrame implements Observer {
 			btnPersonManagement.setEnabled(authenticated);
 
 			if (authenticated) {
-				setTitle(TITLE + " - [" + context.getUser().getName() + "]");
+				setTitle(TITLE + " - [" + context.getUser().getName() + " #"+ context.getUser().getId() + "]");
 			} else {
 				setTitle(TITLE);
 			}
@@ -127,7 +128,7 @@ public class MainFrame extends JFrame implements Observer {
 	}
 
 	private void actionManagementAgent() {
-		// TODO Do Stuff
+		estateFrame.showGui();
 	}
 
 	private void actionManagementEstate() {

@@ -4,21 +4,62 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-07
  */
 public class Estate extends Entity {
-    private int id;
+    private int id = -1;
     private EstateAgent manager;
     private Person person;
     private Contract contract;
-    private String city;
-    private String postalCode;
-    private String street;
-    private String streetNumber;
-    private Integer squareArea;
+    private String city = "";
+    private String postalCode = "";
+    private String street = "";
+    private String streetNumber = "";
+    private int squareArea = 0;
+
+    public static List<Estate> findByEstateAgent(EstateAgent estateAgent) {
+        List<Estate> estates = new ArrayList<Estate>();
+
+        try {
+            String sql = "SELECT e.*, a.*, h.*, a.ESTATE_ID as APARTMENT_ID, h.ESTATE_ID as HOUSE_ID FROM ESTATE e LEFT JOIN APARTMENT a ON e.ID = a.ESTATE_ID LEFT JOIN HOUSE h ON e.ID = h.ESTATE_ID WHERE e.MANAGER_ID=?";
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            statement.setInt(1, estateAgent.getId());
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                resultSet.getInt("apartment_id");
+                if (!resultSet.wasNull()) {
+                    Apartment apartment = new Apartment();
+                    apartment.applyResultSet(resultSet);
+                    estates.add(apartment);
+                    continue;
+                }
+
+                resultSet.getInt("house_id");
+                if (!resultSet.wasNull()) {
+                    House house = new House();
+                    house.applyResultSet(resultSet);
+                    estates.add(house);
+                    continue;
+                }
+
+                throw new SQLException("Inconsistent DB state: Found estate which is neither apartment nor house: #" + resultSet.getInt("id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return estates;
+    }
+
+    public String getKind() {
+        return "Generic Estate";
+    }
 
     @Override
     protected String getFindAllSql() {
@@ -27,8 +68,11 @@ public class Estate extends Entity {
 
     @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
+        this.setId(resultSet.getInt("id"));
+
+        int managerId = resultSet.getInt("manager_id");
         EstateAgent manager = new EstateAgent();
-        manager.load(resultSet.getInt("manager_id"));
+        manager.load(managerId);
         this.setManager(manager);
 
         int personId = resultSet.getInt("person_id");
@@ -91,8 +135,21 @@ public class Estate extends Entity {
         preparedStatement.setInt(6, getSquareArea());
         preparedStatement.setInt(7, getId());
 
-
         return preparedStatement;
+    }
+
+    public boolean drop() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM ESTATE WHERE ID=?");
+            preparedStatement.setInt(1, getId());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public int getId() {
@@ -143,11 +200,11 @@ public class Estate extends Entity {
         this.streetNumber = streetNumber;
     }
 
-    public Integer getSquareArea() {
+    public int getSquareArea() {
         return squareArea;
     }
 
-    public void setSquareArea(Integer squareArea) {
+    public void setSquareArea(int squareArea) {
         this.squareArea = squareArea;
     }
 

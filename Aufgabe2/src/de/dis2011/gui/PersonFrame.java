@@ -2,6 +2,7 @@ package de.dis2011.gui;
 
 import de.dis2011.data.Entity;
 import de.dis2011.data.Person;
+import de.dis2011.model.PersonModel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -17,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -35,7 +37,7 @@ public class PersonFrame extends JFrame {
         initGui();
         List<Entity> persons = Person.findAll(Person.class);
         for (Entity person : persons) {
-            model.addPerson((Person) person);
+            model.add((Person) person);
         }
     }
 
@@ -48,6 +50,7 @@ public class PersonFrame extends JFrame {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
         table.setModel(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(table);
 
         JButton btnInsert = new JButton("Insert");
@@ -58,18 +61,21 @@ public class PersonFrame extends JFrame {
                 Person p = new Person();
                 p.save();
 
-                model.addPerson(p);
+                model.add(p);
             }
         });
 
-        JButton btnRemove = new JButton("Remove");
+        JButton btnRemove = new JButton("Remove");;
         btnRemove.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/user_delete.png"));
         btnRemove.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Person person = model.findByRow(table.getSelectedRow());
-                if (person.drop()) {
-                    model.removePerson(person);
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    Person person = model.findByRow(row);
+                    if (person.drop()) {
+                        model.remove(person);
+                    }
                 }
             }
         });
