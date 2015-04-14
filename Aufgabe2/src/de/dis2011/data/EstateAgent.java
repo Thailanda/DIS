@@ -4,6 +4,7 @@ package de.dis2011.data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -57,6 +58,11 @@ public class EstateAgent extends Entity {
     }
 
     @Override
+    protected String getFindAllSql() {
+        return "SELECT * FROM ESTATE_AGENT";
+    }
+
+    @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
         this.setName(resultSet.getString("name"));
         this.setAddress(resultSet.getString("address"));
@@ -76,7 +82,7 @@ public class EstateAgent extends Entity {
     @Override
     public PreparedStatement createInsertStatement() throws SQLException {
         String insertSQL = "INSERT INTO ESTATE_AGENT (NAME, ADDRESS, LOGIN, PASSWORD) VALUES (?, ?, ?, ?)";
-        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
 
         preparedStatement.setString(1, getName());
         preparedStatement.setString(2, getAddress());

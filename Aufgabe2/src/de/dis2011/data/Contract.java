@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -14,6 +15,11 @@ public class Contract extends Entity {
     private String contractNo;
     private Date date;
     private String place;
+
+    @Override
+    protected String getFindAllSql() {
+        return "SELECT * FROM CONTRACT";
+    }
 
     @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
@@ -35,7 +41,7 @@ public class Contract extends Entity {
     @Override
     public PreparedStatement createInsertStatement() throws SQLException {
         String insertSQL = "INSERT INTO CONTRACT (CONTRACT_NO, DATE, PLACE) VALUES (?, ?, ?)";
-        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
 
         preparedStatement.setString(1, getContractNo());
         preparedStatement.setDate(2, getDate());

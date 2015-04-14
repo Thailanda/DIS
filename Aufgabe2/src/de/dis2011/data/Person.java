@@ -3,19 +3,26 @@ package de.dis2011.data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-07
  */
 public class Person extends Entity {
-    private int id;
-    private String firstName;
-    private String name;
-    private String address;
+    private int id = -1;
+    private String firstName = "";
+    private String name = "";
+    private String address = "";
+
+    @Override
+    protected String getFindAllSql() {
+        return "SELECT * FROM PERSON";
+    }
 
     @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
+        this.setId(resultSet.getInt("id"));
         this.setFirstName(resultSet.getString("first_name"));
         this.setName(resultSet.getString("name"));
         this.setAddress(resultSet.getString("address"));
@@ -33,7 +40,7 @@ public class Person extends Entity {
     @Override
     public PreparedStatement createInsertStatement() throws SQLException {
         String insertSQL = "INSERT INTO PERSON (FIRST_NAME, NAME, ADDRESS) VALUES (?, ?, ?)";
-        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
 
         preparedStatement.setString(1, getFirstName());
         preparedStatement.setString(2, getName());

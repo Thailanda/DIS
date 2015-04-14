@@ -32,7 +32,7 @@ public class PurchaseContractEntity extends Contract {
 
     @Override
     public void applyAdditionalInsertStatements(int insertedId) throws SQLException {
-        String insertSQL = "INSERT INTO PURCHASE_CONTRACT (CONTRACT_ID, NO_OF_INSTALLMENTS, INTREST_RATE) VALUES (?, ?, ?)";
+        String insertSQL = "INSERT INTO PURCHASE_CONTRACT (CONTRACT_ID, NO_OF_INSTALLMENTS, INTEREST_RATE) VALUES (?, ?, ?)";
         PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
 
         preparedStatement.setInt(1, insertedId);
@@ -44,7 +44,7 @@ public class PurchaseContractEntity extends Contract {
 
     @Override
     public void applyAdditionalUpdateStatements(int updatedId) throws SQLException {
-        String insertSQL = "UPDATE PURCHASE_CONTRACT SET NO_OF_INSTALLMENTS=?, INTREST_RATE=? WHERE CONTRACT_ID=?";
+        String insertSQL = "UPDATE PURCHASE_CONTRACT SET NO_OF_INSTALLMENTS=?, INTEREST_RATE=? WHERE CONTRACT_ID=?";
         PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
 
         preparedStatement.setInt(1, noOfInstallments);

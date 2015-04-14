@@ -3,6 +3,7 @@ package de.dis2011.data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -11,6 +12,8 @@ import java.sql.SQLException;
 public class Estate extends Entity {
     private int id;
     private EstateAgent manager;
+    private Person person;
+    private Contract contract;
     private String city;
     private String postalCode;
     private String street;
@@ -18,10 +21,31 @@ public class Estate extends Entity {
     private Integer squareArea;
 
     @Override
+    protected String getFindAllSql() {
+        return "SELECT * FROM ESTATE";
+    }
+
+    @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
         EstateAgent manager = new EstateAgent();
         manager.load(resultSet.getInt("manager_id"));
         this.setManager(manager);
+
+        int personId = resultSet.getInt("person_id");
+        setPerson(null);
+        if (!resultSet.wasNull()) {
+            Person person = new Person();
+            person.load(personId);
+            setPerson(person);
+        }
+
+        int contractId = resultSet.getInt("contract_id");
+        setContract(null);
+        if (!resultSet.wasNull()) {
+            Contract contract = new Contract();
+            contract.load(contractId);
+            setContract(contract);
+        }
 
         this.setCity(resultSet.getString("city"));
         this.setPostalCode(resultSet.getString("postal_code"));
@@ -42,7 +66,7 @@ public class Estate extends Entity {
     @Override
     public PreparedStatement createInsertStatement() throws SQLException {
         String insertSQL = "INSERT INTO ESTATE (MANAGER_ID, CITY, POSTAL_CODE, STREET, STREET_NUMBER, SQUARE_AREA)  VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
 
         preparedStatement.setInt(1, getManager().getId());
         preparedStatement.setString(2, getCity());
@@ -125,5 +149,21 @@ public class Estate extends Entity {
 
     public void setSquareArea(Integer squareArea) {
         this.squareArea = squareArea;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public Contract getContract() {
+        return contract;
+    }
+
+    public void setContract(Contract contract) {
+        this.contract = contract;
     }
 }

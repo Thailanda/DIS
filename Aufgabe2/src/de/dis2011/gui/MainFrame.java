@@ -14,6 +14,8 @@ public class MainFrame extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private PersonFrame personFrame = new PersonFrame();
+
 	public MainFrame() {
 		this.setSize(600, 50);
 		JPanel listPane = new JPanel();
@@ -64,6 +66,6 @@ public class MainFrame extends JFrame {
 	}
 
 	private void actionmManagementContract() {
-		// TODO Do Stuff
+		personFrame.setVisible(true);
 	}
 }
