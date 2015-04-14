@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Makler-Bean
- * 
+ *
  * Beispiel-Tabelle:
  * CREATE TABLE makler(id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1, NO CACHE) PRIMARY KEY,
  * name varchar(255),z
@@ -98,7 +98,7 @@ public abstract class Entity {
 	public boolean load(int id) {
 		try {
 			PreparedStatement selectStatement = createSelectStatement();
-			
+
 			// Execute select query.
 			ResultSet resultSet = selectStatement.executeQuery();
 			if (resultSet.next()) {

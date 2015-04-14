@@ -1,76 +1,140 @@
 package de.dis2011.gui;
 
-import java.awt.FlowLayout;
+import de.dis2011.gui.estate.EstateLogin;
+import de.dis2011.model.EstateAgentSecurityContext;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import de.dis2011.gui.estate.EstateLogin;
-
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements Observer {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private EstateLogin estateLoginFrame;
+	public static final String TITLE = "Estate Agent Software";
 
-	private PersonFrame personFrame = new PersonFrame();
+	final private PersonFrame personFrame = new PersonFrame(this);
+	final private EstateLogin estateLoginFrame = new EstateLogin(this);
+	final private EstateAgentSecurityContext context = new EstateAgentSecurityContext(this);
+	private final JButton btnPersonManagement;
+	private final JButton btnAuthenticate;
+	private final JButton btnManageEstates;
 
 	public MainFrame() {
-		this.setSize(600, 50);
-		JPanel listPane = new JPanel();
+		super(TITLE);
 
-		this.setLayout(new FlowLayout());
+		setDefaultCloseOperation(MainFrame.EXIT_ON_CLOSE);
 
-		JButton btnManagementModeAgent = new JButton("Management Estate Agent");
-		btnManagementModeAgent.addActionListener(new ActionListener() {
+		btnAuthenticate = new JButton("Authenticate");
+		btnAuthenticate.setIcon(createImageIcon("/de/dis2011/icons/key.png"));
+		btnAuthenticate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actionManagementEstate();
+			}
+		});
+
+		btnManageEstates = new JButton("Manage Estates");
+		btnManageEstates.setIcon(createImageIcon("/de/dis2011/icons/house.png"));
+		btnManageEstates.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionManagementAgent();
 			}
 		});
-		JButton btnManagementModeEstate = new JButton("Manage Estate");
-		btnManagementModeEstate.addActionListener(new ActionListener() {
+
+		btnPersonManagement = new JButton("Manage Persons");
+		btnPersonManagement.setIcon(createImageIcon("/de/dis2011/icons/user_edit.png"));
+		btnPersonManagement.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionMangementEstate();
+				actionManagePersons();
 			}
 		});
 
-		JButton btnManagementContract = new JButton("Manage Contract");
-		btnManagementContract.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				actionmManagementContract();
-			}
-		});
+		JPanel buttonPane = new JPanel();
+		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
+		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		buttonPane.add(Box.createHorizontalGlue());
+		buttonPane.add(btnAuthenticate);
+		buttonPane.add(btnManageEstates);
+		buttonPane.add(btnPersonManagement);
+		buttonPane.add(Box.createHorizontalGlue());
 
-		listPane.add(btnManagementModeAgent);
-		listPane.add(btnManagementModeEstate);
-		listPane.add(btnManagementContract);
+		Container contentPane = getContentPane();
+		contentPane.add(buttonPane, BorderLayout.CENTER);
 
-		this.add(listPane);
+		pack();
 
+		setMinimumSize(getSize());
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
+
+		update(context, null);
+	}
+
+	public void centerFrame(JFrame frame) {
+		frame.setLocation(getX() + getWidth() / 2 - frame.getWidth() / 2, getY() + getHeight() / 2 - frame.getHeight()
+				/ 2);
 	}
 
 	public void showGui() {
 		setVisible(true);
 	}
 
+	public ImageIcon createImageIcon(String path) {
+		URL imgURL = getClass().getResource(path);
+		if (imgURL != null) {
+			return new ImageIcon(imgURL, path);
+		}
+
+		return null;
+	}
+
+	public EstateAgentSecurityContext getContext() {
+		return context;
+	}
+
+	@Override
+	public void update(Observable observable, Object o) {
+		if (observable == context) {
+			boolean authenticated = context.isAuthenticated();
+
+			btnAuthenticate.setEnabled(!authenticated);
+			btnManageEstates.setEnabled(authenticated);
+			btnPersonManagement.setEnabled(authenticated);
+
+			if (authenticated) {
+				setTitle(TITLE + " - [" + context.getUser().getName() + "]");
+			} else {
+				setTitle(TITLE);
+			}
+		}
+	}
+
 	private void actionManagementAgent() {
 		// TODO Do Stuff
 	}
 
-	private void actionMangementEstate() {
-		estateLoginFrame = new EstateLogin();
-		estateLoginFrame.setVisible(true);
+	private void actionManagementEstate() {
+		estateLoginFrame.showGui();
 	}
 
-	private void actionmManagementContract() {
-		personFrame.setVisible(true);
+	private void actionManagePersons() {
+		personFrame.showGui();
 	}
 }

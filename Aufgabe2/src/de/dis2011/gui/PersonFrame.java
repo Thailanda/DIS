@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -25,11 +24,13 @@ import javax.swing.JTable;
  */
 public class PersonFrame extends JFrame {
 
-    private PersonModel model = new PersonModel();
-    private JTable table = new JTable();
+    final private MainFrame mainFrame;
+    final private PersonModel model = new PersonModel();
+    final private JTable table = new JTable();
 
-    public PersonFrame() throws HeadlessException {
+    public PersonFrame(MainFrame mainFrame) throws HeadlessException {
         super("Persons");
+        this.mainFrame = mainFrame;
 
         initGui();
         List<Entity> persons = Person.findAll(Person.class);
@@ -38,17 +39,19 @@ public class PersonFrame extends JFrame {
         }
     }
 
-    private void initGui() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    public void showGui() {
+        mainFrame.centerFrame(this);
+        setVisible(true);
+    }
 
-        setMinimumSize(new Dimension(800, 600));
-        setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
+    private void initGui() {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
         table.setModel(model);
         JScrollPane scrollPane = new JScrollPane(table);
 
         JButton btnInsert = new JButton("Insert");
+        btnInsert.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/user_add.png"));
         btnInsert.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -60,6 +63,7 @@ public class PersonFrame extends JFrame {
         });
 
         JButton btnRemove = new JButton("Remove");
+        btnRemove.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/user_delete.png"));
         btnRemove.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -72,7 +76,7 @@ public class PersonFrame extends JFrame {
 
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-        buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         buttonPane.add(Box.createHorizontalGlue());
         buttonPane.add(btnInsert);
         buttonPane.add(btnRemove);
@@ -82,5 +86,7 @@ public class PersonFrame extends JFrame {
         contentPane.add(buttonPane, BorderLayout.PAGE_END);
 
         pack();
+
+        setMinimumSize(new Dimension(800, getHeight()));
     }
 }
