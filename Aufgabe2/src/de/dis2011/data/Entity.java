@@ -6,14 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import de.dis2011.data.DB2ConnectionManager;
 
 /**
  * Makler-Bean
  * 
  * Beispiel-Tabelle:
  * CREATE TABLE makler(id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1, NO CACHE) PRIMARY KEY,
- * name varchar(255),
+ * name varchar(255),z
  * address varchar(255),
  * login varchar(40) UNIQUE,
  * password varchar(40));

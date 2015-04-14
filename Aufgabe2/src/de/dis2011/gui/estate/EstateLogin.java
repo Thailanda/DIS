@@ -3,7 +3,6 @@ package de.dis2011.gui.estate;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
