@@ -59,20 +59,28 @@ public class PersonFrame extends JFrame {
             }
         });
 
+        JButton btnRemove = new JButton("Remove");
+        btnRemove.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Person person = model.findByRow(table.getSelectedRow());
+                if (person.drop()) {
+                    model.removePerson(person);
+                }
+            }
+        });
+
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         buttonPane.add(Box.createHorizontalGlue());
         buttonPane.add(btnInsert);
+        buttonPane.add(btnRemove);
 
         Container contentPane = getContentPane();
         contentPane.add(scrollPane, BorderLayout.CENTER);
         contentPane.add(buttonPane, BorderLayout.PAGE_END);
 
         pack();
-    }
-
-    public PersonModel getModel() {
-        return model;
     }
 }

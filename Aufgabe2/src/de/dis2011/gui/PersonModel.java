@@ -70,4 +70,13 @@ public class PersonModel extends AbstractTableModel {
         this.persons.add(person);
         this.fireTableDataChanged();
     }
+
+    public void removePerson(Person person) {
+        this.persons.remove(person);
+        this.fireTableDataChanged();
+    }
+
+    public Person findByRow(int i) {
+        return this.persons.get(i);
+    }
 }

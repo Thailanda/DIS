@@ -58,7 +58,7 @@ public class EstateAgent extends Entity {
     }
     
     public boolean verifyLogin(String login, String password) throws SQLException {
-    	String selectSQL = "SELECT * FROM ESTATE_AGENT WHERE LOGIN = ? AND PASSOWRD = ?";
+    	String selectSQL = "SELECT * FROM ESTATE_AGENT WHERE LOGIN = ? AND PASSWORD = ?";
     	PreparedStatement preparedStatement = getConnection().prepareStatement(selectSQL);
     	
     	preparedStatement.setString(1, login);

@@ -94,4 +94,18 @@ public class Person extends Entity {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public boolean drop() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM PERSON WHERE ID=?");
+            preparedStatement.setInt(1, getId());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
