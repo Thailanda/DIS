@@ -48,6 +48,32 @@ public class House extends Estate {
     }
 
     @Override
+    public void applyAdditionalInsertStatements(int insertedId) throws SQLException {
+        String insertSQL = "INSERT INTO HOUSE (ESTATE_ID, FLOORS, PRICE, GARDEN) VALUES (?, ?, ?, ?)";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+
+        preparedStatement.setInt(1, insertedId);
+        preparedStatement.setString(2, floors);
+        preparedStatement.setBigDecimal(3, price);
+        preparedStatement.setBoolean(4, garden);
+
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public void applyAdditionalUpdateStatements(int updatedId) throws SQLException {
+        String insertSQL = "UPDATE HOUSE SET FLOORS=?, PRICE=?, GARDEN=? WHERE ESTATE_ID=?";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+
+        preparedStatement.setString(1, floors);
+        preparedStatement.setBigDecimal(2, price);
+        preparedStatement.setBoolean(3, garden);
+        preparedStatement.setInt(4, updatedId);
+
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
     public PreparedStatement createSelectStatement() throws SQLException {
         String selectSQL = "SELECT * FROM ESTATE e INNER JOIN HOUSE h ON e.ID = h.ESTATE_ID WHERE e.ID = ?";
         PreparedStatement preparedStatement = getConnection().prepareStatement(selectSQL);

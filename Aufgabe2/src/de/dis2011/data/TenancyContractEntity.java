@@ -3,6 +3,7 @@ package de.dis2011.data;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -21,6 +22,41 @@ public class TenancyContractEntity extends Contract {
         preparedStatement.setInt(1, getId());
 
         return preparedStatement;
+    }
+
+    @Override
+    public void applyResultSet(ResultSet resultSet) throws SQLException {
+        super.applyResultSet(resultSet);
+
+        this.setStartDate(resultSet.getDate("start_date"));
+        this.setDuration(resultSet.getInt("duration"));
+        this.setAdditionalCosts(resultSet.getBigDecimal("additional_costs"));
+    }
+
+    @Override
+    public void applyAdditionalInsertStatements(int insertedId) throws SQLException {
+        String insertSQL = "INSERT INTO TENANCY_CONTRACT (CONTRACT_ID, START_DATE, DURATION, ADDITIONAL_COSTS) VALUES (?, ?, ?, ?)";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+
+        preparedStatement.setInt(1, insertedId);
+        preparedStatement.setDate(2, startDate);
+        preparedStatement.setInt(3, duration);
+        preparedStatement.setBigDecimal(4, additionalCosts);
+
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public void applyAdditionalUpdateStatements(int updatedId) throws SQLException {
+        String insertSQL = "UPDATE TENANCY_CONTRACT SET START_DATE=?, DURATION=?, ADDITIONAL_COSTS=? WHERE CONTRACT_ID=?";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+
+        preparedStatement.setDate(1, startDate);
+        preparedStatement.setInt(2, duration);
+        preparedStatement.setBigDecimal(3, additionalCosts);
+        preparedStatement.setInt(4, updatedId);
+
+        preparedStatement.executeUpdate();
     }
 
     public Date getStartDate() {

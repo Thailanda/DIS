@@ -68,6 +68,36 @@ public class Apartment extends Estate {
     }
 
     @Override
+    public void applyAdditionalInsertStatements(int insertedId) throws SQLException {
+        String insertSQL = "INSERT INTO APARTMENT (ESTATE_ID, FLOOR, RENT, ROOMS, BALCONY, BUILT_IN_KITCHEN) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+
+        preparedStatement.setInt(1, insertedId);
+        preparedStatement.setString(2, floor);
+        preparedStatement.setBigDecimal(3, rent);
+        preparedStatement.setInt(4, rooms);
+        preparedStatement.setBoolean(5, balcony);
+        preparedStatement.setBoolean(6, builtInKitchen);
+
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public void applyAdditionalUpdateStatements(int updatedId) throws SQLException {
+        String insertSQL = "UPDATE APARTMENT SET FLOOR=?, RENT=?, ROOMS=?, BALCONY=?, BUILT_IN_KITCHEN=? WHERE ESTATE_ID=?";
+        PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
+
+        preparedStatement.setString(1, floor);
+        preparedStatement.setBigDecimal(2, rent);
+        preparedStatement.setInt(3, rooms);
+        preparedStatement.setBoolean(4, balcony);
+        preparedStatement.setBoolean(5, builtInKitchen);
+        preparedStatement.setInt(6, updatedId);
+
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
     public PreparedStatement createSelectStatement() throws SQLException {
         String selectSQL = "SELECT * FROM ESTATE INNER JOIN APARTMENT ON ESTATE.ID = APARTMENT.ESTATE_ID WHERE ESTATE.ID = ?";
         PreparedStatement preparedStatement = getConnection().prepareStatement(selectSQL);

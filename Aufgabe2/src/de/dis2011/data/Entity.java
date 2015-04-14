@@ -35,14 +35,18 @@ public abstract class Entity {
 				// Save ID.
 				ResultSet rs = preparedStatement.getGeneratedKeys();
 				if (rs.next()) {
-					setId(rs.getInt(1));
+					int insertedId = rs.getInt(1);
+					setId(insertedId);
+
+					applyAdditionalInsertStatements(insertedId);
 				}
 				rs.close();
-
 			} else {
 				// Update entity if it exists already.
 				preparedStatement = createUpdateStatement();
 				preparedStatement.executeUpdate();
+
+				applyAdditionalUpdateStatements(getId());
 			}
 			preparedStatement.close();
 			return true;
@@ -86,6 +90,14 @@ public abstract class Entity {
 	abstract public PreparedStatement createInsertStatement() throws SQLException;
 
 	abstract public PreparedStatement createUpdateStatement() throws SQLException;
+
+	public void applyAdditionalInsertStatements(int insertedId) throws SQLException {
+		/* empty block */
+	}
+
+	public void applyAdditionalUpdateStatements(int updatedId) throws SQLException {
+		/* empty block */
+	}
 
 	abstract public int getId();
 
