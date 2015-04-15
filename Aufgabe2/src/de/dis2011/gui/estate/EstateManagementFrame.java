@@ -20,7 +20,6 @@ import javax.swing.JTable;
 
 import de.dis2011.data.Entity;
 import de.dis2011.data.House;
-import de.dis2011.data.Person;
 import de.dis2011.model.HouseDataModel;
 
 

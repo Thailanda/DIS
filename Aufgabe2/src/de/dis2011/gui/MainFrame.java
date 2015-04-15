@@ -1,6 +1,6 @@
 package de.dis2011.gui;
 
-import de.dis2011.gui.estate.ContractFrame;
+import de.dis2011.gui.contract.ContractManagementFrame;
 import de.dis2011.gui.estate.EstateLogin;
 import de.dis2011.model.EstateAgentSecurityContext;
 
@@ -33,7 +33,7 @@ public class MainFrame extends JFrame implements Observer {
 	final private PersonFrame personFrame = new PersonFrame(this);
 	final private EstateFrame estateFrame = new EstateFrame(this);
 	final private EstateLogin estateLoginFrame = new EstateLogin(this);
-	final private ContractFrame contractFrame = new ContractFrame(this);
+	final private ContractManagementFrame contractFrame = new ContractManagementFrame(this);
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;

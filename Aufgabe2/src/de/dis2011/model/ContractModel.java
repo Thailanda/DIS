@@ -1,7 +1,11 @@
 package de.dis2011.model;
 
 import de.dis2011.data.Contract;
+import de.dis2011.data.House;
+
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -10,6 +14,11 @@ import java.sql.Date;
 public class ContractModel extends EntityModel<Contract> {
 
     final private static String[] COLUMNS = {"ID", "Contract NO", "Date", "Place"};
+	final private List<Contract> contracts;
+	
+	public ContractModel() {
+		contracts = new ArrayList<Contract>();
+	}
 
     @Override
     public Object getValueAt(int i, int i1) {
@@ -38,4 +47,9 @@ public class ContractModel extends EntityModel<Contract> {
     protected String[] getColumns() {
         return COLUMNS;
     }
+    
+	public void removeContract(Contract c) {
+		this.contracts.remove(c);
+		this.fireTableDataChanged();
+	}
 }

@@ -21,6 +21,22 @@ public class Estate extends Entity {
     private String street = "";
     private String streetNumber = "";
     private int squareArea = 0;
+    
+    public static ArrayList<Estate> findByKind(String kind) {
+        ArrayList<Estate> estates = new ArrayList<Estate>();
+        
+        List<Entity> all = Estate.findAll(Estate.class);
+        
+        for (Entity e : all)
+        {
+        	if (((Estate) e).getKind().equals(kind))
+        	{
+        		estates.add((Estate)e);
+        	}        	
+        }
+        
+        return estates;
+    }
 
     public static List<Estate> findByEstateAgent(EstateAgent estateAgent) {
         List<Estate> estates = new ArrayList<Estate>();

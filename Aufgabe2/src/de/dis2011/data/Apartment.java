@@ -74,7 +74,7 @@ public class Apartment extends Estate {
         preparedStatement.setInt(1, insertedId);
         preparedStatement.setString(2, floor);
         preparedStatement.setDouble(3, rent);
-        preparedStatement.setInt(4, rooms != null? rooms : -1);
+        preparedStatement.setInt(4, rooms);
         preparedStatement.setBoolean(5, balcony);
         preparedStatement.setBoolean(6, builtInKitchen);
 
