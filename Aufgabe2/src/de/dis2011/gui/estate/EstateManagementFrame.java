@@ -35,7 +35,7 @@ public class EstateManagementFrame extends JFrame {
         super("Estates");
 
         initGui();
-        List<Entity> persons = Person.findAll(Person.class);
+        List<Entity> persons = House.findAll(House.class);
         for (Entity person : persons) {
             model.addHouse((House) person);
         }

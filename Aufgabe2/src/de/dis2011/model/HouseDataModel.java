@@ -93,7 +93,7 @@ public class HouseDataModel extends AbstractTableModel {
 			p.setStreet((String) o);
 			break;
 		case 7:
-			p.setPrice((BigDecimal) o);
+			p.setPrice((double) o);
 			break;
 		case 8:
 			p.setGarden((boolean) o);

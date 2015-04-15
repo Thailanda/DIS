@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 public class EstateLogin extends JFrame {
 
 	final private MainFrame mainFrame;
-	final private EstateManagementFrame managementFrame = new EstateManagementFrame();
+//	final private EstateManagementFrame managementFrame = new EstateManagementFrame();
 	
 	private final JPasswordField txtFieldPassword;
 	
@@ -91,7 +91,6 @@ public class EstateLogin extends JFrame {
 			mainFrame.getContext().setUser(a);
 			mainFrame.getContext().notifyObservers();
 			setVisible(false);
-			managementFrame.setVisible(true);
 		} else {
 			String msg = "Login was not successful!";
 			JOptionPane.showMessageDialog(this, msg, "Error: Could not login", JOptionPane.ERROR_MESSAGE);
