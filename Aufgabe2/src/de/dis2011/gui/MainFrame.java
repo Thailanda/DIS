@@ -1,7 +1,9 @@
 package de.dis2011.gui;
 
+import de.dis2011.gui.estate.ContractFrame;
 import de.dis2011.gui.estate.EstateLogin;
 import de.dis2011.model.EstateAgentSecurityContext;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -11,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,9 +33,11 @@ public class MainFrame extends JFrame implements Observer {
 	final private PersonFrame personFrame = new PersonFrame(this);
 	final private EstateFrame estateFrame = new EstateFrame(this);
 	final private EstateLogin estateLoginFrame = new EstateLogin(this);
+	final private ContractFrame contractFrame = new ContractFrame(this);
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;
+	private final JButton btnManageContracts;
 
 	public MainFrame() {
 		super(TITLE);
@@ -65,6 +70,14 @@ public class MainFrame extends JFrame implements Observer {
 				actionManagePersons();
 			}
 		});
+		
+		btnManageContracts = new JButton("Manage Contracts");
+		btnManageContracts.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actionManageContracts();
+			}
+		});
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -73,6 +86,7 @@ public class MainFrame extends JFrame implements Observer {
 		buttonPane.add(btnAuthenticate);
 		buttonPane.add(btnManageEstates);
 		buttonPane.add(btnPersonManagement);
+		buttonPane.add(btnManageContracts);
 		buttonPane.add(Box.createHorizontalGlue());
 
 		Container contentPane = getContentPane();
@@ -118,6 +132,7 @@ public class MainFrame extends JFrame implements Observer {
 			btnAuthenticate.setEnabled(!authenticated);
 			btnManageEstates.setEnabled(authenticated);
 			btnPersonManagement.setEnabled(authenticated);
+			btnManageContracts.setEnabled(authenticated);
 
 			if (authenticated) {
 				setTitle(TITLE + " - [" + context.getUser().getName() + " #"+ context.getUser().getId() + "]");
@@ -137,5 +152,10 @@ public class MainFrame extends JFrame implements Observer {
 
 	private void actionManagePersons() {
 		personFrame.showGui();
+	}
+	
+	protected void actionManageContracts() {
+		 contractFrame.showGui();
+		
 	}
 }
