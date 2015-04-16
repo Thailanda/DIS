@@ -123,4 +123,18 @@ public class EstateAgent extends Entity {
 
         return preparedStatement;
     }
+    
+    public boolean drop() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM ESTATE_AGENT WHERE ID=?");
+            preparedStatement.setInt(1, getId());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -33,11 +33,13 @@ public class MainFrame extends JFrame implements Observer {
 	final private EstateFrame estateFrame = new EstateFrame(this);
 	final private EstateLogin estateLoginFrame = new EstateLogin(this);
 	final private ContractManagementFrame contractFrame = new ContractManagementFrame(this);
+	final private ManagementAgentFrame agentFrame = new ManagementAgentFrame(this);
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;
 	private final JButton btnManageContracts;
-
+	private final JButton btnManageEstateAgents;
+	
 	public MainFrame() {
 		super(TITLE);
 
@@ -75,6 +77,14 @@ public class MainFrame extends JFrame implements Observer {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionManageContracts();
+			}
+		});
+		
+		btnManageEstateAgents = new JButton("Manage Estate Agents");
+		btnManageEstateAgents.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actionManageAgents();
 			}
 		});
 
@@ -156,5 +166,9 @@ public class MainFrame extends JFrame implements Observer {
 	protected void actionManageContracts() {
 		 contractFrame.showGui();
 		
+	}
+	
+	protected void actionManageAgents() {
+		agentFrame.showGui();
 	}
 }
