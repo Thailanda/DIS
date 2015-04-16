@@ -1,6 +1,7 @@
 package de.dis2011.gui.contract;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
 import javax.swing.JSpinner;
 
@@ -13,6 +14,7 @@ public class TenancyContractForm extends AbstractForm {
 	
 	private JSpinner duration;
 	private JSpinner additionalCosts;
+	private JSpinner startDate;
 
 	public TenancyContractForm(EstateFrame estateFrame) {
 		super(estateFrame, "Tenancy Contract");
@@ -21,7 +23,8 @@ public class TenancyContractForm extends AbstractForm {
 
 	@Override
 	protected void buildForm() {
-	
+
+		startDate = addFormDateElement("Start Date");
 		duration = addFormIntElement("Duration");
 		additionalCosts = addFormDecimalElement("Additional Costs");
 	}
@@ -31,7 +34,8 @@ public class TenancyContractForm extends AbstractForm {
 		TenancyContractEntity contract = (TenancyContractEntity) entity;
 		
 		duration.setValue(contract.getDuration());
-		additionalCosts.setValue(contract.getAdditionalCosts());
+		additionalCosts.setValue(contract.getAdditionalCosts() != null? contract.getAdditionalCosts() : new BigDecimal(0));
+		startDate.setValue(contract.getDate());
 	}
 
 	@Override
@@ -39,7 +43,8 @@ public class TenancyContractForm extends AbstractForm {
 		TenancyContractEntity contract = (TenancyContractEntity) entity;
 		
 		contract.setDuration((Integer) duration.getValue());
-		contract.setAdditionalCosts((BigDecimal) additionalCosts.getValue());	
+		contract.setAdditionalCosts((Double)additionalCosts.getValue());
+		contract.setDate((Date) startDate.getValue());
 		
 		contract.save();
 	}

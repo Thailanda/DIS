@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class TenancyContractEntity extends Contract {
     private Date startDate;
     private Integer duration;
-    private BigDecimal additionalCosts;
+    private double additionalCosts;
 
     @Override
     public PreparedStatement createSelectStatement() throws SQLException {
@@ -30,7 +30,7 @@ public class TenancyContractEntity extends Contract {
 
         this.setStartDate(resultSet.getDate("start_date"));
         this.setDuration(resultSet.getInt("duration"));
-        this.setAdditionalCosts(resultSet.getBigDecimal("additional_costs"));
+        this.setAdditionalCosts(resultSet.getDouble("additional_costs"));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TenancyContractEntity extends Contract {
         preparedStatement.setInt(1, insertedId);
         preparedStatement.setDate(2, startDate);
         preparedStatement.setInt(3, duration);
-        preparedStatement.setBigDecimal(4, additionalCosts);
+        preparedStatement.setDouble(4, additionalCosts);
 
         preparedStatement.executeUpdate();
     }
@@ -53,7 +53,7 @@ public class TenancyContractEntity extends Contract {
 
         preparedStatement.setDate(1, startDate);
         preparedStatement.setInt(2, duration);
-        preparedStatement.setBigDecimal(3, additionalCosts);
+        preparedStatement.setDouble(3, additionalCosts);
         preparedStatement.setInt(4, updatedId);
 
         preparedStatement.executeUpdate();
@@ -89,11 +89,11 @@ public class TenancyContractEntity extends Contract {
         this.duration = duration;
     }
 
-    public BigDecimal getAdditionalCosts() {
+    public Double getAdditionalCosts() {
         return additionalCosts;
     }
 
-    public void setAdditionalCosts(BigDecimal additionalCosts) {
+    public void setAdditionalCosts(Double additionalCosts) {
         this.additionalCosts = additionalCosts;
     }
 }

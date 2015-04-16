@@ -14,10 +14,8 @@ import java.util.List;
 public class ContractModel extends EntityModel<Contract> {
 
     final private static String[] COLUMNS = {"ID", "Contract No", "Date", "Place"};
-	final private List<Contract> contracts;
 	
 	public ContractModel() {
-		contracts = new ArrayList<Contract>();
 	}
 
     @Override
@@ -47,14 +45,4 @@ public class ContractModel extends EntityModel<Contract> {
     protected String[] getColumns() {
         return COLUMNS;
     }
-    
-    public void addContract(Contract contract)
-    {
-    	contracts.add(contract);
-    }
-    
-	public void removeContract(Contract c) {
-		this.contracts.remove(c);
-		this.fireTableDataChanged();
-	}
 }

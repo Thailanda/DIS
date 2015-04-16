@@ -1,4 +1,4 @@
-package de.dis2011.gui.contract;
+package de.dis2011.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -24,7 +24,9 @@ import de.dis2011.data.Estate;
 import de.dis2011.data.House;
 import de.dis2011.data.PurchaseContractEntity;
 import de.dis2011.data.TenancyContractEntity;
-import de.dis2011.gui.MainFrame;
+import de.dis2011.gui.contract.PurchaseContractForm;
+import de.dis2011.gui.contract.SignContractForm;
+import de.dis2011.gui.contract.TenancyContractForm;
 import de.dis2011.gui.estate.ApartmentForm;
 import de.dis2011.gui.estate.HouseForm;
 import de.dis2011.model.ContractModel;
@@ -41,9 +43,9 @@ public class ContractManagementFrame extends JFrame {
 
 		initGUI(); 
 		
-		List<Entity> contracts = Contract.findAll(Contract.class);
+		List<Contract> contracts = Contract.findAllContracts();
         for (Entity contract : contracts) {
-            model.addContract((Contract) contract);
+            model.add((Contract) contract);
         }
 	}
 
@@ -66,7 +68,7 @@ public class ContractManagementFrame extends JFrame {
 		btnInsert.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				saveContract();
+				signContract();
 			}
 		});
 
@@ -106,14 +108,14 @@ public class ContractManagementFrame extends JFrame {
 		pack();
 	}
 	    
-    private void saveContract() {
+    private void signContract() {
     	signContractForm.showGui();
     }
     
     private void removeContract() {
     	Contract c = model.findByRow(table.getSelectedRow());
         if (c.drop()) {
-            model.removeContract(c);
+            model.remove(c);
         }
     }
     

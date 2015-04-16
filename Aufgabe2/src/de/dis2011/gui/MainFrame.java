@@ -1,6 +1,5 @@
 package de.dis2011.gui;
 
-import de.dis2011.gui.contract.ContractManagementFrame;
 import de.dis2011.gui.estate.EstateLogin;
 import de.dis2011.model.EstateAgentSecurityContext;
 

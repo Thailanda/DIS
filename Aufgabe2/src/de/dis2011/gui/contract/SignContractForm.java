@@ -98,7 +98,7 @@ public class SignContractForm extends AbstractForm {
 			contr.setPlace((String) place.getText());
 			
 			contr.setStartDate((Date) startDate.getValue());
-			contr.setAdditionalCosts((BigDecimal) addtionalCosts.getValue());
+			contr.setAdditionalCosts((Double) addtionalCosts.getValue());
 			contr.setDuration((Integer) duration.getValue());
 			
 			contr.save();
