@@ -96,6 +96,7 @@ public class MainFrame extends JFrame implements Observer {
 		buttonPane.add(btnManageEstates);
 		buttonPane.add(btnPersonManagement);
 		buttonPane.add(btnManageContracts);
+		buttonPane.add(btnManageEstateAgents);
 		buttonPane.add(Box.createHorizontalGlue());
 
 		Container contentPane = getContentPane();
