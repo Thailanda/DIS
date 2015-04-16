@@ -11,7 +11,7 @@ import java.sql.SQLException;
  */
 public class PurchaseContractEntity extends Contract {
     private int noOfInstallments;
-    private BigDecimal interestRate;
+    private Double interestRate;
 
     @Override
     public PreparedStatement createSelectStatement() throws SQLException {
@@ -27,7 +27,7 @@ public class PurchaseContractEntity extends Contract {
         super.applyResultSet(resultSet);
 
         this.setNoOfInstallments(resultSet.getInt("no_of_installments"));
-        this.setInterestRate(resultSet.getBigDecimal("intrest_rate"));
+        this.setInterestRate(resultSet.getDouble("interest_rate"));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PurchaseContractEntity extends Contract {
 
         preparedStatement.setInt(1, insertedId);
         preparedStatement.setInt(2, noOfInstallments);
-        preparedStatement.setBigDecimal(3, interestRate);
+        preparedStatement.setDouble(3, interestRate);
 
         preparedStatement.executeUpdate();
     }
@@ -48,7 +48,7 @@ public class PurchaseContractEntity extends Contract {
         PreparedStatement preparedStatement = getConnection().prepareStatement(insertSQL);
 
         preparedStatement.setInt(1, noOfInstallments);
-        preparedStatement.setBigDecimal(2, interestRate);
+        preparedStatement.setDouble(2, interestRate);
         preparedStatement.setInt(3, updatedId);
 
         preparedStatement.executeUpdate();
@@ -76,11 +76,11 @@ public class PurchaseContractEntity extends Contract {
         this.noOfInstallments = noOfInstallments;
     }
 
-    public BigDecimal getInterestRate() {
+    public Double getInterestRate() {
         return interestRate;
     }
 
-    public void setInterestRate(BigDecimal interestRate) {
+    public void setInterestRate(Double interestRate) {
         this.interestRate = interestRate;
     }
 }

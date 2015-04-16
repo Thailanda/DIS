@@ -24,36 +24,37 @@ public class SignContractForm extends AbstractForm {
 	JComboBox<String> contractTypeC;
 	JComboBox<Integer> estatesC;
 	JComboBox<Integer> personsC;
-	
+
 	JSpinner date;
 	JTextField contractNo;
 	JTextField place;
-	
+
 	// Purchse Contract
 	JSpinner noInstallments;
 	JSpinner interestRate;
-	
+
 	// Tenancy Contract
 	JSpinner startDate;
 	JSpinner duration;
 	JSpinner addtionalCosts;
-	
+
 	public SignContractForm(EstateFrame estateFrame) {
 		super(estateFrame, "Sign new Contract");
 	}
 
 	@Override
 	protected void buildForm() {
-		contractTypeC = addFormComboBoxElement(new String[] {"Purchase", "Rent"});
+		contractTypeC = addFormComboBoxElement(new String[] { "Purchase",
+				"Rent" });
 		estatesC = addFormComboBoxIntElement(new Integer[] {});
 		personsC = addFormComboBoxIntElement(new Integer[] {});
 		date = addFormDateElement("Date");
 		contractNo = addFormTextElement("Contract No");
 		place = addFormTextElement("Place");
-		
+
 		noInstallments = addFormIntElement("No of Installments");
 		interestRate = addFormDecimalElement("Interest Rate");
-		
+
 		startDate = addFormDateElement("Start Date");
 		duration = addFormIntElement("Duration");
 		addtionalCosts = addFormDecimalElement("Additional Costs");
@@ -65,7 +66,7 @@ public class SignContractForm extends AbstractForm {
 				processTypeSelection();
 			}
 		});
-		
+
 		preparePurchase();
 	}
 
@@ -76,33 +77,34 @@ public class SignContractForm extends AbstractForm {
 
 	@Override
 	public void saveForm(Entity entity) {
-		if (((String)contractTypeC.getSelectedItem()).equals("Purchase"))
-		{
+		if (((String) contractTypeC.getSelectedItem()).equals("Purchase")) {
 			PurchaseContractEntity contr = new PurchaseContractEntity();
-			
+
 			contr.setContractNo((String) contractNo.getText());
-			contr.setDate((Date) date.getValue());
+			contr.setDate(new java.sql.Date(((java.util.Date) date.getValue())
+					.getTime()));
 			contr.setPlace((String) place.getText());
-			
-			contr.setInterestRate((BigDecimal)interestRate.getValue());
+
+			contr.setInterestRate((Double) interestRate.getValue());
 			contr.setNoOfInstallments((int) noInstallments.getValue());
-			
+
 			contr.save();
-		}
-		else // Should be Rent
+		} else // Should be Rent
 		{
 			TenancyContractEntity contr = new TenancyContractEntity();
 
 			contr.setContractNo((String) contractNo.getText());
-			contr.setDate((Date) date.getValue());
+			contr.setDate(new java.sql.Date(((java.util.Date) date.getValue())
+					.getTime()));
 			contr.setPlace((String) place.getText());
-			
-			contr.setStartDate((Date) startDate.getValue());
+
+			contr.setStartDate(new java.sql.Date(((java.util.Date) startDate
+					.getValue()).getTime()));
 			contr.setAdditionalCosts((Double) addtionalCosts.getValue());
 			contr.setDuration((Integer) duration.getValue());
-			
+
 			contr.save();
-		}		
+		}
 		this.setVisible(false);
 	}
 
@@ -115,34 +117,32 @@ public class SignContractForm extends AbstractForm {
 		{
 			prepareRent();
 		}
+		
 		List<Entity> persons = Person.findAll(Person.class);
 		personsC.removeAllItems();
-		for (Entity e: persons)
-		{
-			personsC.addItem(((Person)e).getId());
+		for (Entity e : persons) {
+			personsC.addItem(((Person) e).getId());
 		}
 	}
 
 	private void preparePurchase() {
 		ArrayList<Estate> houses = Estate.findByKind("House");
 		estatesC.removeAllItems();
-		for (Estate e: houses)
-		{
+		for (Estate e : houses) {
 			estatesC.addItem(e.getId());
 		}
-		
+
 		startDate.setEnabled(false);
 		duration.setEnabled(false);
 		addtionalCosts.setEnabled(false);
 		noInstallments.setEnabled(true);
 		interestRate.setEnabled(true);
 	}
-	
+
 	private void prepareRent() {
 		ArrayList<Estate> houses = Estate.findByKind("Apartment");
 		estatesC.removeAllItems();
-		for (Estate e: houses)
-		{
+		for (Estate e : houses) {
 			estatesC.addItem(e.getId());
 		}
 
