@@ -156,8 +156,8 @@ public abstract class AbstractForm extends JFrame {
 	}
 
 	protected JComboBox<String> addFormComboBoxElement(String[] contents) {
-		JComboBox<String> jCombobox = new JComboBox<String>(contents);
-		jCombobox.setSelectedIndex(0);
+;		JComboBox<String> jCombobox = new JComboBox<String>(contents);
+//		jCombobox.setSelectedIndex(0);
 		formPane.add(jCombobox);
 		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
 
@@ -166,7 +166,7 @@ public abstract class AbstractForm extends JFrame {
 
 	protected JComboBox<Integer> addFormComboBoxIntElement(Integer[] contents) {
 		JComboBox<Integer> jCombobox = new JComboBox<Integer>(contents);
-		jCombobox.setSelectedIndex(0);
+//		jCombobox.setSelectedIndex(0);
 		formPane.add(jCombobox);
 		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
 

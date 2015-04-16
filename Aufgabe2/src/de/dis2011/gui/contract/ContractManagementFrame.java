@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -16,9 +17,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import de.dis2011.data.Apartment;
 import de.dis2011.data.Contract;
+import de.dis2011.data.Entity;
+import de.dis2011.data.Estate;
 import de.dis2011.data.House;
+import de.dis2011.data.PurchaseContractEntity;
+import de.dis2011.data.TenancyContractEntity;
 import de.dis2011.gui.MainFrame;
+import de.dis2011.gui.estate.ApartmentForm;
+import de.dis2011.gui.estate.HouseForm;
 import de.dis2011.model.ContractModel;
 import de.dis2011.model.HouseDataModel;
 
@@ -31,7 +39,12 @@ public class ContractManagementFrame extends JFrame {
 	public ContractManagementFrame(MainFrame main) {
 		super("Contracts");
 
-		initGUI();
+		initGUI(); 
+		
+		List<Entity> contracts = Contract.findAll(Contract.class);
+        for (Entity contract : contracts) {
+            model.addContract((Contract) contract);
+        }
 	}
 
 	public void showGui() {
@@ -64,11 +77,25 @@ public class ContractManagementFrame extends JFrame {
 				removeContract();
 			}
 		});
+		
+        JButton btnEdit = new JButton("Edit");
+//        btnEdit.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/pencil.png"));
+        btnEdit.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    Contract contract = model.findByRow(row);
+                    editContract(contract);
+                }
+            }
+        });
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		buttonPane.add(Box.createHorizontalGlue());
+		buttonPane.add(btnEdit);
 		buttonPane.add(btnInsert);
 		buttonPane.add(btnRemove);
 
@@ -87,6 +114,20 @@ public class ContractManagementFrame extends JFrame {
     	Contract c = model.findByRow(table.getSelectedRow());
         if (c.drop()) {
             model.removeContract(c);
+        }
+    }
+    
+
+    private void editContract(Contract contract) {
+        if (contract instanceof TenancyContractEntity) {
+            TenancyContractForm form = new TenancyContractForm(null);
+            form.setEntity(contract);
+            form.showGui();
+        }
+        else if (contract instanceof PurchaseContractEntity) {
+            PurchaseContractForm form = new PurchaseContractForm(null);
+            form.setEntity(contract);
+            form.showGui();
         }
     }
 }

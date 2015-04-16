@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ContractModel extends EntityModel<Contract> {
 
-    final private static String[] COLUMNS = {"ID", "Contract NO", "Date", "Place"};
+    final private static String[] COLUMNS = {"ID", "Contract No", "Date", "Place"};
 	final private List<Contract> contracts;
 	
 	public ContractModel() {
@@ -46,6 +46,11 @@ public class ContractModel extends EntityModel<Contract> {
     @Override
     protected String[] getColumns() {
         return COLUMNS;
+    }
+    
+    public void addContract(Contract contract)
+    {
+    	contracts.add(contract);
     }
     
 	public void removeContract(Contract c) {

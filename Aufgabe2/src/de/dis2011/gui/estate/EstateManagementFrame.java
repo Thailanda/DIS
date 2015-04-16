@@ -28,7 +28,7 @@ public class EstateManagementFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private HouseDataModel model = new HouseDataModel();
-    private JTable table = new JTable();
+	private JTable table = new JTable();
 
     public EstateManagementFrame() throws HeadlessException {
         super("Estates");
