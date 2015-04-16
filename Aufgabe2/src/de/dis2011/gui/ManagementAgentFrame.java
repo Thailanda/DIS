@@ -7,8 +7,10 @@ import de.dis2011.model.AgentModel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -17,9 +19,11 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 
@@ -28,6 +32,9 @@ public class ManagementAgentFrame extends JFrame {
 	final private MainFrame mainFrame;
     final private AgentModel model = new AgentModel();
     final private JTable table = new JTable();
+    
+	JFrame pwdFrame = new JFrame("Password Required");
+	private final String PASSWORD = "demo";
 
     public ManagementAgentFrame(MainFrame mainFrame) throws HeadlessException {
         super("Estate Agents");
@@ -94,5 +101,57 @@ public class ManagementAgentFrame extends JFrame {
 
         setMinimumSize(new Dimension(800, getHeight()));
     }
+    
+    public void authenticate() {
+
+		pwdFrame.setSize(600,100);
+		JPanel pwdPanel = new JPanel();
+		pwdPanel.setLayout(new BorderLayout());
+		final JTextField pwd = new JTextField();
+		
+		//Buttons for password
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout());
+		JButton ok = new JButton("Ok");
+		JButton cancel = new JButton("Cancel");
+		buttonPanel.add(ok);
+		buttonPanel.add(cancel);
+		
+		pwdPanel.add(pwd, BorderLayout.CENTER);
+		pwdPanel.add(buttonPanel, BorderLayout.PAGE_END);
+		pwdFrame.add(pwdPanel);
+		
+		pwdFrame.show();
+		
+		ok.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				final String password = pwd.getText();
+
+				if (pwd.equals(PASSWORD)){
+					showGui();
+					pwdFrame.setVisible(false);
+				} else {
+					String msg = "Login Failed";
+					JOptionPane.showMessageDialog(pwdFrame, msg, "Error: Wrong Password", JOptionPane.ERROR_MESSAGE);
+					pwd.setText("");
+				}		
+			}
+
+		});
+		
+		cancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				pwdFrame.setVisible(false);				
+			}
+
+		});
+		
+	}
 	
 }

@@ -169,6 +169,6 @@ public class MainFrame extends JFrame implements Observer {
 	}
 	
 	protected void actionManageAgents() {
-		agentFrame.showGui();
+		agentFrame.authenticate();
 	}
 }
