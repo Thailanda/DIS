@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -35,6 +36,8 @@ public class ManagementAgentFrame extends JFrame {
     
 	JFrame pwdFrame = new JFrame("Password Required");
 	private final String PASSWORD = "demo";
+	
+	JFrame loginFrame = new JFrame("New Login Required");
 
     public ManagementAgentFrame(MainFrame mainFrame) throws HeadlessException {
         super("Estate Agents");
@@ -64,14 +67,15 @@ public class ManagementAgentFrame extends JFrame {
         btnInsert.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                EstateAgent agent = new EstateAgent();
-                agent.save();
+               
+            	EstateAgent agent = new EstateAgent();
+            	agent.setId(-1);
+                provideAgentLogin(agent);
 
-                model.add(agent);
             }
         });
-
-        JButton btnRemove = new JButton("Remove");;
+        
+        JButton btnRemove = new JButton("Remove");
         btnRemove.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/user_delete.png"));
         btnRemove.addActionListener(new AbstractAction() {
             @Override
@@ -107,7 +111,7 @@ public class ManagementAgentFrame extends JFrame {
 		pwdFrame.setSize(600,100);
 		JPanel pwdPanel = new JPanel();
 		pwdPanel.setLayout(new BorderLayout());
-		final JTextField pwd = new JTextField();
+		final JPasswordField pwd = new JPasswordField();;
 		
 		//Buttons for password
 		JPanel buttonPanel = new JPanel();
@@ -129,8 +133,9 @@ public class ManagementAgentFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				final String password = pwd.getText();
+				System.out.println(password);
 
-				if (pwd.equals(PASSWORD)){
+				if (password.equals(PASSWORD)){
 					showGui();
 					pwdFrame.setVisible(false);
 				} else {
@@ -154,4 +159,51 @@ public class ManagementAgentFrame extends JFrame {
 		
 	}
 	
+    public void provideAgentLogin(final EstateAgent agent) {
+
+    	loginFrame.setSize(600,100);
+		JPanel loginPanel = new JPanel();
+		loginPanel.setLayout(new BorderLayout());
+		final JTextField loginField = new JTextField();
+		
+		//Buttons for password
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout());
+		JButton ok = new JButton("Ok");
+		JButton cancel = new JButton("Cancel");
+		buttonPanel.add(ok);
+		buttonPanel.add(cancel);
+		
+		loginPanel.add(loginField, BorderLayout.CENTER);
+		loginPanel.add(buttonPanel, BorderLayout.PAGE_END);
+		loginFrame.add(loginPanel);
+		
+		loginFrame.show();
+		
+		ok.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				final String login = loginField.getText();
+				agent.setLogin(login);
+				agent.save();
+                model.add(agent);
+				loginFrame.setVisible(false);
+				
+			}
+
+		});
+		
+		cancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				loginFrame.setVisible(false);				
+			}
+
+		});
+		
+	}
 }
