@@ -114,6 +114,7 @@ public class EstateFrame extends JFrame implements Observer {
             public void actionPerformed(ActionEvent actionEvent) {
                 Apartment apartment = new Apartment();
                 apartment.setManager(context.getUser());
+                apartment.setRooms(0);
                 apartment.save();
 
                 model.add(apartment);
