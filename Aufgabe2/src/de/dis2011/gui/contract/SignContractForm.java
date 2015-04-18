@@ -80,6 +80,7 @@ public class SignContractForm extends AbstractForm {
 		if (((String) contractTypeC.getSelectedItem()).equals("Purchase")) {
 			PurchaseContractEntity contr = new PurchaseContractEntity();
 
+			contr.setId(-1);
 			contr.setContractNo((String) contractNo.getText());
 			contr.setDate(new java.sql.Date(((java.util.Date) date.getValue())
 					.getTime()));
@@ -93,6 +94,7 @@ public class SignContractForm extends AbstractForm {
 		{
 			TenancyContractEntity contr = new TenancyContractEntity();
 
+			contr.setId(-1);
 			contr.setContractNo((String) contractNo.getText());
 			contr.setDate(new java.sql.Date(((java.util.Date) date.getValue())
 					.getTime()));
