@@ -1,8 +1,9 @@
-package de.dis2011.gui;
+package de.dis2011.gui.management;
 
 import de.dis2011.data.Apartment;
 import de.dis2011.data.Estate;
 import de.dis2011.data.House;
+import de.dis2011.gui.MainFrame;
 import de.dis2011.gui.estate.ApartmentForm;
 import de.dis2011.gui.estate.HouseForm;
 import de.dis2011.model.EstateAgentSecurityContext;
@@ -30,14 +31,14 @@ import javax.swing.ListSelectionModel;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-14
  */
-public class EstateFrame extends JFrame implements Observer {
+public class EstateManagementFrame extends JFrame implements Observer {
 
     final private MainFrame mainFrame;
     final private EstateAgentSecurityContext context;
     final private EstateModel model = new EstateModel();
     final private JTable table = new JTable();
 
-    public EstateFrame(MainFrame mainFrame) throws HeadlessException {
+    public EstateManagementFrame(MainFrame mainFrame) throws HeadlessException {
         super("Estates");
         this.mainFrame = mainFrame;
         context = mainFrame.getContext();

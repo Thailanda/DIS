@@ -2,7 +2,7 @@ package de.dis2011.gui.estate;
 
 import de.dis2011.data.House;
 import de.dis2011.data.Entity;
-import de.dis2011.gui.EstateFrame;
+import de.dis2011.gui.management.EstateManagementFrame;
 import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -17,7 +17,7 @@ public class HouseForm extends AbstractForm {
     private JSpinner price;
     private JCheckBox garden;
 
-    public HouseForm(EstateFrame estateFrame) {
+    public HouseForm(EstateManagementFrame estateFrame) {
         super(estateFrame, "House Form");
     }
 

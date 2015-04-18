@@ -1,6 +1,10 @@
 package de.dis2011.gui;
 
 import de.dis2011.gui.estate.EstateLogin;
+import de.dis2011.gui.management.EstateAgentManagementFrame;
+import de.dis2011.gui.management.ContractManagementFrame;
+import de.dis2011.gui.management.EstateManagementFrame;
+import de.dis2011.gui.management.PersonManagementFrame;
 import de.dis2011.model.EstateAgentSecurityContext;
 
 import java.awt.BorderLayout;
@@ -29,11 +33,11 @@ public class MainFrame extends JFrame implements Observer {
 	public static final String TITLE = "Estate Agent Software";
 
 	final private EstateAgentSecurityContext context = new EstateAgentSecurityContext(this);
-	final private PersonFrame personFrame = new PersonFrame(this);
-	final private EstateFrame estateFrame = new EstateFrame(this);
+	final private PersonManagementFrame personFrame = new PersonManagementFrame(this);
+	final private EstateManagementFrame estateFrame = new EstateManagementFrame(this);
 	final private EstateLogin estateLoginFrame = new EstateLogin(this);
 	final private ContractManagementFrame contractFrame = new ContractManagementFrame(this);
-	final private ManagementAgentFrame agentFrame = new ManagementAgentFrame(this);
+	final private EstateAgentManagementFrame agentFrame = new EstateAgentManagementFrame(this);
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;
@@ -71,17 +75,19 @@ public class MainFrame extends JFrame implements Observer {
 				actionManagePersons();
 			}
 		});
-		
+
 		btnManageContracts = new JButton("Manage Contracts");
-		btnManageContracts.addActionListener(new ActionListener() {			
+		btnManageContracts.setIcon(createImageIcon("/de/dis2011/icons/script_edit.png"));
+		btnManageContracts.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionManageContracts();
 			}
 		});
-		
+
 		btnManageEstateAgents = new JButton("Manage Estate Agents");
-		btnManageEstateAgents.addActionListener(new ActionListener() {			
+		btnManageEstateAgents.setIcon(createImageIcon("/de/dis2011/icons/key_add.png"));
+		btnManageEstateAgents.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionManageAgents();
@@ -143,6 +149,7 @@ public class MainFrame extends JFrame implements Observer {
 			btnManageEstates.setEnabled(authenticated);
 			btnPersonManagement.setEnabled(authenticated);
 			btnManageContracts.setEnabled(authenticated);
+			btnManageEstateAgents.setEnabled(authenticated);
 
 			if (authenticated) {
 				setTitle(TITLE + " - [" + context.getUser().getName() + " #"+ context.getUser().getId() + "]");

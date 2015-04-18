@@ -3,6 +3,8 @@ package de.dis2011.data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -14,6 +16,28 @@ public class Apartment extends Estate {
     private Integer rooms;
     private boolean balcony;
     private boolean builtInKitchen;
+
+    /**
+     * Finds all apartments.
+     */
+    public static List<Apartment> findAll() {
+        ArrayList<Apartment> apartments = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM ESTATE e INNER JOIN APARTMENT a ON e.ID = a.ESTATE_ID";
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Apartment p = new Apartment();
+                p.applyResultSet(resultSet);
+                apartments.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return apartments;
+    }
 
     public String getFloor() {
         return floor;
@@ -123,5 +147,10 @@ public class Apartment extends Estate {
     @Override
     public String getKind() {
         return "Apartment";
+    }
+
+    @Override
+    public String toString() {
+        return "Apartment in " + getPostalCode() + " " + getCity();
     }
 }

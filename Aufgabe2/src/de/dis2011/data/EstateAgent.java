@@ -11,11 +11,11 @@ import java.sql.Statement;
  * @version 2015-04-07
  */
 public class EstateAgent extends Entity {
-    private int id;
-    private String name;
-    private String address;
-    private String login;
-    private String password;
+    private int id = -1;
+    private String name = "";
+    private String address = "";
+    private String login = "";
+    private String password = "";
 
     public int getId() {
         return id;

@@ -1,11 +1,11 @@
 package de.dis2011.gui.estate;
 
+import de.dis2011.data.Entity;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -21,16 +21,13 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 
-import de.dis2011.data.Entity;
-import de.dis2011.gui.EstateFrame;
-
 /**
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-14
  */
 public abstract class AbstractForm extends JFrame {
 
-	final private EstateFrame estateFrame;
+	final private JFrame frame;
 
 	private Entity entity;
 	private JPanel formPane;
@@ -46,9 +43,9 @@ public abstract class AbstractForm extends JFrame {
 		loadForm(entity);
 	}
 
-	public AbstractForm(EstateFrame estateFrame, String title) {
+	public AbstractForm(JFrame frame, String title) {
 		super(title);
-		this.estateFrame = estateFrame;
+		this.frame = frame;
 
 		formPane = new JPanel();
 		formPane.setLayout(new BoxLayout(formPane, BoxLayout.PAGE_AXIS));
@@ -93,8 +90,11 @@ public abstract class AbstractForm extends JFrame {
 	}
 
 	public void showGui() {
-		if (this.estateFrame != null) {
-			estateFrame.centerFrame(this);
+		if (this.frame != null) {
+			setLocation(
+				frame.getX() + frame.getWidth() / 2 - getWidth() / 2,
+				frame.getY() + frame.getHeight() / 2 - getHeight() / 2
+			);
 		}
 		setVisible(true);
 	}
@@ -146,6 +146,42 @@ public abstract class AbstractForm extends JFrame {
 		return field;
 	}
 
+	protected JComboBox<String> addFormComboBoxElement(String label, String[] contents) {
+;		JComboBox<String> field = new JComboBox<>(contents);
+		field.setAlignmentX(Component.LEFT_ALIGNMENT);
+		addFormLabel(label).setLabelFor(field);
+
+		formPane.add(field);
+		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
+
+		return field;
+	}
+
+	protected JComboBox<Object> addFormComboBoxElement(String label, Object[] contents) {
+		JComboBox<Object> field = new JComboBox<>(contents);
+		field.setAlignmentX(Component.LEFT_ALIGNMENT);
+		addFormLabel(label).setLabelFor(field);
+
+		formPane.add(field);
+		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
+
+		return field;
+	}
+
+	protected JSpinner addFormDateElement(String label) {
+		JSpinner field = new JSpinner();
+		SpinnerDateModel model = new SpinnerDateModel();
+
+		field.setAlignmentX(Component.LEFT_ALIGNMENT);
+		field.setModel(model);
+		field.setEditor(new JSpinner.DateEditor(field, "dd.MM.yyyy"));
+		addFormLabel(label).setLabelFor(field);
+
+		formPane.add(field);
+
+		return field;
+	}
+
 	private JLabel addFormLabel(String label) {
 		JLabel jLabel = new JLabel(label);
 		jLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -153,35 +189,5 @@ public abstract class AbstractForm extends JFrame {
 		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
 
 		return jLabel;
-	}
-
-	protected JComboBox<String> addFormComboBoxElement(String[] contents) {
-;		JComboBox<String> jCombobox = new JComboBox<String>(contents);
-//		jCombobox.setSelectedIndex(0);
-		formPane.add(jCombobox);
-		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
-
-		return jCombobox;
-	}
-
-	protected JComboBox<Integer> addFormComboBoxIntElement(Integer[] contents) {
-		JComboBox<Integer> jCombobox = new JComboBox<Integer>(contents);
-//		jCombobox.setSelectedIndex(0);
-		formPane.add(jCombobox);
-		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
-
-		return jCombobox;
-	}
-
-	protected JSpinner addFormDateElement(String label) {
-		JSpinner field = new JSpinner();
-		field.setAlignmentX(Component.LEFT_ALIGNMENT);
-		addFormLabel(label).setLabelFor(field);
-
-		field.setModel(new SpinnerDateModel());
-		formPane.add(field);
-		formPane.add(Box.createRigidArea(new Dimension(0, 5)));
-
-		return field;
 	}
 }

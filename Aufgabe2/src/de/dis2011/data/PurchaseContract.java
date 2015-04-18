@@ -1,6 +1,5 @@
 package de.dis2011.data;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,9 +8,9 @@ import java.sql.SQLException;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-07
  */
-public class PurchaseContractEntity extends Contract {
-    private int noOfInstallments;
-    private Double interestRate;
+public class PurchaseContract extends Contract {
+    private int noOfInstallments = 0;
+    private double interestRate = 0.0;
 
     @Override
     public PreparedStatement createSelectStatement() throws SQLException {
@@ -76,11 +75,11 @@ public class PurchaseContractEntity extends Contract {
         this.noOfInstallments = noOfInstallments;
     }
 
-    public Double getInterestRate() {
+    public double getInterestRate() {
         return interestRate;
     }
 
-    public void setInterestRate(Double interestRate) {
+    public void setInterestRate(double interestRate) {
         this.interestRate = interestRate;
     }
 }

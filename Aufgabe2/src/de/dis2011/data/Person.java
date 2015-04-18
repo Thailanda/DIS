@@ -108,4 +108,9 @@ public class Person extends Entity {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return firstName + " " + name;
+    }
 }

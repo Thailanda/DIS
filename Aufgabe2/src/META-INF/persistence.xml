@@ -8,10 +8,10 @@
         <class>de.dis2011.data.EstateAgent</class>
         <class>de.dis2011.data.House</class>
         <class>de.dis2011.data.Person</class>
-        <class>de.dis2011.data.PurchaseContractEntity</class>
+        <class>de.dis2011.data.PurchaseContract</class>
         <class>de.dis2011.entities.RentEntity</class>
         <class>de.dis2011.entities.SellEntity</class>
-        <class>de.dis2011.data.TenancyContractEntity</class>
+        <class>de.dis2011.data.TenancyContract</class>
         <properties>
             <property name="eclipselink.jdbc.url" value="jdbc:db2://vsisls4.informatik.uni-hamburg.de:50001/VSISP"/>
             <property name="eclipselink.jdbc.driver" value="com.ibm.db2.jcc.DB2Driver"/>

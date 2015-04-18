@@ -2,7 +2,7 @@ package de.dis2011.gui.estate;
 
 import de.dis2011.data.Apartment;
 import de.dis2011.data.Entity;
-import de.dis2011.gui.EstateFrame;
+import de.dis2011.gui.management.EstateManagementFrame;
 import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -19,7 +19,7 @@ public class ApartmentForm extends AbstractForm {
     private JCheckBox balcony;
     private JCheckBox builtInKitchen;
 
-    public ApartmentForm(EstateFrame estateFrame) {
+    public ApartmentForm(EstateManagementFrame estateFrame) {
         super(estateFrame, "Apartment Form");
     }
 

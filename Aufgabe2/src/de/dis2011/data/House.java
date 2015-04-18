@@ -3,6 +3,8 @@ package de.dis2011.data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -12,6 +14,28 @@ public class House extends Estate {
     private String floors;
     private double price;
     private boolean garden;
+
+    /**
+     * Finds all houses.
+     */
+    public static List<House> findAll() {
+        ArrayList<House> houses = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM ESTATE e INNER JOIN HOUSE h ON e.ID = h.ESTATE_ID";
+            PreparedStatement statement = getConnection().prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                House p = new House();
+                p.applyResultSet(resultSet);
+                houses.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return houses;
+    }
 
     public String getFloors() {
         return floors;
@@ -99,5 +123,10 @@ public class House extends Estate {
     @Override
     public String getKind() {
         return "House";
+    }
+
+    @Override
+    public String toString() {
+        return "House in " + getPostalCode() + " " + getCity();
     }
 }

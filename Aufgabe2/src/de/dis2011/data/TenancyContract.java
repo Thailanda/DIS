@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-07
  */
-public class TenancyContractEntity extends Contract {
+public class TenancyContract extends Contract {
     private Date startDate;
     private Integer duration;
     private double additionalCosts;

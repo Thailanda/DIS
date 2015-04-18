@@ -140,16 +140,18 @@ public class Estate extends Entity {
 
     @Override
     public PreparedStatement createUpdateStatement() throws SQLException {
-        String updateSQL = "UPDATE ESTATE SET MANAGER_ID=?, CITY=?, POSTAL_CODE=?, STREET=?, STREET_NUMBER=?, SQUARE_AREA=? WHERE ID=?";
+        String updateSQL = "UPDATE ESTATE SET MANAGER_ID=?, PERSON_ID=?, CONTRACT_ID=?, CITY=?, POSTAL_CODE=?, STREET=?, STREET_NUMBER=?, SQUARE_AREA=? WHERE ID=?";
         PreparedStatement preparedStatement = getConnection().prepareStatement(updateSQL);
 
         preparedStatement.setInt(1, getManager().getId());
-        preparedStatement.setString(2, getCity());
-        preparedStatement.setString(3, getPostalCode());
-        preparedStatement.setString(4, getStreet());
-        preparedStatement.setString(5, getStreetNumber());
-        preparedStatement.setInt(6, getSquareArea());
-        preparedStatement.setInt(7, getId());
+        preparedStatement.setInt(2, getPerson().getId());
+        preparedStatement.setInt(3, getContract().getId());
+        preparedStatement.setString(4, getCity());
+        preparedStatement.setString(5, getPostalCode());
+        preparedStatement.setString(6, getStreet());
+        preparedStatement.setString(7, getStreetNumber());
+        preparedStatement.setInt(8, getSquareArea());
+        preparedStatement.setInt(9, getId());
 
         return preparedStatement;
     }

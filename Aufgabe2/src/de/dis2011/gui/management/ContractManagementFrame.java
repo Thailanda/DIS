@@ -1,12 +1,20 @@
-package de.dis2011.gui;
+package de.dis2011.gui.management;
 
+import de.dis2011.data.Contract;
+import de.dis2011.data.Entity;
+import de.dis2011.data.PurchaseContract;
+import de.dis2011.data.TenancyContract;
+import de.dis2011.gui.MainFrame;
+import de.dis2011.gui.contract.PurchaseContractForm;
+import de.dis2011.gui.contract.SignContractForm;
+import de.dis2011.gui.contract.TenancyContractForm;
+import de.dis2011.model.ContractModel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,29 +25,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import de.dis2011.data.Apartment;
-import de.dis2011.data.Contract;
-import de.dis2011.data.Entity;
-import de.dis2011.data.Estate;
-import de.dis2011.data.House;
-import de.dis2011.data.PurchaseContractEntity;
-import de.dis2011.data.TenancyContractEntity;
-import de.dis2011.gui.contract.PurchaseContractForm;
-import de.dis2011.gui.contract.SignContractForm;
-import de.dis2011.gui.contract.TenancyContractForm;
-import de.dis2011.gui.estate.ApartmentForm;
-import de.dis2011.gui.estate.HouseForm;
-import de.dis2011.model.ContractModel;
-import de.dis2011.model.HouseDataModel;
-
 public class ContractManagementFrame extends JFrame {
 	private ContractModel model = new ContractModel();
     private JTable table = new JTable();
     
-    private SignContractForm signContractForm = new SignContractForm(null);
+	final private MainFrame mainFrame;
 
-	public ContractManagementFrame(MainFrame main) {
+	public ContractManagementFrame(MainFrame mainFrame) {
 		super("Contracts");
+
+		this.mainFrame = mainFrame;
 
 		initGUI(); 
 		
@@ -50,6 +45,7 @@ public class ContractManagementFrame extends JFrame {
 	}
 
 	public void showGui() {
+		mainFrame.centerFrame(this);
 		this.setVisible(true);
 	}
 
@@ -64,8 +60,9 @@ public class ContractManagementFrame extends JFrame {
 		table.setModel(model);
 		JScrollPane scrollPane = new JScrollPane(table);
 
-		JButton btnInsert = new JButton("Sign Contract");
-		btnInsert.addActionListener(new AbstractAction() {
+		JButton btnSignContract = new JButton("Sign Contract");
+		btnSignContract.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/script_add.png"));
+		btnSignContract.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				signContract();
@@ -73,6 +70,7 @@ public class ContractManagementFrame extends JFrame {
 		});
 
 		JButton btnRemove = new JButton("Remove");
+		btnRemove.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/delete.png"));
 		btnRemove.addActionListener(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -81,24 +79,24 @@ public class ContractManagementFrame extends JFrame {
 		});
 		
         JButton btnEdit = new JButton("Edit");
-//        btnEdit.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/pencil.png"));
+        btnEdit.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/pencil.png"));
         btnEdit.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                int row = table.getSelectedRow();
-                if (row >= 0) {
-                    Contract contract = model.findByRow(row);
-                    editContract(contract);
-                }
-            }
-        });
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				int row = table.getSelectedRow();
+				if (row >= 0) {
+					Contract contract = model.findByRow(row);
+					editContract(contract);
+				}
+			}
+		});
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-		buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		buttonPane.add(btnSignContract);
 		buttonPane.add(Box.createHorizontalGlue());
 		buttonPane.add(btnEdit);
-		buttonPane.add(btnInsert);
 		buttonPane.add(btnRemove);
 
 		Container contentPane = getContentPane();
@@ -109,6 +107,7 @@ public class ContractManagementFrame extends JFrame {
 	}
 	    
     private void signContract() {
+		final SignContractForm signContractForm = new SignContractForm(this);
     	signContractForm.showGui();
     }
     
@@ -118,18 +117,22 @@ public class ContractManagementFrame extends JFrame {
             model.remove(c);
         }
     }
-    
+
 
     private void editContract(Contract contract) {
-        if (contract instanceof TenancyContractEntity) {
-            TenancyContractForm form = new TenancyContractForm(null);
+        if (contract instanceof TenancyContract) {
+            TenancyContractForm form = new TenancyContractForm(this);
             form.setEntity(contract);
             form.showGui();
         }
-        else if (contract instanceof PurchaseContractEntity) {
-            PurchaseContractForm form = new PurchaseContractForm(null);
+        else if (contract instanceof PurchaseContract) {
+            PurchaseContractForm form = new PurchaseContractForm(this);
             form.setEntity(contract);
             form.showGui();
         }
     }
+
+	public ContractModel getModel() {
+		return model;
+	}
 }

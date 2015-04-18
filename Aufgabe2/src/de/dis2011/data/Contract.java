@@ -13,10 +13,10 @@ import java.util.List;
  * @version 2015-04-07
  */
 public class Contract extends Entity {
-	private int id;
-	private String contractNo;
-	private Date date;
-	private String place;
+	private int id = -1;
+	private String contractNo = "";
+	private Date date = new Date(0);
+	private String place = "";
 
 	@Override
 	protected String getFindAllSql() {
@@ -130,7 +130,7 @@ public class Contract extends Entity {
 			while (resultSet.next()) {
 				resultSet.getInt("purchase_id");
 				if (!resultSet.wasNull()) {
-					PurchaseContractEntity e = new PurchaseContractEntity();
+					PurchaseContract e = new PurchaseContract();
 					e.applyResultSet(resultSet);
 					contracts.add(e);
 					continue;
@@ -138,7 +138,7 @@ public class Contract extends Entity {
 
 				resultSet.getInt("tenancy_id");
 				if (!resultSet.wasNull()) {
-					TenancyContractEntity e = new TenancyContractEntity();
+					TenancyContract e = new TenancyContract();
 					e.applyResultSet(resultSet);
 					contracts.add(e);
 					continue;

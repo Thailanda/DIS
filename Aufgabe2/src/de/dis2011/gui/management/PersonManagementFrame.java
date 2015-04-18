@@ -1,7 +1,8 @@
-package de.dis2011.gui;
+package de.dis2011.gui.management;
 
 import de.dis2011.data.Entity;
 import de.dis2011.data.Person;
+import de.dis2011.gui.MainFrame;
 import de.dis2011.model.PersonModel;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -24,13 +25,13 @@ import javax.swing.ListSelectionModel;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-14
  */
-public class PersonFrame extends JFrame {
+public class PersonManagementFrame extends JFrame {
 
     final private MainFrame mainFrame;
     final private PersonModel model = new PersonModel();
     final private JTable table = new JTable();
 
-    public PersonFrame(MainFrame mainFrame) throws HeadlessException {
+    public PersonManagementFrame(MainFrame mainFrame) throws HeadlessException {
         super("Persons");
         this.mainFrame = mainFrame;
 

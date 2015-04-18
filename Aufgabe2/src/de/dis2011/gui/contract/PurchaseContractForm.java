@@ -1,16 +1,11 @@
 package de.dis2011.gui.contract;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import javax.swing.JSpinner;
-
 import de.dis2011.data.Entity;
-import de.dis2011.data.PurchaseContractEntity;
-import de.dis2011.gui.EstateFrame;
+import de.dis2011.data.PurchaseContract;
 import de.dis2011.gui.estate.AbstractForm;
+import java.util.Date;
+import javax.swing.JFrame;
+import javax.swing.JSpinner;
 
 public class PurchaseContractForm extends AbstractForm {
 
@@ -18,8 +13,8 @@ public class PurchaseContractForm extends AbstractForm {
 	private JSpinner interestRate;
 	private JSpinner startDate;
 
-	public PurchaseContractForm(EstateFrame estateFrame) {
-		super(estateFrame, "Purchase Contract Form");
+	public PurchaseContractForm(JFrame frame) {
+		super(frame, "Purchase Contract Form");
 	}
 
 	@Override
@@ -31,21 +26,23 @@ public class PurchaseContractForm extends AbstractForm {
 
 	@Override
 	protected void loadForm(Entity entity) {
-		PurchaseContractEntity ent = (PurchaseContractEntity) entity;
+		PurchaseContract ent = (PurchaseContract) entity;
 
 		noInstallments.setValue((int) ent.getNoOfInstallments());
 		interestRate.setValue((Double) ent.getInterestRate());
 
-		startDate.setValue(new java.util.Date(((Date) startDate.getValue()).getTime()));
+		startDate.setValue(startDate.getValue());
 	}
 
 	@Override
 	public void saveForm(Entity entity) {
-		PurchaseContractEntity ent = (PurchaseContractEntity) entity;
+		PurchaseContract ent = (PurchaseContract) entity;
 
 		ent.setNoOfInstallments((int) noInstallments.getValue());
 		ent.setInterestRate((Double) interestRate.getValue());
-		ent.setDate((Date) startDate.getValue());
+
+		Date startDateValue = (Date) startDate.getValue();
+		ent.setDate(new java.sql.Date(startDateValue.getTime()));
 
 		ent.save();
 	}
