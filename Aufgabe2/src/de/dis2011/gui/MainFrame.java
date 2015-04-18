@@ -33,11 +33,13 @@ public class MainFrame extends JFrame implements Observer {
 	final private EstateFrame estateFrame = new EstateFrame(this);
 	final private EstateLogin estateLoginFrame = new EstateLogin(this);
 	final private ContractManagementFrame contractFrame = new ContractManagementFrame(this);
+	final private ManagementAgentFrame agentFrame = new ManagementAgentFrame(this);
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;
 	private final JButton btnManageContracts;
-
+	private final JButton btnManageEstateAgents;
+	
 	public MainFrame() {
 		super(TITLE);
 
@@ -77,6 +79,14 @@ public class MainFrame extends JFrame implements Observer {
 				actionManageContracts();
 			}
 		});
+		
+		btnManageEstateAgents = new JButton("Manage Estate Agents");
+		btnManageEstateAgents.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				actionManageAgents();
+			}
+		});
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -86,6 +96,7 @@ public class MainFrame extends JFrame implements Observer {
 		buttonPane.add(btnManageEstates);
 		buttonPane.add(btnPersonManagement);
 		buttonPane.add(btnManageContracts);
+		buttonPane.add(btnManageEstateAgents);
 		buttonPane.add(Box.createHorizontalGlue());
 
 		Container contentPane = getContentPane();
@@ -156,5 +167,9 @@ public class MainFrame extends JFrame implements Observer {
 	protected void actionManageContracts() {
 		 contractFrame.showGui();
 		
+	}
+	
+	protected void actionManageAgents() {
+		agentFrame.authenticate();
 	}
 }
