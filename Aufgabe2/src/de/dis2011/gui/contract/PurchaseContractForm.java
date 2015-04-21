@@ -31,7 +31,7 @@ public class PurchaseContractForm extends AbstractForm {
 		noInstallments.setValue((int) ent.getNoOfInstallments());
 		interestRate.setValue((Double) ent.getInterestRate());
 
-		startDate.setValue(startDate.getValue());
+		startDate.setValue(ent.getDate());
 	}
 
 	@Override
