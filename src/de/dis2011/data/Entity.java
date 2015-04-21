@@ -19,6 +19,14 @@ import java.util.List;
  */
 public abstract class Entity {
 
+	static {
+		try {
+			Entity.getConnection().setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Finds all entities of a given class.
 	 *
@@ -37,6 +45,8 @@ public abstract class Entity {
 				p.applyResultSet(resultSet);
 				persons.add(p);
 			}
+
+			getConnection().commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
@@ -82,6 +92,7 @@ public abstract class Entity {
 				applyAdditionalUpdateStatements(getId());
 			}
 			preparedStatement.close();
+			getConnection().commit();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -107,6 +118,7 @@ public abstract class Entity {
 
 				resultSet.close();
 				selectStatement.close();
+				getConnection().commit();
 				return true;
 			}
 		} catch (SQLException e) {
