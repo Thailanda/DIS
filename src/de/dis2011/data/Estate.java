@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,8 +145,16 @@ public class Estate extends Entity {
         PreparedStatement preparedStatement = getConnection().prepareStatement(updateSQL);
 
         preparedStatement.setInt(1, getManager().getId());
-        preparedStatement.setInt(2, getPerson().getId());
-        preparedStatement.setInt(3, getContract().getId());
+        if (null != getPerson()) {
+            preparedStatement.setInt(2, getPerson().getId());
+        } else {
+            preparedStatement.setNull(2, Types.INTEGER);
+        }
+        if (null != getContract()) {
+            preparedStatement.setInt(3, getContract().getId());
+        } else {
+            preparedStatement.setNull(3, Types.INTEGER);
+        }
         preparedStatement.setString(4, getCity());
         preparedStatement.setString(5, getPostalCode());
         preparedStatement.setString(6, getStreet());
