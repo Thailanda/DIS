@@ -149,7 +149,6 @@ public class MainFrame extends JFrame implements Observer {
 			btnManageEstates.setEnabled(authenticated);
 			btnPersonManagement.setEnabled(authenticated);
 			btnManageContracts.setEnabled(authenticated);
-			btnManageEstateAgents.setEnabled(authenticated);
 
 			if (authenticated) {
 				setTitle(TITLE + " - [" + context.getUser().getName() + " #"+ context.getUser().getId() + "]");
