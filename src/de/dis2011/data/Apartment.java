@@ -63,7 +63,7 @@ public class Apartment extends Estate {
         this.rooms = rooms;
     }
 
-    public boolean hasBalcony() {
+    public boolean isBalcony() {
         return balcony;
     }
 
@@ -71,7 +71,7 @@ public class Apartment extends Estate {
         this.balcony = balcony;
     }
 
-    public boolean hasBuiltInKitchen() {
+    public boolean isBuiltInKitchen() {
         return builtInKitchen;
     }
 

@@ -53,7 +53,7 @@ public class House extends Estate {
         this.price = price;
     }
 
-    public boolean hasGarden() {
+    public boolean isGarden() {
         return garden;
     }
 

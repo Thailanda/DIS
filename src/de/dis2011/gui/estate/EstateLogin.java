@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 public class EstateLogin extends JFrame {
 
@@ -84,17 +86,22 @@ public class EstateLogin extends JFrame {
 		setVisible(true);
 	}
 
-	private void login(String estateID, String estatePassword) throws SQLException {
-		EstateAgent a = new EstateAgent();
+	private void login(String estateLogin, String estatePassword) throws SQLException {
+		Session session = mainFrame.getSessionFactory().openSession();
+		Query query = session.createQuery("from EstateAgent where login=:login AND password=:password");
+		query.setString("login", estateLogin);
+		query.setString("password", estatePassword);
+		EstateAgent a = (EstateAgent) query.uniqueResult();
 
-		if (a.verifyLogin(estateID, estatePassword)) {
+		if (a != null) {
 			mainFrame.getContext().setUser(a);
 			mainFrame.getContext().notifyObservers();
 			setVisible(false);
-		} else {
-			String msg = "Login was not successful!";
-			JOptionPane.showMessageDialog(this, msg, "Error: Could not login", JOptionPane.ERROR_MESSAGE);
-			txtFieldPassword.setText("");
+			return;
 		}
+
+		String msg = "Login was not successful!";
+		JOptionPane.showMessageDialog(this, msg, "Error: Could not login", JOptionPane.ERROR_MESSAGE);
+		txtFieldPassword.setText("");
 	}
 }

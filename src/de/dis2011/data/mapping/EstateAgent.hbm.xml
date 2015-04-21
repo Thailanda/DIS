@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="de.dis2011.data.EstateAgent" table="ESTATE_AGENT" schema="VSISP15">
+        <id name="id" column="ID">
+            <generator class="native"/>
+        </id>
+        <property name="name" column="NAME"/>
+        <property name="address" column="ADDRESS"/>
+        <property name="login" column="LOGIN"/>
+        <property name="password" column="PASSWORD"/>
+        <set name="estates" inverse="true">
+            <key column="manager_id"/>
+            <one-to-many not-found="ignore" class="de.dis2011.data.Estate"/>
+        </set>
+    </class>
+</hibernate-mapping>

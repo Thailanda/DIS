@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Set;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -14,6 +15,7 @@ public class Person extends Entity {
     private String firstName = "";
     private String name = "";
     private String address = "";
+    private Set<Estate> estates;
 
     @Override
     protected String getFindAllSql() {
@@ -107,6 +109,14 @@ public class Person extends Entity {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Set<Estate> getEstates() {
+        return estates;
+    }
+
+    public void setEstates(Set<Estate> estates) {
+        this.estates = estates;
     }
 
     @Override

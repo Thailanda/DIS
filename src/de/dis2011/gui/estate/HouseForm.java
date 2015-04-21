@@ -33,7 +33,7 @@ public class HouseForm extends AbstractForm {
         House house = (House) entity;
         floors.setText(house.getFloors());
         price.setValue(house.getPrice());
-        garden.setSelected(house.hasGarden());
+        garden.setSelected(house.isGarden());
     }
 
     @Override

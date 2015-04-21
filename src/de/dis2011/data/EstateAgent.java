@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Set;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -16,6 +17,7 @@ public class EstateAgent extends Entity {
     private String address = "";
     private String login = "";
     private String password = "";
+    private Set<Estate> estates;
 
     public int getId() {
         return id;
@@ -57,23 +59,6 @@ public class EstateAgent extends Entity {
         this.password = password;
     }
     
-    public boolean verifyLogin(String login, String password) throws SQLException {
-    	String selectSQL = "SELECT * FROM ESTATE_AGENT WHERE LOGIN = ? AND PASSWORD = ?";
-    	PreparedStatement preparedStatement = getConnection().prepareStatement(selectSQL);
-    	
-    	preparedStatement.setString(1, login);
-    	preparedStatement.setString(2, password);
-    	
-    	ResultSet resultSet = preparedStatement.executeQuery();
-      	
-    	if (!resultSet.next()) {
-    		return false;
-    	}
-    	
-    	applyResultSet(resultSet);
-    	return true;
-    }
-
     @Override
     protected String getFindAllSql() {
         return "SELECT * FROM ESTATE_AGENT";
@@ -136,5 +121,13 @@ public class EstateAgent extends Entity {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Set<Estate> getEstates() {
+        return estates;
+    }
+
+    public void setEstates(Set<Estate> estates) {
+        this.estates = estates;
     }
 }

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="de.dis2011.data.Estate" table="ESTATE" schema="VSISP15">
+        <id name="id" column="ID">
+            <generator class="native"/>
+        </id>
+        <property name="city" column="CITY"/>
+        <property name="postalCode" column="POSTAL_CODE"/>
+        <property name="street" column="STREET"/>
+        <property name="streetNumber" column="STREET_NUMBER"/>
+        <property name="squareArea" column="SQUARE_AREA"/>
+
+        <!-- Many to One -->
+        <many-to-one name="manager" class="de.dis2011.data.EstateAgent" column="MANAGER_ID" not-null="true"/>
+        <many-to-one name="person" class="de.dis2011.data.Person" column="PERSON_ID" not-null="false"/>
+
+        <!-- One to One -->
+        <many-to-one name="contract" class="de.dis2011.data.Contract" column="CONTRACT_ID" unique="true" not-null="false"/>
+
+        <joined-subclass name="de.dis2011.data.Apartment" table="APARTMENT">
+            <key column="estate_id"/>
+            <property name="floor" column="FLOOR"/>
+            <property name="rent" column="RENT"/>
+            <property name="rooms" column="ROOMS"/>
+            <property name="balcony" column="BALCONY"/>
+            <property name="builtInKitchen" column="BUILT_IN_KITCHEN"/>
+        </joined-subclass>
+
+        <joined-subclass name="de.dis2011.data.House" table="HOUSE">
+            <key column="estate_id"/>
+            <property name="floors" column="FLOORS"/>
+            <property name="price" column="PRICE"/>
+            <property name="garden" column="GARDEN"/>
+        </joined-subclass>
+    </class>
+</hibernate-mapping>

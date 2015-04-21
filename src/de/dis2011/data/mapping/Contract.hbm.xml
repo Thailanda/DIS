@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="de.dis2011.data.Contract" table="CONTRACT" schema="VSISP15">
+        <id name="id" column="ID">
+            <generator class="native"/>
+        </id>
+        <property name="contractNo" column="CONTRACT_NO"/>
+        <property name="date" column="DATE"/>
+        <property name="place" column="PLACE"/>
+
+        <!-- One to One -->
+        <one-to-one name="estate" class="de.dis2011.data.Estate"/>
+
+        <joined-subclass name="de.dis2011.data.PurchaseContract" table="PURCHASE_CONTRACT">
+            <key column="contract_id"/>
+            <property name="noOfInstallments" column="NO_OF_INSTALLMENTS"/>
+            <property name="interestRate" column="INTEREST_RATE"/>
+        </joined-subclass>
+
+        <joined-subclass name="de.dis2011.data.TenancyContract" table="TENANCY_CONTRACT">
+            <key column="contract_id"/>
+            <property name="startDate" column="START_DATE"/>
+            <property name="duration" column="DURATION"/>
+            <property name="additionalCosts" column="ADDITIONAL_COSTS"/>
+        </joined-subclass>
+    </class>
+</hibernate-mapping>

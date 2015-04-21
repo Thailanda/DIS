@@ -17,6 +17,7 @@ public class Contract extends Entity {
 	private String contractNo = "";
 	private Date date = new Date(0);
 	private String place = "";
+	private Estate estate;
 
 	@Override
 	protected String getFindAllSql() {
@@ -153,5 +154,13 @@ public class Contract extends Entity {
 		}
 
 		return contracts;
+	}
+
+	public Estate getEstate() {
+		return estate;
+	}
+
+	public void setEstate(Estate estate) {
+		this.estate = estate;
 	}
 }

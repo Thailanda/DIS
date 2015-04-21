@@ -1,6 +1,5 @@
 package de.dis2011.model;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class HouseDataModel extends AbstractTableModel {
 		case 7:
 			return p.getPrice();
 		case 8:
-			return p.hasGarden();
+			return p.isGarden();
 		}
 		return null;
 	}

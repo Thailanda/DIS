@@ -38,8 +38,8 @@ public class ApartmentForm extends AbstractForm {
         floor.setText(apartment.getFloor());
         rent.setValue(apartment.getRent());
         rooms.setValue(apartment.getRooms());
-        balcony.setSelected(apartment.hasBalcony());
-        builtInKitchen.setSelected(apartment.hasBuiltInKitchen());
+        balcony.setSelected(apartment.isBalcony());
+        builtInKitchen.setSelected(apartment.isBuiltInKitchen());
     }
 
     @Override

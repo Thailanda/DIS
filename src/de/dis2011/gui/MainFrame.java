@@ -24,29 +24,30 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import org.hibernate.SessionFactory;
 
 public class MainFrame extends JFrame implements Observer {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "Estate Agent Software";
 
-	final private EstateAgentSecurityContext context = new EstateAgentSecurityContext(this);
-	final private PersonManagementFrame personFrame = new PersonManagementFrame(this);
-	final private EstateManagementFrame estateFrame = new EstateManagementFrame(this);
-	final private EstateLogin estateLoginFrame = new EstateLogin(this);
-	final private ContractManagementFrame contractFrame = new ContractManagementFrame(this);
-	final private EstateAgentManagementFrame agentFrame = new EstateAgentManagementFrame(this);
+	private final EstateAgentSecurityContext context = new EstateAgentSecurityContext(this);
+	private final PersonManagementFrame personFrame = new PersonManagementFrame(this);
+	private final EstateManagementFrame estateFrame = new EstateManagementFrame(this);
+	private final EstateLogin estateLoginFrame = new EstateLogin(this);
+	private final ContractManagementFrame contractFrame = new ContractManagementFrame(this);
+	private final EstateAgentManagementFrame agentFrame = new EstateAgentManagementFrame(this);
+
+	private final SessionFactory sessionFactory;
+
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;
 	private final JButton btnManageContracts;
-	private final JButton btnManageEstateAgents;
-	
-	public MainFrame() {
+
+	public MainFrame(SessionFactory sessionFactory) {
 		super(TITLE);
 
+		this.sessionFactory = sessionFactory;
 		setDefaultCloseOperation(MainFrame.EXIT_ON_CLOSE);
 
 		btnAuthenticate = new JButton("Authenticate");
@@ -85,7 +86,7 @@ public class MainFrame extends JFrame implements Observer {
 			}
 		});
 
-		btnManageEstateAgents = new JButton("Manage Estate Agents");
+		JButton btnManageEstateAgents = new JButton("Manage Estate Agents");
 		btnManageEstateAgents.setIcon(createImageIcon("/de/dis2011/icons/key_add.png"));
 		btnManageEstateAgents.addActionListener(new ActionListener() {
 			@Override
@@ -177,5 +178,9 @@ public class MainFrame extends JFrame implements Observer {
 	
 	protected void actionManageAgents() {
 		agentFrame.authenticate();
+	}
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
 	}
 }

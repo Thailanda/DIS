@@ -32,7 +32,9 @@ public abstract class Entity {
 	 *
 	 * @param clazz
 	 * @return
+	 * @deprecated
 	 */
+	@Deprecated
 	public static List<Entity> findAll(Class<? extends Entity> clazz) {
 		ArrayList<Entity> persons = new ArrayList<Entity>();
 		try {
@@ -65,7 +67,9 @@ public abstract class Entity {
 	 * worden, wird die generierte Id von DB2 geholt und dem Model übergeben.
 	 *
 	 * @return if saving was successful
+	 * @deprecated
 	 */
+	@Deprecated
 	public boolean save() {
 		PreparedStatement preparedStatement;
 
@@ -105,7 +109,9 @@ public abstract class Entity {
 	 * Lädt einen Makler aus der Datenbank
 	 * @param id ID des zu ladenden Maklers
 	 * @return if loading was successful
+	 * @deprecated
 	 */
+	@Deprecated
 	public boolean load(int id) {
 		try {
 			setId(id);
