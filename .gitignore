@@ -3,4 +3,4 @@ out
 */.settings/
 .idea
 .metadata
-!*/lib/*.jar
+!*lib/*.jar
