@@ -56,9 +56,7 @@ public class Main {
 
             ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
 
-            SessionFactory ourSessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-            return ourSessionFactory;
+            return configuration.buildSessionFactory(serviceRegistry);
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
         }

@@ -1,7 +1,7 @@
 package de.dis2011.gui.management;
 
-import de.dis2011.data.Entity;
 import de.dis2011.data.EstateAgent;
+import de.dis2011.data.dao.EstateAgentDao;
 import de.dis2011.gui.MainFrame;
 import de.dis2011.model.EstateAgentModel;
 import java.awt.BorderLayout;
@@ -32,6 +32,7 @@ public class EstateAgentManagementFrame extends JFrame {
     final private MainFrame mainFrame;
     final private EstateAgentModel model = new EstateAgentModel();
     final private JTable table = new JTable();
+    final private EstateAgentDao estateAgentDao;
 
     JFrame pwdFrame = new JFrame("Password Required");
     private final String PASSWORD = "demo";
@@ -41,12 +42,11 @@ public class EstateAgentManagementFrame extends JFrame {
     public EstateAgentManagementFrame(MainFrame mainFrame) throws HeadlessException {
         super("Estate Agents");
         this.mainFrame = mainFrame;
+        this.estateAgentDao = new EstateAgentDao(mainFrame.getSessionFactory());
 
         initGui();
-        List<Entity> agents = EstateAgent.findAll(EstateAgent.class);
-        for (Entity agent : agents) {
-            model.add((EstateAgent) agent);
-        }
+        List<EstateAgent> agents = estateAgentDao.findAll();
+        model.addAll(agents);
     }
 
     public void showGui() {

@@ -13,9 +13,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -61,10 +61,8 @@ public class EstateManagementFrame extends JFrame implements Observer {
                 setTitle("Estates by " + context.getUser().getName());
 
                 model.clear();
-                List<Estate> estates = Estate.findByEstateAgent(context.getUser());
-                for (Estate estate : estates) {
-                    model.add(estate);
-                }
+                Set<Estate> estates = context.getUser().getEstates();
+                model.addAll(estates);
             }
         }
     }

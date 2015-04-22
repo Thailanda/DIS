@@ -18,11 +18,6 @@ public class Person extends Entity {
     private Set<Estate> estates;
 
     @Override
-    protected String getFindAllSql() {
-        return "SELECT * FROM PERSON";
-    }
-
-    @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
         this.setId(resultSet.getInt("id"));
         this.setFirstName(resultSet.getString("first_name"));

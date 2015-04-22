@@ -1,5 +1,9 @@
 package de.dis2011.gui.estate;
 
+import de.dis2011.data.House;
+import de.dis2011.data.dao.HouseDao;
+import de.dis2011.gui.MainFrame;
+import de.dis2011.model.HouseDataModel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -9,7 +13,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -22,10 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import de.dis2011.data.Entity;
-import de.dis2011.data.House;
-import de.dis2011.model.HouseDataModel;
-
 
 public class EstateManagementFrame extends JFrame {
 
@@ -35,15 +34,17 @@ public class EstateManagementFrame extends JFrame {
 	
 	private HouseDataModel model = new HouseDataModel();
 	private JTable table = new JTable();
-	
 
-    public EstateManagementFrame() throws HeadlessException {
+	private final HouseDao houseDao;
+
+    public EstateManagementFrame(MainFrame mainFrame) throws HeadlessException {
         super("Estates");
+		houseDao = new HouseDao(mainFrame.getSessionFactory());
 
         initGui();
-        List<Entity> persons = House.findAll(House.class);
-        for (Entity person : persons) {
-            model.addHouse((House) person);
+        List<House> persons = houseDao.findAll();
+        for (House person : persons) {
+            model.addHouse(person);
         }
     }
 

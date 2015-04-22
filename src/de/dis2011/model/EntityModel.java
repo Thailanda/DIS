@@ -2,6 +2,7 @@ package de.dis2011.model;
 
 import de.dis2011.data.Entity;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
@@ -57,6 +58,14 @@ abstract public class EntityModel<T extends Entity> extends AbstractTableModel {
      */
     public void add(T entity) {
         entities.add(entity);
+        fireTableDataChanged();
+    }
+
+    /**
+     * Adds all entities to the table model.
+     */
+    public void addAll(Collection<T> entities) {
+        this.entities.addAll(entities);
         fireTableDataChanged();
     }
 

@@ -1,6 +1,7 @@
 package de.dis2011.gui.estate;
 
 import de.dis2011.data.EstateAgent;
+import de.dis2011.data.dao.EstateAgentDao;
 import de.dis2011.gui.MainFrame;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -19,22 +20,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 public class EstateLogin extends JFrame {
 
 	final private MainFrame mainFrame;
-//	final private EstateManagementFrame managementFrame = new EstateManagementFrame();
-	
-	private final JPasswordField txtFieldPassword;
-	
+	final private JPasswordField txtFieldPassword;
+	final private EstateAgentDao estateAgentDao;
 
 	public EstateLogin(MainFrame mainFrame) {
 		super("Please enter Estate Agent Login");
 		final JButton btnLogin = new JButton("Login");
 
 		this.mainFrame = mainFrame;
+		this.estateAgentDao = new EstateAgentDao(mainFrame.getSessionFactory());
 
 		final JLabel xName = new JLabel("Name");
 		final JLabel xPass = new JLabel("Password");
@@ -87,11 +85,7 @@ public class EstateLogin extends JFrame {
 	}
 
 	private void login(String estateLogin, String estatePassword) throws SQLException {
-		Session session = mainFrame.getSessionFactory().openSession();
-		Query query = session.createQuery("from EstateAgent where login=:login AND password=:password");
-		query.setString("login", estateLogin);
-		query.setString("password", estatePassword);
-		EstateAgent a = (EstateAgent) query.uniqueResult();
+		EstateAgent a = estateAgentDao.verifyLogin(estateLogin, estatePassword);
 
 		if (a != null) {
 			mainFrame.getContext().setUser(a);

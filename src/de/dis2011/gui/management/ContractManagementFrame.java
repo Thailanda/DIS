@@ -1,9 +1,10 @@
 package de.dis2011.gui.management;
 
 import de.dis2011.data.Contract;
-import de.dis2011.data.Entity;
 import de.dis2011.data.PurchaseContract;
 import de.dis2011.data.TenancyContract;
+import de.dis2011.data.dao.PurchaseContractDao;
+import de.dis2011.data.dao.TenancyContractDao;
 import de.dis2011.gui.MainFrame;
 import de.dis2011.gui.contract.PurchaseContractForm;
 import de.dis2011.gui.contract.SignContractForm;
@@ -24,24 +25,39 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import org.hibernate.SessionFactory;
 
 public class ContractManagementFrame extends JFrame {
+
+	// DAOs
+	private final PurchaseContractDao purchaseContractDao;
+	private final TenancyContractDao tenancyContractDao;
+
+	// GUI
 	private ContractModel model = new ContractModel();
     private JTable table = new JTable();
-    
+
+	// Parent
 	final private MainFrame mainFrame;
 
 	public ContractManagementFrame(MainFrame mainFrame) {
 		super("Contracts");
 
 		this.mainFrame = mainFrame;
+		this.purchaseContractDao = new PurchaseContractDao(mainFrame.getSessionFactory());
+		this.tenancyContractDao = new TenancyContractDao(mainFrame.getSessionFactory());
 
 		initGUI(); 
 		
-		List<Contract> contracts = Contract.findAllContracts();
-        for (Entity contract : contracts) {
-            model.add((Contract) contract);
-        }
+		List<PurchaseContract> purchaseContracts = purchaseContractDao.findAll();
+		for (PurchaseContract purchaseContract : purchaseContracts) {
+			model.add(purchaseContract);
+		}
+
+		List<TenancyContract> tenancyContracts = tenancyContractDao.findAll();
+		for (TenancyContract tenancyContract : tenancyContracts) {
+			model.add(tenancyContract);
+		}
 	}
 
 	public void showGui() {
@@ -131,6 +147,10 @@ public class ContractManagementFrame extends JFrame {
             form.showGui();
         }
     }
+
+	public SessionFactory getSessionFactory() {
+		return mainFrame.getSessionFactory();
+	}
 
 	public ContractModel getModel() {
 		return model;

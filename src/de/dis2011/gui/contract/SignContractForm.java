@@ -8,6 +8,7 @@ import de.dis2011.data.House;
 import de.dis2011.data.Person;
 import de.dis2011.data.PurchaseContract;
 import de.dis2011.data.TenancyContract;
+import de.dis2011.data.dao.PersonDao;
 import de.dis2011.gui.estate.AbstractForm;
 import de.dis2011.gui.management.ContractManagementFrame;
 import java.awt.event.ActionEvent;
@@ -20,28 +21,30 @@ import javax.swing.JTextField;
 
 public class SignContractForm extends AbstractForm {
 
-	JComboBox<String> contractTypeChooser;
-	JComboBox<Object> estatesChooser;
-	JComboBox<Object> personsChooser;
+	private final PersonDao personDao;
+	private JComboBox<String> contractTypeChooser;
+	private JComboBox<Object> estatesChooser;
+	private JComboBox<Object> personsChooser;
 
-	JSpinner date;
-	JTextField contractNo;
-	JTextField place;
+	private JSpinner date;
+	private JTextField contractNo;
+	private JTextField place;
 
 	// Purchase Contract
-	JSpinner noInstallments;
-	JSpinner interestRate;
+	private JSpinner noInstallments;
+	private JSpinner interestRate;
 
 	// Tenancy Contract
-	JSpinner startDate;
-	JSpinner duration;
-	JSpinner additionalCosts;
+	private JSpinner startDate;
+	private JSpinner duration;
+	private JSpinner additionalCosts;
 
 	final ContractManagementFrame contractManagementFrame;
 
 	public SignContractForm(ContractManagementFrame frame) {
 		super(frame, "Sign new Contract");
 		contractManagementFrame = frame;
+		this.personDao = new PersonDao(frame.getSessionFactory());
 	}
 
 	@Override
@@ -140,9 +143,9 @@ public class SignContractForm extends AbstractForm {
 	}
 
 	private void loadPersons() {
-		List<Entity> persons = Person.findAll(Person.class);
-		for (Entity e : persons) {
-			personsChooser.addItem(e);
+		List<Person> persons = personDao.findAll();
+		for (Person person : persons) {
+			personsChooser.addItem(person);
 		}
 	}
 

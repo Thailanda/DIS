@@ -5,8 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -22,65 +20,9 @@ public class Estate extends Entity {
     private String street = "";
     private String streetNumber = "";
     private int squareArea = 0;
-    
-    public static ArrayList<Estate> findByKind(String kind) {
-        ArrayList<Estate> estates = new ArrayList<Estate>();
-        
-        List<Entity> all = Estate.findAll(Estate.class);
-        
-        for (Entity e : all)
-        {
-        	if (((Estate) e).getKind().equals(kind))
-        	{
-        		estates.add((Estate)e);
-        	}        	
-        }
-        
-        return estates;
-    }
-
-    public static List<Estate> findByEstateAgent(EstateAgent estateAgent) {
-        List<Estate> estates = new ArrayList<Estate>();
-
-        try {
-            String sql = "SELECT e.*, a.*, h.*, a.ESTATE_ID as APARTMENT_ID, h.ESTATE_ID as HOUSE_ID FROM ESTATE e LEFT JOIN APARTMENT a ON e.ID = a.ESTATE_ID LEFT JOIN HOUSE h ON e.ID = h.ESTATE_ID WHERE e.MANAGER_ID=?";
-            PreparedStatement statement = getConnection().prepareStatement(sql);
-            statement.setInt(1, estateAgent.getId());
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                resultSet.getInt("apartment_id");
-                if (!resultSet.wasNull()) {
-                    Apartment apartment = new Apartment();
-                    apartment.applyResultSet(resultSet);
-                    estates.add(apartment);
-                    continue;
-                }
-
-                resultSet.getInt("house_id");
-                if (!resultSet.wasNull()) {
-                    House house = new House();
-                    house.applyResultSet(resultSet);
-                    estates.add(house);
-                    continue;
-                }
-
-                throw new SQLException("Inconsistent DB state: Found estate which is neither apartment nor house: #" + resultSet.getInt("id"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return estates;
-    }
 
     public String getKind() {
         return "Generic Estate";
-    }
-
-    @Override
-    protected String getFindAllSql() {
-        return "SELECT * FROM ESTATE";
     }
 
     @Override

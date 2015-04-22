@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Makler-Bean
@@ -18,17 +16,6 @@ import java.util.List;
  * password varchar(40));
  */
 public abstract class Entity {
-
-	/**
-	 * Finds all entities of a given class.
-	 * @deprecated
-	 */
-	@Deprecated
-	public static List<Entity> findAll(Class<? extends Entity> clazz) {
-		return new ArrayList<>();
-	}
-
-	abstract protected String getFindAllSql();
 
 	/**
 	 * Speichert den Makler in der Datenbank. Ist noch keine ID vergeben

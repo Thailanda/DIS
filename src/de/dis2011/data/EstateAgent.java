@@ -58,11 +58,6 @@ public class EstateAgent extends Entity {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    @Override
-    protected String getFindAllSql() {
-        return "SELECT * FROM ESTATE_AGENT";
-    }
 
     @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {

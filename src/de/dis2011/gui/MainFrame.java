@@ -30,15 +30,18 @@ public class MainFrame extends JFrame implements Observer {
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "Estate Agent Software";
 
-	private final EstateAgentSecurityContext context = new EstateAgentSecurityContext(this);
-	private final PersonManagementFrame personFrame = new PersonManagementFrame(this);
-	private final EstateManagementFrame estateFrame = new EstateManagementFrame(this);
-	private final EstateLogin estateLoginFrame = new EstateLogin(this);
-	private final ContractManagementFrame contractFrame = new ContractManagementFrame(this);
-	private final EstateAgentManagementFrame agentFrame = new EstateAgentManagementFrame(this);
+	// Owned frames
+	private final EstateAgentSecurityContext context;
+	private final PersonManagementFrame personFrame;
+	private final EstateManagementFrame estateFrame;
+	private final EstateLogin estateLoginFrame;
+	private final ContractManagementFrame contractFrame;
+	private final EstateAgentManagementFrame agentFrame;
 
+	// Hibernate session factory
 	private final SessionFactory sessionFactory;
 
+	// GUI elements
 	private final JButton btnPersonManagement;
 	private final JButton btnAuthenticate;
 	private final JButton btnManageEstates;
@@ -49,6 +52,13 @@ public class MainFrame extends JFrame implements Observer {
 
 		this.sessionFactory = sessionFactory;
 		setDefaultCloseOperation(MainFrame.EXIT_ON_CLOSE);
+
+		context = new EstateAgentSecurityContext(this);
+		personFrame = new PersonManagementFrame(this);
+		estateFrame = new EstateManagementFrame(this);
+		estateLoginFrame = new EstateLogin(this);
+		contractFrame = new ContractManagementFrame(this);
+		agentFrame = new EstateAgentManagementFrame(this);
 
 		btnAuthenticate = new JButton("Authenticate");
 		btnAuthenticate.setIcon(createImageIcon("/de/dis2011/icons/key.png"));
