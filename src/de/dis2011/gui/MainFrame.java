@@ -52,6 +52,7 @@ public class MainFrame extends JFrame implements Observer {
 
 		this.sessionFactory = sessionFactory;
 		setDefaultCloseOperation(MainFrame.EXIT_ON_CLOSE);
+		getRootPane().putClientProperty("apple.awt.brushMetalLook", true);
 
 		context = new EstateAgentSecurityContext(this);
 		personFrame = new PersonManagementFrame(this);
@@ -68,6 +69,10 @@ public class MainFrame extends JFrame implements Observer {
 				actionManagementEstate();
 			}
 		});
+		btnAuthenticate.putClientProperty("JButton.buttonType", "roundRect");
+		btnAuthenticate.putClientProperty("JButton.segmentPosition", "first");
+		btnAuthenticate.setHorizontalTextPosition(JButton.CENTER);
+		btnAuthenticate.setVerticalTextPosition(JButton.BOTTOM);
 
 		btnManageEstates = new JButton("Manage Estates");
 		btnManageEstates.setIcon(createImageIcon("/de/dis2011/icons/house.png"));
@@ -77,6 +82,10 @@ public class MainFrame extends JFrame implements Observer {
 				actionManagementAgent();
 			}
 		});
+		btnManageEstates.putClientProperty("JButton.buttonType", "roundRect");
+		btnManageEstates.putClientProperty("JButton.segmentPosition", "middle");
+		btnManageEstates.setHorizontalTextPosition(JButton.CENTER);
+		btnManageEstates.setVerticalTextPosition(JButton.BOTTOM);
 
 		btnPersonManagement = new JButton("Manage Persons");
 		btnPersonManagement.setIcon(createImageIcon("/de/dis2011/icons/user_edit.png"));
@@ -86,6 +95,10 @@ public class MainFrame extends JFrame implements Observer {
 				actionManagePersons();
 			}
 		});
+		btnPersonManagement.putClientProperty("JButton.buttonType", "roundRect");
+		btnPersonManagement.putClientProperty("JButton.segmentPosition", "middle");
+		btnPersonManagement.setHorizontalTextPosition(JButton.CENTER);
+		btnPersonManagement.setVerticalTextPosition(JButton.BOTTOM);
 
 		btnManageContracts = new JButton("Manage Contracts");
 		btnManageContracts.setIcon(createImageIcon("/de/dis2011/icons/script_edit.png"));
@@ -95,6 +108,10 @@ public class MainFrame extends JFrame implements Observer {
 				actionManageContracts();
 			}
 		});
+		btnManageContracts.putClientProperty("JButton.buttonType", "roundRect");
+		btnManageContracts.putClientProperty("JButton.segmentPosition", "middle");
+		btnManageContracts.setHorizontalTextPosition(JButton.CENTER);
+		btnManageContracts.setVerticalTextPosition(JButton.BOTTOM);
 
 		JButton btnManageEstateAgents = new JButton("Manage Estate Agents");
 		btnManageEstateAgents.setIcon(createImageIcon("/de/dis2011/icons/key_add.png"));
@@ -104,15 +121,23 @@ public class MainFrame extends JFrame implements Observer {
 				actionManageAgents();
 			}
 		});
+		btnManageEstateAgents.putClientProperty("JButton.buttonType", "roundRect");
+		btnManageEstateAgents.putClientProperty("JButton.segmentPosition", "last");
+		btnManageEstateAgents.setHorizontalTextPosition(JButton.CENTER);
+		btnManageEstateAgents.setVerticalTextPosition(JButton.BOTTOM);
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		buttonPane.add(Box.createHorizontalGlue());
 		buttonPane.add(btnAuthenticate);
+		buttonPane.add(Box.createRigidArea(new Dimension(5, 0)));
 		buttonPane.add(btnManageEstates);
+		buttonPane.add(Box.createRigidArea(new Dimension(5, 0)));
 		buttonPane.add(btnPersonManagement);
+		buttonPane.add(Box.createRigidArea(new Dimension(5, 0)));
 		buttonPane.add(btnManageContracts);
+		buttonPane.add(Box.createRigidArea(new Dimension(5, 0)));
 		buttonPane.add(btnManageEstateAgents);
 		buttonPane.add(Box.createHorizontalGlue());
 

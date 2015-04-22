@@ -62,6 +62,8 @@ public class EstateLogin extends JFrame {
 			}
 		});
 
+		this.getRootPane().putClientProperty("Window.style", "small");
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 		buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
