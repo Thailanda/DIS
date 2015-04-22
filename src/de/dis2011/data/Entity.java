@@ -19,45 +19,13 @@ import java.util.List;
  */
 public abstract class Entity {
 
-	static {
-		try {
-			Entity.getConnection().setAutoCommit(true);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Finds all entities of a given class.
-	 *
-	 * @param clazz
-	 * @return
 	 * @deprecated
 	 */
 	@Deprecated
 	public static List<Entity> findAll(Class<? extends Entity> clazz) {
-		ArrayList<Entity> persons = new ArrayList<Entity>();
-		try {
-			Entity p = clazz.newInstance();
-			PreparedStatement statement = getConnection().prepareStatement(p.getFindAllSql());
-			ResultSet resultSet = statement.executeQuery();
-
-			while (resultSet.next()) {
-				p = clazz.newInstance();
-				p.applyResultSet(resultSet);
-				persons.add(p);
-			}
-
-			getConnection().commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-
-		return persons;
+		return new ArrayList<>();
 	}
 
 	abstract protected String getFindAllSql();
@@ -154,7 +122,11 @@ public abstract class Entity {
 
 	abstract public void setId(int id);
 
+	/**
+	 * Should not be used anymore!
+	 */
+	@Deprecated
 	protected static Connection getConnection() {
-		return DB2ConnectionManager.getInstance().getConnection();
+		return null;
 	}
 }

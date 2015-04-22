@@ -4,13 +4,16 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.DB2Dialect</property>
+        <property name="hibernate.connection.autocommit">false</property>
+        <property name="hibernate.connection.driver_class">com.ibm.db2.jcc.DB2Driver</property>
+
         <property name="connection.url">jdbc:db2://vsisls4.informatik.uni-hamburg.de:50001/VSISP</property>
         <property name="connection.username">vsisp15</property>
         <property name="connection.password">eCULVnyP</property>
-        <property name="connection.driver_class">com.ibm.db2.jcc.DB2Driver</property>
 
         <!-- DB schema will be updated if needed -->
-        <!--<property name="hbm2ddl.auto">create-drop</property>-->
+        <property name="hbm2ddl.auto">create-drop</property>
 
         <mapping resource="de/dis2011/data/mapping/Contract.hbm.xml"/>
         <mapping resource="de/dis2011/data/mapping/Estate.hbm.xml"/>
