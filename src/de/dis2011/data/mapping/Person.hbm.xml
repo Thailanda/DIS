@@ -11,7 +11,7 @@
         <property name="firstName" column="FIRST_NAME"/>
         <property name="name" column="NAME"/>
         <property name="address" column="ADDRESS"/>
-        <set name="estates" inverse="true">
+        <set name="estates" inverse="true" lazy="false">
             <key column="person_id"/>
             <one-to-many not-found="ignore" class="de.dis2011.data.Estate"/>
         </set>

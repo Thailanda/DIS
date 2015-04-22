@@ -8,29 +8,45 @@ import de.dis2011.data.Person;
  */
 public class PersonModel extends EntityModel<Person> {
 
-    final private static String[] COLUMNS = {"ID", "First name", "Last name", "Address"};
+    final private static String[] COLUMNS = {"ID", "First name", "Last name", "Address", "No. of Estates"};
 
     @Override
     public Object getValueAt(int i, int i1) {
-        Person p = findByRow(i);
+        Person person = findByRow(i);
         switch (i1) {
-            case 0: return p.getId();
-            case 1: return p.getFirstName();
-            case 2: return p.getName();
-            case 3: return p.getAddress();
+            case 0: return person.getId();
+            case 1: return person.getFirstName();
+            case 2: return person.getName();
+            case 3: return person.getAddress();
+            case 4: return person.getEstates() != null ? person.getEstates().size() : 0;
         }
         return null;
     }
 
     @Override
     public void setValueAt(Object o, int i, int i1) {
-        Person p = findByRow(i);
+        Person person = findByRow(i);
         switch (i1) {
-            case 1: p.setFirstName((String) o); break;
-            case 2: p.setName((String) o); break;
-            case 3: p.setAddress((String) o); break;
+            case 1: person.setFirstName((String) o); break;
+            case 2: person.setName((String) o); break;
+            case 3: person.setAddress((String) o); break;
+            case 4: return;
         }
-        p.save();
+        dao.save(person);
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return super.isCellEditable(row, column) && column != 4;
+    }
+
+    @Override
+    public Class<?> getColumnClass(int column) {
+        if (column == 4) {
+            return Integer.class;
+        }
+
+        return super.getColumnClass(column);
     }
 
     @Override

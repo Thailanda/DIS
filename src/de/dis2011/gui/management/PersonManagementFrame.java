@@ -16,10 +16,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -37,12 +40,16 @@ public class PersonManagementFrame extends JFrame {
         this.mainFrame = mainFrame;
         this.personDao = new PersonDao(mainFrame.getSessionFactory());
 
+        model.setDao(personDao);
+
         initGui();
-        List<Person> persons = personDao.findAll();
-        model.addAll(persons);
     }
 
     public void showGui() {
+        model.clear();
+        List<Person> persons = personDao.findAll();
+        model.addAll(persons);
+
         mainFrame.centerFrame(this);
         setVisible(true);
     }
@@ -60,13 +67,13 @@ public class PersonManagementFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 Person p = new Person();
-                p.save();
+                personDao.save(p);
 
                 model.add(p);
             }
         });
 
-        JButton btnRemove = new JButton("Remove");;
+        final JButton btnRemove = new JButton("Remove");;
         btnRemove.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/user_delete.png"));
         btnRemove.addActionListener(new AbstractAction() {
             @Override
@@ -74,10 +81,25 @@ public class PersonManagementFrame extends JFrame {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
                     Person person = model.findByRow(row);
-                    if (person.drop()) {
+                    if (personDao.delete(person)) {
                         model.remove(person);
+                    } else {
+                        showError("Could not delete person – maybe there are still contracts which prohibit deletion?");
                     }
                 }
+            }
+        });
+
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int row = table.getSelectedRow();
+                Person person = model.findByRow(row);
+
+                if (person != null) {
+                    btnRemove.setEnabled(person.getEstates().isEmpty());
+                }
+
             }
         });
 
@@ -95,5 +117,9 @@ public class PersonManagementFrame extends JFrame {
         pack();
 
         setMinimumSize(new Dimension(800, getHeight()));
+    }
+
+    protected void showError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

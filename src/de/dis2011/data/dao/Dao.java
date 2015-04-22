@@ -12,7 +12,7 @@ import org.hibernate.Transaction;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-04-22
  */
-abstract class Dao<EntityType extends Entity> {
+public abstract class Dao<EntityType extends Entity> {
 
     final private SessionFactory factory;
     final protected Class<EntityType> prototype;
