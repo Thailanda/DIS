@@ -4,6 +4,7 @@ import de.dis2011.data.EstateAgent;
 import de.dis2011.data.dao.EstateAgentDao;
 import de.dis2011.gui.MainFrame;
 import de.dis2011.model.EstateAgentModel;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -12,6 +13,7 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -27,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 
+
 public class EstateAgentManagementFrame extends JFrame {
 
     final private MainFrame mainFrame;
@@ -36,6 +39,7 @@ public class EstateAgentManagementFrame extends JFrame {
 
     JFrame pwdFrame = new JFrame("Password Required");
     private final String PASSWORD = "demo";
+    private EstateAgent _agent;
 
     JFrame loginFrame = new JFrame("New Login Required");
 
@@ -44,9 +48,12 @@ public class EstateAgentManagementFrame extends JFrame {
         this.mainFrame = mainFrame;
         this.estateAgentDao = new EstateAgentDao(mainFrame.getSessionFactory());
 
-        initGui();
+        model.setDao(estateAgentDao);
+        
         List<EstateAgent> agents = estateAgentDao.findAll();
         model.addAll(agents);
+        
+        initGui();
     }
 
     public void showGui() {
@@ -61,18 +68,22 @@ public class EstateAgentManagementFrame extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(table);
 
+        
+        // Add a new estate agent
         JButton btnInsert = new JButton("Insert");
         btnInsert.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/user_add.png"));
         btnInsert.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                EstateAgent agent = new EstateAgent();
-                provideAgentLogin(agent);
-
+            	_agent = new EstateAgent();
+                provideAgentLogin();
+                
             }
         });
 
+       
+        // remove estate agent
         JButton btnRemove = new JButton("Remove");
         btnRemove.setIcon(mainFrame.createImageIcon("/de/dis2011/icons/user_delete.png"));
         btnRemove.addActionListener(new AbstractAction() {
@@ -81,7 +92,7 @@ public class EstateAgentManagementFrame extends JFrame {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
                     EstateAgent agent = model.findByRow(row);
-                    if (agent.drop()) {
+                    if (estateAgentDao.delete(agent)) {
                         model.remove(agent);
                     }
                 }
@@ -135,12 +146,13 @@ public class EstateAgentManagementFrame extends JFrame {
 
                 if (password.equals(PASSWORD)) {
                     showGui();
-                    pwdFrame.setVisible(false);
+                    pwdFrame.setVisible(false);         
                 } else {
                     String msg = "Login Failed";
                     JOptionPane.showMessageDialog(pwdFrame, msg, "Error: Wrong Password", JOptionPane.ERROR_MESSAGE);
-                    pwd.setText("");
                 }
+                pwd.setText("");                
+                
             }
 
         });
@@ -155,7 +167,7 @@ public class EstateAgentManagementFrame extends JFrame {
         });
     }
 
-    public void provideAgentLogin(final EstateAgent agent) {
+    public void provideAgentLogin() {
 
         loginFrame.setSize(600, 100);
         JPanel loginPanel = new JPanel();
@@ -176,30 +188,41 @@ public class EstateAgentManagementFrame extends JFrame {
 
         loginFrame.setVisible(true);
 
+        // set the password
         ok.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 final String login = loginField.getText();
-                agent.setLogin(login);
-                agent.save();
-                model.add(agent);
-                loginFrame.setVisible(false);
-
+                addLoginToAgent(login);
+         	    loginField.setText("");
+                           
             }
 
         });
 
+        // cancel
         cancel.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 loginFrame.setVisible(false);
+
             }
 
         });
 
     }
+    
+   private void addLoginToAgent(String login){
+    
+	   _agent.setLogin(login);
+	   if (estateAgentDao.save(_agent)){
+		   model.add(_agent);              	
+	   }
+	   loginFrame.setVisible(false);
+    
+   }
 }

@@ -28,7 +28,7 @@ public class EstateAgentModel extends EntityModel<EstateAgent>{
             case 3: agent.setLogin((String) o); break;
             case 4: agent.setPassword((String) o); break;
         }
-        agent.save();
+        dao.save(agent);
     }
 
     @Override

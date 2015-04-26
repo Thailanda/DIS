@@ -8,10 +8,10 @@
         <id name="id" column="ID">
             <generator class="native"/>
         </id>
-        <property name="name" column="NAME"/>
-        <property name="address" column="ADDRESS"/>
-        <property name="login" column="LOGIN"/>
-        <property name="password" column="PASSWORD"/>
+        <property name="name" type="string" column="NAME"/>
+        <property name="address" type="string" column="ADDRESS"/>
+        <property name="login" type="string" column="LOGIN" not-null="true" unique="true"/>
+        <property name="password" type="string" column="PASSWORD"/>
         <set name="estates" inverse="true">
             <key column="manager_id"/>
             <one-to-many not-found="ignore" class="de.dis2011.data.Estate"/>
