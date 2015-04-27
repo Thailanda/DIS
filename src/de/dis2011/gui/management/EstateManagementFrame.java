@@ -3,11 +3,14 @@ package de.dis2011.gui.management;
 import de.dis2011.data.Apartment;
 import de.dis2011.data.Estate;
 import de.dis2011.data.House;
+import de.dis2011.data.dao.ApartmentDao;
+import de.dis2011.data.dao.HouseDao;
 import de.dis2011.gui.MainFrame;
 import de.dis2011.gui.estate.ApartmentForm;
 import de.dis2011.gui.estate.HouseForm;
 import de.dis2011.model.EstateAgentSecurityContext;
 import de.dis2011.model.EstateModel;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -16,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -35,15 +39,24 @@ public class EstateManagementFrame extends JFrame implements Observer {
 
     final private MainFrame mainFrame;
     final private EstateAgentSecurityContext context;
-    final private EstateModel model = new EstateModel();
+    final private EstateModel model; 
     final private JTable table = new JTable();
+    final private ApartmentDao apartmentDao;
+    final private HouseDao houseDao;
+    
 
+
+    
     public EstateManagementFrame(MainFrame mainFrame) throws HeadlessException {
         super("Estates");
         this.mainFrame = mainFrame;
         context = mainFrame.getContext();
         context.addObserver(this);
-
+        
+        apartmentDao = new ApartmentDao(mainFrame.getSessionFactory());
+        houseDao = new HouseDao(mainFrame.getSessionFactory());
+        model = new EstateModel(apartmentDao, houseDao);
+        
         initGui();
     }
 
@@ -99,10 +112,11 @@ public class EstateManagementFrame extends JFrame implements Observer {
             public void actionPerformed(ActionEvent actionEvent) {
                 House house = new House();
                 house.setManager(context.getUser());
-                house.save();
+                if (houseDao.save(house)){
+                    model.add(house);
+                    editEstate(house);
+                }
 
-                model.add(house);
-                editEstate(house);
             }
         });
 
@@ -114,10 +128,10 @@ public class EstateManagementFrame extends JFrame implements Observer {
                 Apartment apartment = new Apartment();
                 apartment.setManager(context.getUser());
                 apartment.setRooms(0);
-                apartment.save();
-
-                model.add(apartment);
-                editEstate(apartment);
+                if(apartmentDao.save(apartment)){
+                	model.add(apartment);
+                	editEstate(apartment);
+                }
             }
         });
 
@@ -128,9 +142,19 @@ public class EstateManagementFrame extends JFrame implements Observer {
             public void actionPerformed(ActionEvent actionEvent) {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
-                    Estate estate = model.findByRow(row);
-                    if (estate.drop()) {
+                    boolean deleted = false;
+                	Estate estate = model.findByRow(row);
+                	
+                    if (estate instanceof Apartment) {
+                    	deleted = apartmentDao.delete((Apartment) estate);
+                    }
+                    else if (estate instanceof House){
+                    	deleted = houseDao.delete((House) estate);
+                    }
+                    
+                    if(deleted){
                         model.remove(estate);
+                        deleted = false;
                     }
                 }
             }
@@ -156,12 +180,12 @@ public class EstateManagementFrame extends JFrame implements Observer {
 
     private void editEstate(Estate estate) {
         if (estate instanceof Apartment) {
-            ApartmentForm form = new ApartmentForm(this);
+            ApartmentForm form = new ApartmentForm(this, apartmentDao);
             form.setEntity(estate);
             form.showGui();
         }
         else if (estate instanceof House) {
-            HouseForm form = new HouseForm(this);
+            HouseForm form = new HouseForm(this, houseDao);
             form.setEntity(estate);
             form.showGui();
         }

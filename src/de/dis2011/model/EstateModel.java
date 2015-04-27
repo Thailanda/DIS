@@ -1,6 +1,10 @@
 package de.dis2011.model;
 
+import de.dis2011.data.Apartment;
 import de.dis2011.data.Estate;
+import de.dis2011.data.House;
+import de.dis2011.data.dao.ApartmentDao;
+import de.dis2011.data.dao.HouseDao;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -9,8 +13,15 @@ import de.dis2011.data.Estate;
 public class EstateModel extends EntityModel<Estate> {
 
     final private static String[] COLUMNS = {"ID", "Street", "Street Number", "City", "Postal Code", "Square Area", "Kind"};
+    final private ApartmentDao _apartmentDao;
+    final private HouseDao _houseDao;
 
-    @Override
+    public EstateModel(ApartmentDao apartmentDao, HouseDao houseDao) {
+		_apartmentDao = apartmentDao;
+		_houseDao = houseDao;
+	}
+
+	@Override
     public boolean isCellEditable(int row, int column) {
         return super.isCellEditable(row, column) && column != 6;
     }
@@ -49,11 +60,18 @@ public class EstateModel extends EntityModel<Estate> {
             case 4: p.setPostalCode((String) o); break;
             case 5: p.setSquareArea((Integer) o); break;
         }
-        p.save();
+        
+        if (p instanceof Apartment){
+        	_apartmentDao.save((Apartment) p);
+        }
+        else if (p instanceof House){
+        	_houseDao.save((House) p);
+        }
     }
 
     @Override
     protected String[] getColumns() {
         return COLUMNS;
     }
+    
 }

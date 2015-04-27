@@ -2,7 +2,9 @@ package de.dis2011.gui.estate;
 
 import de.dis2011.data.Apartment;
 import de.dis2011.data.Entity;
+import de.dis2011.data.dao.ApartmentDao;
 import de.dis2011.gui.management.EstateManagementFrame;
+
 import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -18,12 +20,15 @@ public class ApartmentForm extends AbstractForm {
     private JSpinner rooms;
     private JCheckBox balcony;
     private JCheckBox builtInKitchen;
+    final private ApartmentDao _apartmentDao;
 
-    public ApartmentForm(EstateManagementFrame estateFrame) {
+    public ApartmentForm(EstateManagementFrame estateFrame, ApartmentDao apartmentDao) {
         super(estateFrame, "Apartment Form");
+        _apartmentDao = apartmentDao;
     }
 
-    @Override
+
+	@Override
     protected void buildForm() {
         floor = addFormTextElement("Floor");
         rent = addFormDecimalElement("Rent");
@@ -52,6 +57,6 @@ public class ApartmentForm extends AbstractForm {
         apartment.setBalcony(balcony.isSelected());
         apartment.setBuiltInKitchen(builtInKitchen.isSelected());
 
-        apartment.save();
+        _apartmentDao.save(apartment);
     }
 }

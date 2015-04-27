@@ -2,7 +2,9 @@ package de.dis2011.gui.estate;
 
 import de.dis2011.data.House;
 import de.dis2011.data.Entity;
+import de.dis2011.data.dao.HouseDao;
 import de.dis2011.gui.management.EstateManagementFrame;
+
 import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -16,9 +18,11 @@ public class HouseForm extends AbstractForm {
     private JTextField floors;
     private JSpinner price;
     private JCheckBox garden;
+    final private HouseDao _houseDao;
 
-    public HouseForm(EstateManagementFrame estateFrame) {
+    public HouseForm(EstateManagementFrame estateFrame, HouseDao houseDao) {
         super(estateFrame, "House Form");
+        _houseDao = houseDao;
     }
 
     @Override
@@ -44,6 +48,6 @@ public class HouseForm extends AbstractForm {
         house.setPrice((Double) price.getValue());
         house.setGarden(garden.isSelected());
 
-        house.save();
+        _houseDao.save(house);
     }
 }
