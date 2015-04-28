@@ -97,7 +97,7 @@ public class PersonManagementFrame extends JFrame {
                 Person person = model.findByRow(row);
 
                 if (person != null) {
-                    btnRemove.setEnabled(person.getEstates().isEmpty());
+                    btnRemove.setEnabled(person.getContracts().isEmpty());
                 }
 
             }

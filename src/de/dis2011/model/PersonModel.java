@@ -18,7 +18,7 @@ public class PersonModel extends EntityModel<Person> {
             case 1: return person.getFirstName();
             case 2: return person.getName();
             case 3: return person.getAddress();
-            case 4: return person.getEstates() != null ? person.getEstates().size() : 0;
+            case 4: return person.getContracts() != null ? person.getContracts().size() : 0;
         }
         return null;
     }

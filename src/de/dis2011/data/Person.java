@@ -16,7 +16,7 @@ public class Person extends Entity {
     private String firstName = "";
     private String name = "";
     private String address = "";
-    private Set<Estate> estates = new HashSet<>();
+    private Set<Contract> contracts = new HashSet<>();
 
     @Override
     public void applyResultSet(ResultSet resultSet) throws SQLException {
@@ -93,12 +93,12 @@ public class Person extends Entity {
         this.address = address;
     }
 
-    public Set<Estate> getEstates() {
-        return estates;
+    public Set<Contract> getContracts() {
+        return contracts;
     }
 
-    public void setEstates(Set<Estate> estates) {
-        this.estates = estates;
+    public void setContracts(Set<Contract> contracts) {
+        this.contracts = contracts;
     }
 
     @Override
