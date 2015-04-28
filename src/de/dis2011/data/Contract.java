@@ -1,10 +1,6 @@
 package de.dis2011.data;
 
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -17,66 +13,6 @@ public class Contract extends Entity {
 	private String place = "";
 	private Estate estate;
 	private Person person;
-
-	@Override
-	public void applyResultSet(ResultSet resultSet) throws SQLException {
-		this.setId(resultSet.getInt("id"));
-		this.setContractNo(resultSet.getString("contract_no"));
-		this.setDate(resultSet.getDate("date"));
-		this.setPlace(resultSet.getString("place"));
-	}
-
-	@Override
-	public PreparedStatement createSelectStatement() throws SQLException {
-		String selectSQL = "SELECT * FROM CONTRACT WHERE id = ?";
-		PreparedStatement preparedStatement = getConnection().prepareStatement(
-				selectSQL);
-		preparedStatement.setInt(1, id);
-
-		return preparedStatement;
-	}
-
-	@Override
-	public PreparedStatement createInsertStatement() throws SQLException {
-		String insertSQL = "INSERT INTO CONTRACT (CONTRACT_NO, DATE, PLACE) VALUES (?, ?, ?)";
-		PreparedStatement preparedStatement = getConnection().prepareStatement(
-				insertSQL, Statement.RETURN_GENERATED_KEYS);
-
-		preparedStatement.setString(1, getContractNo());
-		preparedStatement.setDate(2, getDate());
-		preparedStatement.setString(3, getPlace());
-
-		return preparedStatement;
-	}
-
-	@Override
-	public PreparedStatement createUpdateStatement() throws SQLException {
-		String updateSQL = "UPDATE CONTRACT SET CONTRACT_NO=?, DATE=?, PLACE=? WHERE ID=?";
-		PreparedStatement preparedStatement = getConnection().prepareStatement(
-				updateSQL);
-
-		preparedStatement.setString(1, getContractNo());
-		preparedStatement.setDate(2, getDate());
-		preparedStatement.setString(3, getPlace());
-		preparedStatement.setInt(4, getId());
-
-		return preparedStatement;
-	}
-
-	public boolean drop() {
-		try {
-			PreparedStatement preparedStatement = getConnection()
-					.prepareStatement("DELETE FROM CONTRACT WHERE ID=?");
-			preparedStatement.setInt(1, getId());
-			preparedStatement.executeUpdate();
-			preparedStatement.close();
-
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 
 	@Override
 	public int getId() {

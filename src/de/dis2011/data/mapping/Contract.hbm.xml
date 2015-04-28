@@ -17,7 +17,7 @@
 		<many-to-one name="person" class="de.dis2011.data.Person" column="PERSON_ID" not-null="false"/>
 
         <!-- One to One -->
-        <many-to-one name="estate" class="de.dis2011.data.Estate"column="ESTATE_ID" unique="true" not-null="false"/>
+        <many-to-one name="estate" class="de.dis2011.data.Estate" column="ESTATE_ID" unique="true" not-null="false"/>
 
         <joined-subclass name="de.dis2011.data.PurchaseContract" table="PURCHASE_CONTRACT">
             <key column="contract_id"/>

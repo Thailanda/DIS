@@ -13,7 +13,7 @@
         <property name="connection.password">eCULVnyP</property>
 
         <!-- DB schema will be updated if needed -->
-        <property name="hbm2ddl.auto">create-drop</property>
+        <!--<property name="hbm2ddl.auto">create-drop</property>-->
 
         <mapping resource="de/dis2011/data/mapping/Contract.hbm.xml"/>
         <mapping resource="de/dis2011/data/mapping/Estate.hbm.xml"/>

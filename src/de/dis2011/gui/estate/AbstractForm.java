@@ -27,7 +27,7 @@ import javax.swing.SpinnerNumberModel;
  */
 public abstract class AbstractForm extends JFrame {
 
-	final private JFrame frame;
+	final protected JFrame frame;
 
 	private Entity entity;
 	private JPanel formPane;

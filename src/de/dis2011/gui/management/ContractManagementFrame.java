@@ -34,7 +34,7 @@ public class ContractManagementFrame extends JFrame {
 	private final TenancyContractDao tenancyContractDao;
 
 	// GUI
-	private ContractModel model = new ContractModel();
+	private final ContractModel model;
     private JTable table = new JTable();
 
 	// Parent
@@ -44,6 +44,7 @@ public class ContractManagementFrame extends JFrame {
 		super("Contracts");
 
 		this.mainFrame = mainFrame;
+		this.model = new ContractModel(mainFrame.getSessionFactory());
 		this.purchaseContractDao = new PurchaseContractDao(mainFrame.getSessionFactory());
 		this.tenancyContractDao = new TenancyContractDao(mainFrame.getSessionFactory());
 
@@ -129,9 +130,15 @@ public class ContractManagementFrame extends JFrame {
     
     private void removeContract() {
     	Contract c = model.findByRow(table.getSelectedRow());
-        if (c.drop()) {
-            model.remove(c);
-        }
+		if (c instanceof TenancyContract) {
+			if (tenancyContractDao.delete((TenancyContract) c)) {
+            	model.remove(c);
+			}
+		} else if (c instanceof PurchaseContract) {
+			if (purchaseContractDao.delete((PurchaseContract) c)) {
+            	model.remove(c);
+			}
+		}
     }
 
 

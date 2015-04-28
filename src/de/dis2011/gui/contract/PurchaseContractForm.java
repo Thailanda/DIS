@@ -2,10 +2,13 @@ package de.dis2011.gui.contract;
 
 import de.dis2011.data.Entity;
 import de.dis2011.data.PurchaseContract;
+import de.dis2011.data.dao.PurchaseContractDao;
 import de.dis2011.gui.estate.AbstractForm;
+import de.dis2011.gui.management.ContractManagementFrame;
 import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JSpinner;
+import org.hibernate.SessionFactory;
 
 public class PurchaseContractForm extends AbstractForm {
 
@@ -44,7 +47,14 @@ public class PurchaseContractForm extends AbstractForm {
 		Date startDateValue = (Date) startDate.getValue();
 		ent.setDate(new java.sql.Date(startDateValue.getTime()));
 
-		ent.save();
+		PurchaseContractDao dao = new PurchaseContractDao(getSessionFactory());
+		dao.save(ent);
 	}
 
+	/**
+	 * @return current session fac inst
+	 */
+	private SessionFactory getSessionFactory() {
+		return ((ContractManagementFrame) frame).getSessionFactory();
+	}
 }

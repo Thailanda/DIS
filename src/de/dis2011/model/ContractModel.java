@@ -1,11 +1,12 @@
 package de.dis2011.model;
 
 import de.dis2011.data.Contract;
-import de.dis2011.data.House;
-
+import de.dis2011.data.PurchaseContract;
+import de.dis2011.data.TenancyContract;
+import de.dis2011.data.dao.PurchaseContractDao;
+import de.dis2011.data.dao.TenancyContractDao;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.SessionFactory;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -14,9 +15,14 @@ import java.util.List;
 public class ContractModel extends EntityModel<Contract> {
 
     final private static String[] COLUMNS = {"ID", "Contract No", "Date", "Place"};
-	
-	public ContractModel() {
-	}
+
+    final private TenancyContractDao tenancyContractDao;
+    final private PurchaseContractDao purchaseContractDao;
+
+	public ContractModel(SessionFactory factory) {
+        tenancyContractDao = new TenancyContractDao(factory);
+        purchaseContractDao = new PurchaseContractDao(factory);
+    }
 
     @Override
     public Object getValueAt(int i, int i1) {
@@ -38,7 +44,12 @@ public class ContractModel extends EntityModel<Contract> {
             case 2: p.setDate((Date) o); break;
             case 3: p.setPlace((String) o); break;
         }
-        p.save();
+
+        if (p instanceof TenancyContract) {
+            tenancyContractDao.save((TenancyContract) p);
+        } else if (p instanceof PurchaseContract) {
+            purchaseContractDao.save((PurchaseContract) p);
+        }
     }
 
     @Override

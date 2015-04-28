@@ -8,7 +8,11 @@ import de.dis2011.data.House;
 import de.dis2011.data.Person;
 import de.dis2011.data.PurchaseContract;
 import de.dis2011.data.TenancyContract;
+import de.dis2011.data.dao.ApartmentDao;
+import de.dis2011.data.dao.HouseDao;
 import de.dis2011.data.dao.PersonDao;
+import de.dis2011.data.dao.PurchaseContractDao;
+import de.dis2011.data.dao.TenancyContractDao;
 import de.dis2011.gui.estate.AbstractForm;
 import de.dis2011.gui.management.ContractManagementFrame;
 import java.awt.event.ActionEvent;
@@ -18,10 +22,10 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import org.hibernate.SessionFactory;
 
 public class SignContractForm extends AbstractForm {
 
-	private final PersonDao personDao;
 	private JComboBox<String> contractTypeChooser;
 	private JComboBox<Object> estatesChooser;
 	private JComboBox<Object> personsChooser;
@@ -44,7 +48,6 @@ public class SignContractForm extends AbstractForm {
 	public SignContractForm(ContractManagementFrame frame) {
 		super(frame, "Sign new Contract");
 		contractManagementFrame = frame;
-		this.personDao = new PersonDao(frame.getSessionFactory());
 	}
 
 	@Override
@@ -100,7 +103,7 @@ public class SignContractForm extends AbstractForm {
 		Date dateValue = (Date) date.getValue();
 		contract.setDate(new java.sql.Date(dateValue.getTime()));
 		contract.setPlace(place.getText());
-
+		contract.setPerson((Person) personsChooser.getSelectedItem());
 
 		if (contract instanceof PurchaseContract) {
 			PurchaseContract purchaseContract = (PurchaseContract) contract;
@@ -108,6 +111,8 @@ public class SignContractForm extends AbstractForm {
 			purchaseContract.setInterestRate((Double) interestRate.getValue());
 			purchaseContract.setNoOfInstallments((int) noInstallments.getValue());
 
+			PurchaseContractDao dao = new PurchaseContractDao(getSessionFactory());
+			dao.save(purchaseContract);
 		} else  {
 			// Should be Rent
 			TenancyContract tenancyContract = (TenancyContract) contract;
@@ -116,16 +121,21 @@ public class SignContractForm extends AbstractForm {
 			tenancyContract.setStartDate(new java.sql.Date(startDateValue.getTime()));
 			tenancyContract.setAdditionalCosts((Double) additionalCosts.getValue());
 			tenancyContract.setDuration((Integer) duration.getValue());
+
+			TenancyContractDao dao = new TenancyContractDao(getSessionFactory());
+			dao.save(tenancyContract);
 		}
 
-		contract.save();
-		// Get Person
-		Person person = (Person) personsChooser.getSelectedItem();
-
 		Estate estate = (Estate) estatesChooser.getSelectedItem();
-		
 		estate.setContract(contract);
-		estate.save();
+
+		if (contract instanceof PurchaseContract) {
+			HouseDao dao = new HouseDao(getSessionFactory());
+			dao.save((House) estate);
+		} else {
+			ApartmentDao dao = new ApartmentDao(getSessionFactory());
+			dao.save((Apartment) estate);
+		}
 
 		contractManagementFrame.getModel().add(contract);
 		this.setVisible(false);
@@ -143,6 +153,8 @@ public class SignContractForm extends AbstractForm {
 	}
 
 	private void loadPersons() {
+		PersonDao personDao = new PersonDao(((ContractManagementFrame) frame).getSessionFactory());
+
 		List<Person> persons = personDao.findAll();
 		for (Person person : persons) {
 			personsChooser.addItem(person);
@@ -150,9 +162,9 @@ public class SignContractForm extends AbstractForm {
 	}
 
 	private void preparePurchase() {
-		List<House> houses = House.findAll();
+		HouseDao dao = new HouseDao(getSessionFactory());
 		estatesChooser.removeAllItems();
-		for (House e : houses) {
+		for (House e : dao.findAll()) {
 			estatesChooser.addItem(e);
 		}
 
@@ -164,9 +176,9 @@ public class SignContractForm extends AbstractForm {
 	}
 
 	private void prepareRent() {
-		List<Apartment> houses = Apartment.findAll();
+		ApartmentDao dao = new ApartmentDao(getSessionFactory());
 		estatesChooser.removeAllItems();
-		for (Apartment e : houses) {
+		for (Apartment e : dao.findAll()) {
 			estatesChooser.addItem(e);
 		}
 
@@ -175,5 +187,12 @@ public class SignContractForm extends AbstractForm {
 		additionalCosts.setEnabled(true);
 		noInstallments.setEnabled(false);
 		interestRate.setEnabled(false);
+	}
+
+	/**
+	 * @return current session fac inst
+	 */
+	private SessionFactory getSessionFactory() {
+		return ((ContractManagementFrame) frame).getSessionFactory();
 	}
 }
