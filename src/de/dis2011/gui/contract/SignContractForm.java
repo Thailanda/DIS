@@ -123,7 +123,7 @@ public class SignContractForm extends AbstractForm {
 		Person person = (Person) personsChooser.getSelectedItem();
 
 		Estate estate = (Estate) estatesChooser.getSelectedItem();
-		estate.setPerson(person);
+		
 		estate.setContract(contract);
 		estate.save();
 

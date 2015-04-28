@@ -12,6 +12,9 @@
         <property name="date" column="DATE"/>
         <property name="place" column="PLACE"/>
 
+        <!-- Many to One -->
+		<many-to-one name="person" class="de.dis2011.data.Person" column="PERSON_ID" not-null="false"/>
+
         <!-- One to One -->
         <one-to-one name="estate" class="de.dis2011.data.Estate"/>
 

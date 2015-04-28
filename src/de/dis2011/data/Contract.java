@@ -16,6 +16,7 @@ public class Contract extends Entity {
 	private Date date = new Date(0);
 	private String place = "";
 	private Estate estate;
+	private Person person;
 
 	@Override
 	public void applyResultSet(ResultSet resultSet) throws SQLException {
@@ -118,4 +119,13 @@ public class Contract extends Entity {
 	public void setEstate(Estate estate) {
 		this.estate = estate;
 	}
+	
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
 }
