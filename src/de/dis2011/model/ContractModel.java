@@ -20,8 +20,8 @@ public class ContractModel extends EntityModel<Contract> {
     final private PurchaseContractDao purchaseContractDao;
 
 	public ContractModel(SessionFactory factory) {
-        tenancyContractDao = new TenancyContractDao(factory);
-        purchaseContractDao = new PurchaseContractDao(factory);
+        tenancyContractDao = new TenancyContractDao();
+        purchaseContractDao = new PurchaseContractDao();
     }
 
     @Override

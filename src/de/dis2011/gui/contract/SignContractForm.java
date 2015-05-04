@@ -1,5 +1,6 @@
 package de.dis2011.gui.contract;
 
+import com.google.inject.Inject;
 import de.dis2011.data.Apartment;
 import de.dis2011.data.Contract;
 import de.dis2011.data.Entity;
@@ -26,6 +27,8 @@ import org.hibernate.SessionFactory;
 
 public class SignContractForm extends AbstractForm {
 
+	@Inject PersonDao personDao;
+
 	private JComboBox<String> contractTypeChooser;
 	private JComboBox<Object> estatesChooser;
 	private JComboBox<Object> personsChooser;
@@ -45,6 +48,7 @@ public class SignContractForm extends AbstractForm {
 
 	final ContractManagementFrame contractManagementFrame;
 
+	@Inject
 	public SignContractForm(ContractManagementFrame frame) {
 		super(frame, "Sign new Contract");
 		contractManagementFrame = frame;
@@ -111,7 +115,7 @@ public class SignContractForm extends AbstractForm {
 			purchaseContract.setInterestRate((Double) interestRate.getValue());
 			purchaseContract.setNoOfInstallments((int) noInstallments.getValue());
 
-			PurchaseContractDao dao = new PurchaseContractDao(getSessionFactory());
+			PurchaseContractDao dao = new PurchaseContractDao();
 			dao.save(purchaseContract);
 		} else  {
 			// Should be Rent
@@ -122,7 +126,7 @@ public class SignContractForm extends AbstractForm {
 			tenancyContract.setAdditionalCosts((Double) additionalCosts.getValue());
 			tenancyContract.setDuration((Integer) duration.getValue());
 
-			TenancyContractDao dao = new TenancyContractDao(getSessionFactory());
+			TenancyContractDao dao = new TenancyContractDao();
 			dao.save(tenancyContract);
 		}
 
@@ -130,10 +134,10 @@ public class SignContractForm extends AbstractForm {
 		estate.setContract(contract);
 
 		if (contract instanceof PurchaseContract) {
-			HouseDao dao = new HouseDao(getSessionFactory());
+			HouseDao dao = new HouseDao();
 			dao.save((House) estate);
 		} else {
-			ApartmentDao dao = new ApartmentDao(getSessionFactory());
+			ApartmentDao dao = new ApartmentDao();
 			dao.save((Apartment) estate);
 		}
 
@@ -153,8 +157,6 @@ public class SignContractForm extends AbstractForm {
 	}
 
 	private void loadPersons() {
-		PersonDao personDao = new PersonDao(((ContractManagementFrame) frame).getSessionFactory());
-
 		List<Person> persons = personDao.findAll();
 		for (Person person : persons) {
 			personsChooser.addItem(person);
@@ -162,7 +164,7 @@ public class SignContractForm extends AbstractForm {
 	}
 
 	private void preparePurchase() {
-		HouseDao dao = new HouseDao(getSessionFactory());
+		HouseDao dao = new HouseDao();
 		estatesChooser.removeAllItems();
 		for (House e : dao.findAll()) {
 			estatesChooser.addItem(e);
@@ -176,7 +178,7 @@ public class SignContractForm extends AbstractForm {
 	}
 
 	private void prepareRent() {
-		ApartmentDao dao = new ApartmentDao(getSessionFactory());
+		ApartmentDao dao = new ApartmentDao();
 		estatesChooser.removeAllItems();
 		for (Apartment e : dao.findAll()) {
 			estatesChooser.addItem(e);

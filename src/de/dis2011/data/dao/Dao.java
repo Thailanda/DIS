@@ -1,5 +1,6 @@
 package de.dis2011.data.dao;
 
+import com.google.inject.Inject;
 import de.dis2011.data.Entity;
 import java.util.List;
 import org.hibernate.HibernateException;
@@ -14,11 +15,11 @@ import org.hibernate.Transaction;
  */
 public abstract class Dao<EntityType extends Entity> {
 
-    final private SessionFactory factory;
+    @Inject SessionFactory factory;
+
     final protected Class<EntityType> prototype;
 
-    public Dao(SessionFactory factory, Class<EntityType> prototype) {
-        this.factory = factory;
+    public Dao(Class<EntityType> prototype) {
         this.prototype = prototype;
     }
 

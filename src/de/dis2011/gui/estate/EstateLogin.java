@@ -1,8 +1,10 @@
 package de.dis2011.gui.estate;
 
+import com.google.inject.Inject;
 import de.dis2011.data.EstateAgent;
 import de.dis2011.data.dao.EstateAgentDao;
 import de.dis2011.gui.MainFrame;
+import de.dis2011.model.EstateAgentSecurityContext;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -23,16 +25,18 @@ import javax.swing.JTextField;
 
 public class EstateLogin extends JFrame {
 
+	@Inject EstateAgentSecurityContext context;
+	@Inject EstateAgentDao estateAgentDao;
+
 	final private MainFrame mainFrame;
 	final private JPasswordField txtFieldPassword;
-	final private EstateAgentDao estateAgentDao;
 
+	@Inject
 	public EstateLogin(MainFrame mainFrame) {
 		super("Please enter Estate Agent Login");
 		final JButton btnLogin = new JButton("Login");
 
 		this.mainFrame = mainFrame;
-		this.estateAgentDao = new EstateAgentDao(mainFrame.getSessionFactory());
 
 		final JLabel xName = new JLabel("Name");
 		final JLabel xPass = new JLabel("Password");
@@ -90,8 +94,8 @@ public class EstateLogin extends JFrame {
 		EstateAgent a = estateAgentDao.verifyLogin(estateLogin, estatePassword);
 
 		if (a != null) {
-			mainFrame.getContext().setUser(a);
-			mainFrame.getContext().notifyObservers();
+			context.setUser(a);
+			context.notifyObservers();
 			setVisible(false);
 			return;
 		}

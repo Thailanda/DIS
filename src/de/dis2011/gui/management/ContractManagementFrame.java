@@ -1,5 +1,6 @@
 package de.dis2011.gui.management;
 
+import com.google.inject.Inject;
 import de.dis2011.data.Contract;
 import de.dis2011.data.PurchaseContract;
 import de.dis2011.data.TenancyContract;
@@ -40,13 +41,14 @@ public class ContractManagementFrame extends JFrame {
 	// Parent
 	final private MainFrame mainFrame;
 
-	public ContractManagementFrame(MainFrame mainFrame) {
+	@Inject
+	public ContractManagementFrame(MainFrame mainFrame, PurchaseContractDao purchaseContractDao, TenancyContractDao tenancyContractDao) {
 		super("Contracts");
 
 		this.mainFrame = mainFrame;
 		this.model = new ContractModel(mainFrame.getSessionFactory());
-		this.purchaseContractDao = new PurchaseContractDao(mainFrame.getSessionFactory());
-		this.tenancyContractDao = new TenancyContractDao(mainFrame.getSessionFactory());
+		this.purchaseContractDao = purchaseContractDao;
+		this.tenancyContractDao = tenancyContractDao;
 
 		initGUI(); 
 		

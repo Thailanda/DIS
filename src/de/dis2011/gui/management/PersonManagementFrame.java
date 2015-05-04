@@ -1,5 +1,6 @@
 package de.dis2011.gui.management;
 
+import com.google.inject.Inject;
 import de.dis2011.data.Person;
 import de.dis2011.data.dao.PersonDao;
 import de.dis2011.gui.MainFrame;
@@ -30,17 +31,16 @@ import javax.swing.event.ListSelectionListener;
  */
 public class PersonManagementFrame extends JFrame {
 
+    @Inject PersonDao personDao;
+
     final private MainFrame mainFrame;
     final private PersonModel model = new PersonModel();
     final private JTable table = new JTable();
-    final private PersonDao personDao;
 
+    @Inject
     public PersonManagementFrame(MainFrame mainFrame) throws HeadlessException {
         super("Persons");
         this.mainFrame = mainFrame;
-        this.personDao = new PersonDao(mainFrame.getSessionFactory());
-
-        model.setDao(personDao);
 
         initGui();
     }

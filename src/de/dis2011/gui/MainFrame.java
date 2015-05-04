@@ -1,12 +1,12 @@
 package de.dis2011.gui;
 
+import com.google.inject.Inject;
 import de.dis2011.gui.estate.EstateLogin;
-import de.dis2011.gui.management.EstateAgentManagementFrame;
 import de.dis2011.gui.management.ContractManagementFrame;
+import de.dis2011.gui.management.EstateAgentManagementFrame;
 import de.dis2011.gui.management.EstateManagementFrame;
 import de.dis2011.gui.management.PersonManagementFrame;
 import de.dis2011.model.EstateAgentSecurityContext;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -16,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -24,19 +23,22 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import org.hibernate.SessionFactory;
 
 public class MainFrame extends JFrame implements Observer {
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "Estate Agent Software";
 
-	// Owned frames
+	// Security context
 	private final EstateAgentSecurityContext context;
-	private final PersonManagementFrame personFrame;
-	private final EstateManagementFrame estateFrame;
-	private final EstateLogin estateLoginFrame;
-	private final ContractManagementFrame contractFrame;
-	private final EstateAgentManagementFrame agentFrame;
+
+	// Owned frames
+	@Inject ContractManagementFrame contractFrame;
+	@Inject PersonManagementFrame personFrame;
+	@Inject EstateManagementFrame estateFrame;
+	@Inject EstateLogin estateLoginFrame;
+	@Inject EstateAgentManagementFrame agentFrame;
 
 	// Hibernate session factory
 	private final SessionFactory sessionFactory;
@@ -47,19 +49,16 @@ public class MainFrame extends JFrame implements Observer {
 	private final JButton btnManageEstates;
 	private final JButton btnManageContracts;
 
-	public MainFrame(SessionFactory sessionFactory) {
+	@Inject
+	public MainFrame(SessionFactory sessionFactory, EstateAgentSecurityContext context) {
 		super(TITLE);
 
 		this.sessionFactory = sessionFactory;
-		setDefaultCloseOperation(MainFrame.EXIT_ON_CLOSE);
-		getRootPane().putClientProperty("apple.awt.brushMetalLook", true);
+		this.context = context;
 
-		context = new EstateAgentSecurityContext(this);
-		personFrame = new PersonManagementFrame(this);
-		estateFrame = new EstateManagementFrame(this);
-		estateLoginFrame = new EstateLogin(this);
-		contractFrame = new ContractManagementFrame(this);
-		agentFrame = new EstateAgentManagementFrame(this);
+		context.addObserver(this);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		getRootPane().putClientProperty("apple.awt.brushMetalLook", true);
 
 		btnAuthenticate = new JButton("Authenticate");
 		btnAuthenticate.setIcon(createImageIcon("/de/dis2011/icons/key.png"));
@@ -151,7 +150,7 @@ public class MainFrame extends JFrame implements Observer {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation(screenSize.width / 2 - getSize().width / 2, screenSize.height / 2 - getSize().height / 2);
 
-		update(context, null);
+		setAuthenticated(false);
 	}
 
 	public void centerFrame(JFrame frame) {
@@ -172,26 +171,26 @@ public class MainFrame extends JFrame implements Observer {
 		return null;
 	}
 
-	public EstateAgentSecurityContext getContext() {
-		return context;
-	}
-
 	@Override
 	public void update(Observable observable, Object o) {
 		if (observable == context) {
 			boolean authenticated = context.isAuthenticated();
 
-			btnAuthenticate.setEnabled(!authenticated);
-			btnManageEstates.setEnabled(authenticated);
-			btnPersonManagement.setEnabled(authenticated);
-			btnManageContracts.setEnabled(authenticated);
-
-			if (authenticated) {
-				setTitle(TITLE + " - [" + context.getUser().getName() + " #"+ context.getUser().getId() + "]");
-			} else {
-				setTitle(TITLE);
-			}
+			setAuthenticated(authenticated);
 		}
+	}
+
+	protected void setAuthenticated(boolean authenticated) {
+		btnAuthenticate.setEnabled(!authenticated);
+		btnManageEstates.setEnabled(authenticated);
+		btnPersonManagement.setEnabled(authenticated);
+		btnManageContracts.setEnabled(authenticated);
+
+		if (authenticated) {
+            setTitle(TITLE + " - [" + context.getUser().getName() + " #"+ context.getUser().getId() + "]");
+        } else {
+            setTitle(TITLE);
+        }
 	}
 
 	private void actionManagementAgent() {

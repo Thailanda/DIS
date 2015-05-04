@@ -1,7 +1,6 @@
 package de.dis2011.data.dao;
 
 import de.dis2011.data.TenancyContract;
-import org.hibernate.SessionFactory;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -9,7 +8,7 @@ import org.hibernate.SessionFactory;
  */
 final public class TenancyContractDao extends Dao<TenancyContract> {
 
-    public TenancyContractDao(SessionFactory factory) {
-        super(factory, TenancyContract.class);
+    public TenancyContractDao() {
+        super(TenancyContract.class);
     }
 }

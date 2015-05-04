@@ -1,6 +1,8 @@
 package de.dis2011.model;
 
+import com.google.inject.Inject;
 import de.dis2011.data.Person;
+import de.dis2011.data.dao.PersonDao;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -9,6 +11,8 @@ import de.dis2011.data.Person;
 public class PersonModel extends EntityModel<Person> {
 
     final private static String[] COLUMNS = {"ID", "First name", "Last name", "Address", "No. of Estates"};
+
+    @Inject protected PersonDao dao;
 
     @Override
     public Object getValueAt(int i, int i1) {

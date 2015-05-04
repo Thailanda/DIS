@@ -47,7 +47,7 @@ public class TenancyContractForm extends AbstractForm {
 		Date dateValue = (Date) date.getValue();
 		contract.setDate(new java.sql.Date(dateValue.getTime()));
 
-		TenancyContractDao dao = new TenancyContractDao(getSessionFactory());
+		TenancyContractDao dao = new TenancyContractDao();
 		dao.save(contract);
 	}
 

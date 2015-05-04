@@ -47,7 +47,7 @@ public class PurchaseContractForm extends AbstractForm {
 		Date startDateValue = (Date) startDate.getValue();
 		ent.setDate(new java.sql.Date(startDateValue.getTime()));
 
-		PurchaseContractDao dao = new PurchaseContractDao(getSessionFactory());
+		PurchaseContractDao dao = new PurchaseContractDao();
 		dao.save(ent);
 	}
 

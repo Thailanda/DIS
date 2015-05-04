@@ -1,5 +1,6 @@
 package de.dis2011.gui.management;
 
+import com.google.inject.Inject;
 import de.dis2011.data.EstateAgent;
 import de.dis2011.data.dao.EstateAgentDao;
 import de.dis2011.gui.MainFrame;
@@ -32,10 +33,11 @@ import javax.swing.ListSelectionModel;
 
 public class EstateAgentManagementFrame extends JFrame {
 
+    private final EstateAgentDao estateAgentDao;
+
     final private MainFrame mainFrame;
     final private EstateAgentModel model = new EstateAgentModel();
     final private JTable table = new JTable();
-    final private EstateAgentDao estateAgentDao;
 
     JFrame pwdFrame = new JFrame("Password Required");
     private final String PASSWORD = "demo";
@@ -43,10 +45,11 @@ public class EstateAgentManagementFrame extends JFrame {
 
     JFrame loginFrame = new JFrame("New Login Required");
 
-    public EstateAgentManagementFrame(MainFrame mainFrame) throws HeadlessException {
+    @Inject
+    public EstateAgentManagementFrame(MainFrame mainFrame, EstateAgentDao estateAgentDao) throws HeadlessException {
         super("Estate Agents");
         this.mainFrame = mainFrame;
-        this.estateAgentDao = new EstateAgentDao(mainFrame.getSessionFactory());
+        this.estateAgentDao = estateAgentDao;
 
         model.setDao(estateAgentDao);
         

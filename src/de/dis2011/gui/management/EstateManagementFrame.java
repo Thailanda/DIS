@@ -1,5 +1,6 @@
 package de.dis2011.gui.management;
 
+import com.google.inject.Inject;
 import de.dis2011.data.Apartment;
 import de.dis2011.data.Estate;
 import de.dis2011.data.House;
@@ -37,24 +38,23 @@ import javax.swing.ListSelectionModel;
  */
 public class EstateManagementFrame extends JFrame implements Observer {
 
-    final private MainFrame mainFrame;
-    final private EstateAgentSecurityContext context;
-    final private EstateModel model; 
-    final private JTable table = new JTable();
-    final private ApartmentDao apartmentDao;
-    final private HouseDao houseDao;
-    
+    private final MainFrame mainFrame;
+    private final EstateModel model;
+    private final JTable table = new JTable();
+    private final ApartmentDao apartmentDao;
+    private final HouseDao houseDao;
+    private final EstateAgentSecurityContext context;
 
-
-    
-    public EstateManagementFrame(MainFrame mainFrame) throws HeadlessException {
+    @Inject
+    public EstateManagementFrame(MainFrame mainFrame, EstateAgentSecurityContext context) throws HeadlessException {
         super("Estates");
         this.mainFrame = mainFrame;
-        context = mainFrame.getContext();
+        this.context = context;
+
         context.addObserver(this);
         
-        apartmentDao = new ApartmentDao(mainFrame.getSessionFactory());
-        houseDao = new HouseDao(mainFrame.getSessionFactory());
+        apartmentDao = new ApartmentDao();
+        houseDao = new HouseDao();
         model = new EstateModel(apartmentDao, houseDao);
         
         initGui();

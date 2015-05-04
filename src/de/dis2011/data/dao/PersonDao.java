@@ -1,7 +1,6 @@
 package de.dis2011.data.dao;
 
 import de.dis2011.data.Person;
-import org.hibernate.SessionFactory;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -9,7 +8,7 @@ import org.hibernate.SessionFactory;
  */
 final public class PersonDao extends Dao<Person> {
 
-    public PersonDao(SessionFactory factory) {
-        super(factory, Person.class);
+    public PersonDao() {
+        super(Person.class);
     }
 }

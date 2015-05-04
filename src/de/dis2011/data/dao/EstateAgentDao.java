@@ -4,7 +4,6 @@ import de.dis2011.data.EstateAgent;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 /**
@@ -13,8 +12,8 @@ import org.hibernate.Transaction;
  */
 final public class EstateAgentDao extends Dao<EstateAgent> {
 
-    public EstateAgentDao(SessionFactory factory) {
-        super(factory, EstateAgent.class);
+    public EstateAgentDao() {
+        super(EstateAgent.class);
     }
 
     public EstateAgent verifyLogin(String login, String password) {
