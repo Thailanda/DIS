@@ -41,6 +41,8 @@ public class ContractManagementFrame extends JFrame {
 	// Parent
 	final private MainFrame mainFrame;
 
+	@Inject SignContractForm signContractForm;
+
 	@Inject
 	public ContractManagementFrame(MainFrame mainFrame, PurchaseContractDao purchaseContractDao, TenancyContractDao tenancyContractDao) {
 		super("Contracts");
@@ -126,7 +128,6 @@ public class ContractManagementFrame extends JFrame {
 	}
 	    
     private void signContract() {
-		final SignContractForm signContractForm = new SignContractForm(this);
     	signContractForm.showGui();
     }
     

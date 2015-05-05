@@ -27,7 +27,7 @@ import org.hibernate.SessionFactory;
 
 public class SignContractForm extends AbstractForm {
 
-	@Inject PersonDao personDao;
+	private final PersonDao personDao;
 
 	private JComboBox<String> contractTypeChooser;
 	private JComboBox<Object> estatesChooser;
@@ -49,9 +49,10 @@ public class SignContractForm extends AbstractForm {
 	final ContractManagementFrame contractManagementFrame;
 
 	@Inject
-	public SignContractForm(ContractManagementFrame frame) {
+	public SignContractForm(ContractManagementFrame frame, PersonDao personDao) {
 		super(frame, "Sign new Contract");
 		contractManagementFrame = frame;
+		this.personDao = personDao;
 	}
 
 	@Override
