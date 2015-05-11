@@ -1,0 +1,13 @@
+1a) isolation level: RR (bzw. keine??)
+1b) OPK-Tabelle
+1c) locks: OPK Tabelle ?
+1d) locks mit isolation level RS: abgefragte Zeile der Tabelle
+
+2: Lock Conflicts:
+2a) (RS level) nur abgerufene Zeilen gesperrt; Hinzugügen einer neuen Zeile mit ID > 5 funktioniert nicht bis commit bestätigt wird
+2b) (SET CURRENT ISOLATION RR)  alle Zeilen gesperrt; kein hinzufügen möglich
+2c) (RR) NAME ändern funktioniert wie das Einfügen erst nach dem commit der ersten Transaktion
+2d) MPK-Tabelle
+2e) (MPK, RR) wie bei 2b)
+
+3: Deadlocks:
