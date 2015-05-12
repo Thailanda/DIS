@@ -1,6 +1,7 @@
 bin
 out
-*/.settings/
+.settings/*
+*/.settings/*
 .idea
 .metadata
 !*lib/*.jar
