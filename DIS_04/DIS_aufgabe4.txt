@@ -1,4 +1,5 @@
-1a) isolation level: CS (default, jeweils 1 Zeile)
+1a) isolation level: CS (default, jeweils 1 Zeile; dirty read verhindert, da x-locks bis zum Ende gehalten werden vgl. Folie 8)
+                     warum CS als default? --> Performance (z.B. wenigere Locks nötig)
 1b) OPK-Tabelle 
 1c) locks: SELECT * FROM OPK WHERE ID=1
 
@@ -18,41 +19,7 @@ Locks held                                 = 5
 Total wait time (ms)                       = Not Collected
 
 List Of Locks
- Lock Name                   = 0x5359535348323030DDECEF2841
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 0
- Object Type                 = Internal Plan Lock
- Mode                        = S
-
- Lock Name                   = 0x53514C4C3948314A39CE8C4241
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 0
- Object Type                 = Internal Plan Lock
- Mode                        = S
-
- Lock Name                   = 0x01000000010000000100603856
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 0
- Object Type                 = Internal Variation Lock
- Mode                        = S
-
- Lock Name                   = 0x53514C4445464C5428DD630641
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 0
- Object Type                 = Internal Plan Lock
- Mode                        = S
+ 
 
  Lock Name                   = 0x00001101000000000000000054
  Lock Attributes             = 0x00000000
@@ -101,27 +68,6 @@ List Of Locks
  Table Name                  = OPK
  Mode                        = NS
 
- Lock Name                   = 0x5359535348323030DDECEF2841
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 0
- Object Type                 = Internal Plan Lock
- Mode                        = S
-
- Lock Name                   = 0x00001101000000000000000054
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 273
- Object Type                 = Table
- Tablespace Name             = SYSCATSPACE
- Table Schema                = SYSIBM
- Table Name                  = SYSUSERAUTH
- Mode                        = IS
-
  Lock Name                   = 0x0200141D000000000000000054
  Lock Attributes             = 0x00000000
  Release Flags               = 0x00000002
@@ -143,11 +89,13 @@ List Of Locks
     Hinzugügen einer neuen Zeile mit ID > 5 funktioniert,
     bei einer erneuten Abfrage in der ersten Verbindung wird 
     nun die eingefügte Zeile angezeigt
+    (Phantom-Problem: ein Phantom taucht auf beim zweiten SELECT)
 
 2b) (SET CURRENT ISOLATION RR)  alle Zeilen gesperrt;
     hinzufügen neuer Zeilen (mit ID größer 5) erst nach dem commit möglich
 
-2c) Änderungen funktionieren erst nach dem commit
+2c) Änderungen funktionieren erst nach dem commit (da wir kein Primärschlüssel haben,
+    wir hätten dann zwei Personen die die ID haben könnten)
 
 UPDATE OPK
 SET NAME='Max Mustermann'
@@ -183,27 +131,6 @@ List Of Locks
  Table Name                  = OPK
  Mode                        = X
 
- Lock Name                   = 0x5359535348323030DDECEF2841
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 0
- Object Type                 = Internal Plan Lock
- Mode                        = S
-
- Lock Name                   = 0x00001101000000000000000054
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 2
- Hold Count                  = 0
- Lock Object Name            = 273
- Object Type                 = Table
- Tablespace Name             = SYSCATSPACE
- Table Schema                = SYSIBM
- Table Name                  = SYSUSERAUTH
- Mode                        = IS
-
  Lock Name                   = 0x0200141D000000000000000054
  Lock Attributes             = 0x00000010
  Release Flags               = 0x40000003
@@ -219,7 +146,7 @@ List Of Locks
 
 2d) MPK-Tabelle
 
-2e) MPK, RS verhält sich genauso wie bei c):
+2e) MPK, RS die Zeile lässt sich einfügen (da die ID:
 
  db2 get snapshot for locks for application agentid 22354
 
@@ -287,14 +214,6 @@ List Of Locks
  Table Name                  = MPK
  Mode                        = S
 
- Lock Name                   = 0x5359535348323030DDECEF2841
- Lock Attributes             = 0x00000000
- Release Flags               = 0x40000000
- Lock Count                  = 1
- Hold Count                  = 0
- Lock Object Name            = 0
- Object Type                 = Internal Plan Lock
- Mode                        = S
 
  Lock Name                   = 0x02000E13000000000000000054
  Lock Attributes             = 0x00000010
@@ -310,7 +229,7 @@ List Of Locks
 
 
 3: Deadlocks:
-3a) Verbindung 1 (RR) kann die Transaktion erfolgreich ausführen
+3a) Verbindung 1 (RR) kann die Transaktion erfolgreich ausführen (da CS nur lockt solange es auf die Daten zugreift d.h. während des SELECTS, danach nicht mehr)
     Verbindung 2 (CS) wartet auf ein commit bei 1
 3b) Verbindung 1 (RR) Deadlock Meldung und Rollback 
     Verbindung 2 (RS) Durchgeführt
