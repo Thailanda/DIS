@@ -1,4 +1,4 @@
-1a) isolation level: RR (bzw. keine??)
+1a) isolation level: CS (default, jeweils 1 Zeile)
 1b) OPK-Tabelle 
 1c) locks: SELECT * FROM OPK WHERE ID=1
 
@@ -139,9 +139,16 @@ List Of Locks
 
 
 2: Lock Conflicts:
-2a) (RS level) nur abgerufene Zeilen gesperrt; Hinzugügen einer neuen Zeile mit ID > 5 funktioniert, bei einer erneuten Abfrage in der ersten Verbindung wird nun die eingefügte Zeile angezeigt
-2b) (SET CURRENT ISOLATION RR)  alle Zeilen gesperrt; hinzufügen neuer Zeilen (mit ID größer 5) erst nach dem commit möglich
+2a) (RS level) nur abgerufene Zeilen gesperrt; 
+    Hinzugügen einer neuen Zeile mit ID > 5 funktioniert,
+    bei einer erneuten Abfrage in der ersten Verbindung wird 
+    nun die eingefügte Zeile angezeigt
+
+2b) (SET CURRENT ISOLATION RR)  alle Zeilen gesperrt;
+    hinzufügen neuer Zeilen (mit ID größer 5) erst nach dem commit möglich
+
 2c) Änderungen funktionieren erst nach dem commit
+
 UPDATE OPK
 SET NAME='Max Mustermann'
 WHERE ID=5
@@ -211,6 +218,7 @@ List Of Locks
 
 
 2d) MPK-Tabelle
+
 2e) MPK, RS verhält sich genauso wie bei c):
 
  db2 get snapshot for locks for application agentid 22354
@@ -302,3 +310,10 @@ List Of Locks
 
 
 3: Deadlocks:
+3a) Verbindung 1 (RR) kann die Transaktion erfolgreich ausführen
+    Verbindung 2 (CS) wartet auf ein commit bei 1
+3b) Verbindung 1 (RR) Deadlock Meldung und Rollback 
+    Verbindung 2 (RS) Durchgeführt
+
+
+
