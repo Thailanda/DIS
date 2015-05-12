@@ -1,0 +1,63 @@
+db2 =>  get snapshot for locks for application agentid 12073                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                               
+            Application Lock Snapshot                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                               
+Snapshot timestamp                         = 2015-05-05 17.39.15.440980                                                                                                                                                                                                        
+
+Application handle                         = 12073
+Application ID                             = 134.100.11.66.10215.15050514495
+Sequence number                            = 00001
+Application name                           = db2bp
+CONNECT Authorization ID                   = VSISP15
+Application status                         = UOW Waiting
+Status change time                         = Not Collected
+Application code page                      = 1208
+Locks held                                 = 4
+Total wait time (ms)                       = Not Collected
+
+List Of Locks
+ Lock Name                   = 0x0200141D060000000000000052
+ Lock Attributes             = 0x00000020
+ Release Flags               = 0x40000000
+ Lock Count                  = 1
+ Hold Count                  = 0
+ Lock Object Name            = 6
+ Object Type                 = Row
+ Tablespace Name             = USERSPACE1
+ Table Schema                = VSISP15
+ Table Name                  = OPK
+ Mode                        = X
+
+ Lock Name                   = 0x53514C43324832307F4760B841
+ Lock Attributes             = 0x00000000
+ Release Flags               = 0x40000000
+ Lock Count                  = 1
+ Hold Count                  = 0
+ Lock Object Name            = 0
+ Object Type                 = Internal Plan Lock
+ Mode                        = S
+
+ Lock Name                   = 0x00001101000000000000000054
+ Lock Attributes             = 0x00000000
+ Release Flags               = 0x40000000
+ Lock Count                  = 3
+ Hold Count                  = 0
+ Lock Object Name            = 273
+ Object Type                 = Table
+ Tablespace Name             = SYSCATSPACE
+ Table Schema                = SYSIBM
+ Table Name                  = SYSUSERAUTH
+ Mode                        = IS
+
+ Lock Name                   = 0x0200141D000000000000000054
+ Lock Attributes             = 0x00000000
+ Release Flags               = 0x4000000E
+ Lock Count                  = 1
+ Hold Count                  = 0
+ Lock Object Name            = 7444
+ Object Type                 = Table
+ Tablespace Name             = USERSPACE1
+ Table Schema                = VSISP15
+ Table Name                  = OPK
+ Mode                        = IX
+
