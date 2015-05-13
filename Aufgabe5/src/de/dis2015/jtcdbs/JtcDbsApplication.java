@@ -2,7 +2,11 @@ package de.dis2015.jtcdbs;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.dis2011.DisModule;
+import de.dis2015.jtcdbs.clients.Alice;
+import de.dis2015.jtcdbs.clients.Bob;
+import de.dis2015.jtcdbs.clients.Caesar;
+import de.dis2015.jtcdbs.clients.Dimitri;
+import de.dis2015.jtcdbs.clients.Eberhardt;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -15,6 +19,13 @@ public class JtcDbsApplication {
     }
 
     private JtcDbsApplication() {
-        Injector injector = Guice.createInjector(new DisModule());
+        Injector injector = Guice.createInjector(new JtcDbsModule());
+
+        // Create clients.
+        injector.getInstance(Alice.class);
+        injector.getInstance(Bob.class);
+        injector.getInstance(Caesar.class);
+        injector.getInstance(Dimitri.class);
+        injector.getInstance(Eberhardt.class);
     }
 }

@@ -26,11 +26,9 @@ public class Main {
      * Runs the application.
      */
     private void run() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                final MainFrame GUI = injector.getInstance(MainFrame.class);
-                GUI.showGui();
-            }
+        SwingUtilities.invokeLater(() -> {
+            final MainFrame GUI = injector.getInstance(MainFrame.class);
+            GUI.showGui();
         });
     }
 }

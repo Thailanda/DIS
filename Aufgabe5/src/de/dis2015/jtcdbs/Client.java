@@ -4,10 +4,15 @@ package de.dis2015.jtcdbs;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-05-12
  */
-public interface Client {
+public interface Client extends Runnable {
 
     /**
-     * Executes the client.
+     * Lets the client take some actions.
      */
-    void execute();
+    void takeActions();
+
+    /**
+     * @return the namespace of this client.
+     */
+    int[] getNamespace();
 }
