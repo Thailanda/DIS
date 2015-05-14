@@ -1,7 +1,9 @@
-package de.dis2015.jtcdbs;
+package de.dis2015.jtcdbs.managers;
 
 import java.io.FileWriter;
 import java.io.IOException;
+
+import de.dis2015.jtcdbs.PersistenceManager;
 
 public class PersistenceManagerImpl implements PersistenceManager {
 
