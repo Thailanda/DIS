@@ -6,6 +6,10 @@ public class RecoveryManager {
 	}
 	
 	private void undo(int pageNo, int lsn, int txId, String data) {
+		//TODO write undo
+	}
+	
+	private readLog() {
 		
 	}
 }
