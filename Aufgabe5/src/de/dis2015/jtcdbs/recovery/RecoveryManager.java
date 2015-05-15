@@ -9,7 +9,7 @@ public class RecoveryManager {
 		//TODO write undo
 	}
 	
-	private readLog() {
+	private void readLog() {
 		
 	}
 }
