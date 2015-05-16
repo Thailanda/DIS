@@ -1,7 +1,8 @@
 package de.dis2015.jtcdbs;
 
 import com.google.inject.AbstractModule;
-import de.dis2015.jtcdbs.managers.DummyPersistenceManager;
+
+import de.dis2015.jtcdbs.managers.PersistenceManagerImpl;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -10,6 +11,6 @@ import de.dis2015.jtcdbs.managers.DummyPersistenceManager;
 public class JtcDbsModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(PersistenceManager.class).to(DummyPersistenceManager.class);
+        bind(PersistenceManager.class).to(PersistenceManagerImpl.class);
     }
 }

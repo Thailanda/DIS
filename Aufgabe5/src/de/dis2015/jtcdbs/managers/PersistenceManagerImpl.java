@@ -5,43 +5,59 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import de.dis2015.jtcdbs.Constants;
 import de.dis2015.jtcdbs.PersistenceManager;
 import de.dis2015.jtcdbs.page.Page;
 
 public class PersistenceManagerImpl implements PersistenceManager {
 
-	private static HashMap<Integer, Page> _buffer;
-	private static HashSet<Integer> _ongoingTransactions;
+	private static HashMap<Integer, Page> _buffer; // The buffer containing all
+													// currently used pages
+	private static HashSet<Integer> _ongoingTransactions; // A list of ongoing
+															// transaction
 
-	private static final String _persistanceStoragePath = "persistentDataStorage/";
-	private static final String _logPath = "logStorate/";
-	private static final String _fileExtensionPage = ".ppg"; // ppg ~ PersistentPaGe
-	private static final String _fileExtensionLogEntry = ".plog"; // plog ~ PageLog
-	private static final String _separator = ";";
+	private int _lastLSN = 0;
 
-	private long _lastLSN = 0;
+	public PersistenceManagerImpl() {
+		restorePages();
+
+		System.out.println("PersistanceManagerImpl created");
+	}
 
 	@Override
 	public int beginTransaction() {
 		int transactionId = getNextTransactionID();
-		_ongoingTransactions.add(transactionId);	
+
+		System.out.println("Begin Transaction with ID: " + transactionId);
+		_ongoingTransactions.add(transactionId);
 		
+		// TODO Use a mutex for transaction? e.g. lock a page?
+
 		return transactionId;
 	}
 
 	@Override
 	public void commit(int tx) {
+		System.out.println("Commit Transaction with ID: " + tx);
 		_ongoingTransactions.remove(tx);
-		//TODO Write Page to buffer?
+		// TODO Write Page to buffer?
 	}
 
 	@Override
 	public void write(int tx, int pageId, String data) {
 		// TODO Hier noch die LSN
-		writePage(pageId, -1, data);
+		int lsn = getNextLSN();
+		insertIntoBuffer(new Page(pageId, lsn, data), true);
+		writePage(pageId, lsn, data);
 		writeLogEntry(tx, pageId, data);
 	}
 
+	/**
+	 * Insert a page into the buffer
+	 * 
+	 * @param page
+	 * @param overwrite
+	 */
 	private void insertIntoBuffer(Page page, boolean overwrite) {
 		if (_buffer.containsKey(page.getPageNo()) && !overwrite) {
 			return;
@@ -50,12 +66,32 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		_buffer.put(page.getPageNo(), page);
 	}
 
+	/**
+	 * Restores the buffer after a restart -> Reads all pages from the disk and
+	 * inserts their contents into the buffer
+	 */
+	private void restorePages() {
+		// TODO Auto-generated method stub
+
+		// TODOset _lastLSN to max from buffer + 1;
+	}
+
+	/**
+	 * Write a page to the disk
+	 * 
+	 * @param pageId
+	 * @param lsn
+	 * @param data
+	 * @return Whether the page was written sucessfully or not
+	 */
 	private boolean writePage(int pageId, int lsn, String data) {
 		try {
-			FileWriter fw = new FileWriter(_persistanceStoragePath + pageId
-					+ _fileExtensionPage);
+			FileWriter fw = new FileWriter(
+					Constants.getPersistancestoragepath() + pageId
+							+ Constants.getFileExtensionPage());
 
-			fw.write(pageId + _separator + lsn + _separator + data);
+			fw.write(pageId + Constants.getSeparator() + lsn
+					+ Constants.getSeparator() + data);
 			fw.flush();
 			fw.close();
 		} catch (IOException e) {
@@ -67,13 +103,22 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		return true;
 	}
 
+	/**
+	 * Write a log entry for the given transaction and page
+	 * 
+	 * @param tx
+	 * @param pageId
+	 * @param data
+	 * @return Whether the log was written sucessfully or not
+	 */
 	private boolean writeLogEntry(int tx, int pageId, String data) {
 		try {
-			FileWriter fw = new FileWriter(_logPath + tx + "."
-					+ pageId + _fileExtensionLogEntry);
+			FileWriter fw = new FileWriter(Constants.getLogPath() + tx + "."
+					+ pageId + Constants.getFileExtensionLogEntry());
 
-			fw.write(tx + _separator + pageId + _separator + getNextLSN()
-					+ _separator + data);
+			fw.write(tx + Constants.getSeparator() + pageId
+					+ Constants.getSeparator() + getNextLSN()
+					+ Constants.getSeparator() + data);
 			fw.flush();
 			fw.close();
 		} catch (IOException e) {
@@ -85,13 +130,23 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		return true;
 	}
 
-	private long getNextLSN() {
+	/**
+	 * Return the next LSN and increment internal counter
+	 * 
+	 * @return
+	 */
+	private int getNextLSN() {
 		_lastLSN += 1;
 		return _lastLSN;
 	}
 
+	/**
+	 * Return the next unused transaction ID
+	 * 
+	 * @return
+	 */
 	private int getNextTransactionID() {
-		//TODO return correct TransactionID not already in use
+		// TODO return correct TransactionID not already in use
 		return 0;
 	}
 }
