@@ -14,6 +14,10 @@ public class Transaction {
         this.persistenceManager = persistenceManager;
     }
 
+    public int getId() {
+        return id;
+    }
+
     /**
      * Commits the transaction.
      */

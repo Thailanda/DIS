@@ -1,7 +1,10 @@
 package de.dis2015.jtcdbs.managers;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.dis2015.jtcdbs.Constants;
+import de.dis2015.jtcdbs.LSNManager;
+import de.dis2015.jtcdbs.LogManager;
 import de.dis2015.jtcdbs.PersistenceManager;
 import de.dis2015.jtcdbs.page.Page;
 import java.io.FileWriter;
@@ -12,12 +15,13 @@ import java.util.HashSet;
 @Singleton
 public class PersistenceManagerImpl implements PersistenceManager {
 
+	@Inject LSNManager lsnManager;
+	@Inject LogManager logManager;
+
 	private static HashMap<Integer, Page> _buffer; // The buffer containing all
 													// currently used pages
 	private static HashSet<Integer> _ongoingTransactions; // A list of ongoing
 															// transaction
-
-	private int _lastLSN = 0;
 
 	public PersistenceManagerImpl() {
 		restorePages();
@@ -47,9 +51,10 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	@Override
 	public void write(int tx, int pageId, String data) {
 		// TODO Hier noch die LSN
-		int lsn = getNextLSN();
+		int lsn = lsnManager.nextLSN();
 		insertIntoBuffer(new Page(pageId, lsn, data), true);
-		writePage(pageId, lsn, data);
+//		writePage(pageId, lsn, data);
+
 		writeLogEntry(tx, pageId, data);
 	}
 
@@ -124,16 +129,6 @@ public class PersistenceManagerImpl implements PersistenceManager {
 
 		// Log successfully written
 		return true;
-	}
-
-	/**
-	 * Return the next LSN and increment internal counter
-	 * 
-	 * @return
-	 */
-	private int getNextLSN() {
-		_lastLSN += 1;
-		return _lastLSN;
 	}
 
 	/**
