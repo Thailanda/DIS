@@ -1,5 +1,6 @@
 package de.dis2015.jtcdbs.managers;
 
+import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import de.dis2015.jtcdbs.page.Page;
 
 @Singleton
 public class PersistenceManagerImpl implements PersistenceManager {
+
+	private static String LOG_FILE_NAME = "jtc.log";
 
 	private static final int _bufferThreshold = 5;
 	
@@ -69,10 +72,17 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	@Override
 	public void write(int tx, int pageId, String data) {
 		int lsn = lsnManager.nextLSN();
+		Page page = new Page(pageId, lsn, data);
 
-		// TODO Log UPDATE
+		// Write a log entry.
+		try (FileWriter writer = new FileWriter(LOG_FILE_NAME, true)) {
+			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page, tx);
+			logManager.writeLogEntry(writer, pageWriteLogEntry);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		insertIntoBuffer(new Page(pageId, lsn, data), true);
+		insertIntoBuffer(page, true);
 		checkBuffer();
 	}
 

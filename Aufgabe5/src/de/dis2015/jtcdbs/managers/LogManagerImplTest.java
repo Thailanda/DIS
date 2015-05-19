@@ -4,6 +4,7 @@ import de.dis2015.jtcdbs.LogEntry;
 import de.dis2015.jtcdbs.LogManager;
 import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
 import de.dis2015.jtcdbs.log.entries.ShutdownLogEntry;
+import de.dis2015.jtcdbs.page.Page;
 import java.io.StringReader;
 import java.io.StringWriter;
 import org.junit.Before;
@@ -30,10 +31,8 @@ public class LogManagerImplTest {
     public void testWriteLogEntry() throws Exception {
         try (StringWriter writer = new StringWriter()) {
             PageWriteLogEntry pageWrite = new PageWriteLogEntry();
-            pageWrite.setLSN(42);
-            pageWrite.setPageId(1337);
+            pageWrite.setPage(new Page(1337, 42, "Hallo Welt, wie geht es dir?"));
             pageWrite.setTransactionId(23);
-            pageWrite.setRedoData("Hallo Welt, wie geht es dir?");
             assertEquals("", writer.toString());
             logManager.writeLogEntry(writer, pageWrite);
             assertEquals(PAGE_WRITE_STR, writer.toString());
@@ -59,9 +58,9 @@ public class LogManagerImplTest {
 
             PageWriteLogEntry pageWrite = (PageWriteLogEntry) logEntry;
             assertEquals(42, pageWrite.getLSN());
-            assertEquals(1337, pageWrite.getPageId());
+            assertEquals(1337, pageWrite.getPage().getPageId());
             assertEquals(23, pageWrite.getTransactionId());
-            assertEquals("Hallo Welt, wie geht es dir?", pageWrite.getRedoData());
+            assertEquals("Hallo Welt, wie geht es dir?", pageWrite.getPage().getData());
 
             logEntry = logManager.readLogEntry(reader);
             assertTrue(logEntry instanceof ShutdownLogEntry);

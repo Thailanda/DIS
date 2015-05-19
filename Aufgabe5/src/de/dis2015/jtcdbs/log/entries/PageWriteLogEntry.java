@@ -1,5 +1,6 @@
 package de.dis2015.jtcdbs.log.entries;
 
+import de.dis2015.jtcdbs.page.Page;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -9,24 +10,25 @@ import java.io.Writer;
  * @version 2015-05-19
  */
 final public class PageWriteLogEntry extends AbstractLogEntry {
+
+    private Page page;
     private int transactionId;
-    private int pageId;
-    private String redoData;
 
-    public int getPageId() {
-        return pageId;
+    public PageWriteLogEntry() {
+        this.page = new Page();
     }
 
-    public void setPageId(int pageId) {
-        this.pageId = pageId;
+    public PageWriteLogEntry(Page page, int tx) {
+        this.transactionId = tx;
+        this.page = page;
     }
 
-    public String getRedoData() {
-        return redoData;
+    public Page getPage() {
+        return page;
     }
 
-    public void setRedoData(String redoData) {
-        this.redoData = redoData;
+    public void setPage(Page page) {
+        this.page = page;
     }
 
     public int getTransactionId() {
@@ -38,19 +40,33 @@ final public class PageWriteLogEntry extends AbstractLogEntry {
     }
 
     @Override
+    public int getLSN() {
+        return page.getLSN();
+    }
+
+    @Override
+    public void setLSN(int lsn) {
+        page.setLSN(lsn);
+    }
+
+    @Override
     public void write(Writer writer) throws IOException {
-        writer.write(pageId);
+        writer.write(page.getPageId());
+
         writer.write(transactionId);
-        writer.write(redoData.length());
-        writer.write(redoData.toCharArray());
+
+        writer.write(page.getData().length());
+        writer.write(page.getData().toCharArray());
     }
 
     @Override
     public void read(Reader reader) throws IOException {
-        pageId = reader.read();
+        page.setPageId(reader.read());
+
         transactionId = reader.read();
-        char[] redoData = new char[reader.read()];
-        reader.read(redoData);
-        this.redoData = new String(redoData);
+
+        char[] dataArray = new char[reader.read()];
+        reader.read(dataArray);
+        page.setData(new String(dataArray));
     }
 }

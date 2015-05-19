@@ -13,8 +13,6 @@ import java.io.Writer;
  */
 public class LogManagerImpl implements LogManager {
 
-    private static String LOG_FILE_NAME = "jtc.log";
-
     @Override
     public void writeLogEntry(Writer writer, LogEntry logEntry) throws IOException {
         // Write LSN.
