@@ -1,55 +1,53 @@
 package de.dis2015.jtcdbs.managers;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 
 import de.dis2015.jtcdbs.LogEntry;
 import de.dis2015.jtcdbs.LogManager;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * @author Konstantin Simon Maria Moellers
  * @version 2015-05-19
  */
 public class LogManagerImpl implements LogManager {
+
     private static String LOG_FILE_NAME = "jtc.log";
 
     @Override
-    public void writeLogEntry(BufferedWriter writer, LogEntry logEntry) throws IOException {
+    public void writeLogEntry(Writer writer, LogEntry logEntry) throws IOException {
         // Write LSN.
         writer.write(logEntry.getLSN());
-        writer.write(";");
 
         // Write log entry class name.
-        writer.write(logEntry.getClass().getName());
-        writer.write(";");
+        String className = logEntry.getClass().getName();
+        writer.write(className.length());
+        writer.write(className.toCharArray());
 
         // Write rest of log entry content.
         logEntry.write(writer);
 
         // New line to end it.
-        writer.newLine();
+        writer.write("\n");
     }
 
     @Override
-    public LogEntry readLogEntry(BufferedReader reader) throws IOException {
-        // Resolve line for entry.
-        String line = reader.readLine();
-
+    public LogEntry readLogEntry(Reader reader) throws IOException {
         // Read LSN.
-        int lsnEnd = line.indexOf(";");
-        String lsnStr = line.substring(0, lsnEnd);
+        int lsn = reader.read();
 
         // Read entry class name.
-        int classNameEnd = line.indexOf(";", lsnEnd + 1);
-        String className = line.substring(lsnEnd + 1, classNameEnd);
-
-        // Skip read information.
-        reader.skip(classNameEnd + 1);
+        char[] classNameArray = new char[reader.read()];
+        reader.read(classNameArray);
+        String className = new String(classNameArray);
 
         // Create log entry and read rest of content.
-        LogEntry logEntry = createLogEntry(Integer.parseInt(lsnStr), className);
+        LogEntry logEntry = createLogEntry(lsn, className);
         logEntry.read(reader);
+
+        // Skip new line.
+        reader.skip(1);
 
         return logEntry;
     }

@@ -1,8 +1,8 @@
 package de.dis2015.jtcdbs.log.entries;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -38,7 +38,7 @@ final public class PageWriteLogEntry extends AbstractLogEntry {
     }
 
     @Override
-    public void write(BufferedWriter writer) throws IOException {
+    public void write(Writer writer) throws IOException {
         writer.write(pageId);
         writer.write(transactionId);
         writer.write(redoData.length());
@@ -46,7 +46,7 @@ final public class PageWriteLogEntry extends AbstractLogEntry {
     }
 
     @Override
-    public void read(BufferedReader reader) throws IOException {
+    public void read(Reader reader) throws IOException {
         pageId = reader.read();
         transactionId = reader.read();
         char[] redoData = new char[reader.read()];

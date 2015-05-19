@@ -3,6 +3,8 @@ package de.dis2015.jtcdbs;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -10,9 +12,9 @@ import java.io.IOException;
  */
 public interface LogManager {
 
-    void writeLogEntry(BufferedWriter writer, LogEntry logEntry) throws IOException;
+    void writeLogEntry(Writer writer, LogEntry logEntry) throws IOException;
 
-    LogEntry readLogEntry(BufferedReader reader) throws IOException;
+    LogEntry readLogEntry(Reader reader) throws IOException;
 
     boolean isRecoveryNeeded();
 

@@ -1,8 +1,8 @@
 package de.dis2015.jtcdbs;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -10,11 +10,29 @@ import java.io.IOException;
  */
 public interface LogEntry {
 
+    /**
+     * Returns the LSN associated with this log entry.
+     */
     int getLSN();
 
+    /**
+     * Sets the LSN associated with this log entry.
+     */
     void setLSN(int lsn);
 
-    void write(BufferedWriter writer) throws IOException;
+    /**
+     * Writes entry details.
+     *
+     * @param writer Writer to write on.
+     * @throws IOException when writing fails.
+     */
+    void write(Writer writer) throws IOException;
 
-    void read(BufferedReader reader) throws IOException;
+    /**
+     * Reads entry details.
+     *
+     * @param reader Reader to read from.
+     * @throws IOException when reading fails.
+     */
+    void read(Reader reader) throws IOException;
 }
