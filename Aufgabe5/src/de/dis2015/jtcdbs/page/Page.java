@@ -6,21 +6,21 @@ package de.dis2015.jtcdbs.page;
  *
  */
 public class Page {
-	private int _pageNo;
+	private int _pageId;
 	private int _lsn;
 	private String _data;
 	
-	public Page(int pageNo, int lsn, String data) {
-		this._pageNo = pageNo;
+	public Page(int pageId, int lsn, String data) {
+		this._pageId = pageId;
 		this._lsn = lsn;
 		this._data = data;
 	}
 	
-	public int getPageNo() {
-		return _pageNo;
+	public int getPageId() {
+		return _pageId;
 	}
-	public void setPageNo(int _pageNo) {
-		this._pageNo = _pageNo;
+	public void setPageId(int _pageId) {
+		this._pageId = _pageId;
 	}
 	public int getLSN() {
 		return _lsn;

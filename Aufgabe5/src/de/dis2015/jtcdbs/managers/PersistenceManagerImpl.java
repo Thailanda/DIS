@@ -1,22 +1,31 @@
 package de.dis2015.jtcdbs.managers;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Random;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import de.dis2015.jtcdbs.Constants;
 import de.dis2015.jtcdbs.LSNManager;
 import de.dis2015.jtcdbs.LogManager;
 import de.dis2015.jtcdbs.PersistenceManager;
 import de.dis2015.jtcdbs.page.Page;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 
 @Singleton
 public class PersistenceManagerImpl implements PersistenceManager {
 
-	@Inject LSNManager lsnManager;
-	@Inject LogManager logManager;
+	private static final int _bufferThreshold = 5;
+	
+	private static Random _transactRandom;
+
+	@Inject
+	LSNManager lsnManager;
+	@Inject
+	LogManager logManager;
 
 	private static HashMap<Integer, Page> _buffer; // The buffer containing all
 													// currently used pages
@@ -24,62 +33,98 @@ public class PersistenceManagerImpl implements PersistenceManager {
 															// transaction
 
 	public PersistenceManagerImpl() {
-		restorePages();
-
 		System.out.println("PersistanceManagerImpl created");
+		
+		_transactRandom = new Random();
 	}
 
 	@Override
 	public int beginTransaction() {
 		int transactionId = getNextTransactionID();
 
-		System.out.println("Begin Transaction with ID: " + transactionId);
+		// TODO Log BEGIN TRANSACTION
+
+		System.out.println("Begin Transaction with ID " + transactionId);
 		_ongoingTransactions.add(transactionId);
-		
-		// TODO Use a mutex for transaction? e.g. lock a page?
 
 		return transactionId;
 	}
 
 	@Override
 	public void commit(int tx) {
-		System.out.println("Commit Transaction with ID: " + tx);
+		System.out.println("Commit Transaction with ID " + tx);
+
+		if (!_ongoingTransactions.contains(tx)) {
+			System.out.println("No ongoing transaction found with ID: " + tx
+					+ "!!");
+			return;
+		}
+
 		_ongoingTransactions.remove(tx);
-		// TODO Write Page to buffer?
+		System.out.println("Transaction with ID " + tx + " is commited");
+
+		checkBuffer();
 	}
 
 	@Override
 	public void write(int tx, int pageId, String data) {
-		// TODO Hier noch die LSN
 		int lsn = lsnManager.nextLSN();
-		insertIntoBuffer(new Page(pageId, lsn, data), true);
-//		writePage(pageId, lsn, data);
 
-		writeLogEntry(tx, pageId, data);
+		// TODO Log UPDATE
+
+		insertIntoBuffer(new Page(pageId, lsn, data), true);
+		checkBuffer();
+	}
+
+	/**
+	 * Check, whether the buffer's threshold is reached and flushes its contents
+	 * to disk if it is
+	 */
+	public void checkBuffer() {
+		System.out.println("Checking buffer...");
+		if (isBufferThresholdReached()) {
+			System.out.println("Threshold is reached, flushing buffer is mandatory...F");
+			flushBufferToDisk();
+		}
+	}
+
+	/**
+	 * Flushes all pages currently in buffer to disk and cleans the buffer
+	 */
+	private void flushBufferToDisk() {
+		System.out.println("Flushing buffer to disk...");
+		for (Page p : _buffer.values()) {
+			writePage(p.getPageId(), p.getLSN(), p.getData());
+		}
+		System.out.println("Flushing done");
+		
+		System.out.println("Clearing buffer...");
+		_buffer.clear();
+		System.out.println("Clearing buffer done");
+	}
+
+	/**
+	 * Returns whether the maximum of pages in the buffer is reached
+	 * 
+	 * @return
+	 */
+	private boolean isBufferThresholdReached() {
+		return _buffer.size() >= _bufferThreshold;
 	}
 
 	/**
 	 * Insert a page into the buffer
 	 * 
-	 * @param page
-	 * @param overwrite
+	 * @param page The page to be written
+	 * @param overwrite Whether a page should be overwritten in the buffer
 	 */
 	private void insertIntoBuffer(Page page, boolean overwrite) {
-		if (_buffer.containsKey(page.getPageNo()) && !overwrite) {
+		if (_buffer.containsKey(page.getPageId()) && !overwrite) {
 			return;
 		}
 
-		_buffer.put(page.getPageNo(), page);
-	}
-
-	/**
-	 * Restores the buffer after a restart -> Reads all pages from the disk and
-	 * inserts their contents into the buffer
-	 */
-	private void restorePages() {
-		// TODO Auto-generated method stub
-
-		// TODOset _lastLSN to max from buffer + 1;
+		System.out.println("Page with ID " + page.getPageId() + " stored in buffer");
+		_buffer.put(page.getPageId(), page); 
 	}
 
 	/**
@@ -88,12 +133,14 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 * @param pageId
 	 * @param lsn
 	 * @param data
-	 * @return Whether the page was written sucessfully or not
+	 * @return Whether the page was written successfully or not
 	 */
 	private boolean writePage(int pageId, int lsn, String data) {
-		String fileName = Constants.getPersistenceStoragePath() + pageId + Constants.getFileExtensionPage();
+		String fileName = Constants.getPersistenceStoragePath() + pageId
+				+ Constants.getFileExtensionPage();
 		try (FileWriter fw = new FileWriter(fileName)) {
-			fw.write(pageId + Constants.getSeparator() + lsn + Constants.getSeparator() + data);
+			fw.write(pageId + Constants.getSeparator() + lsn
+					+ Constants.getSeparator() + data);
 			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -105,39 +152,18 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	}
 
 	/**
-	 * Write a log entry for the given transaction and page
-	 * 
-	 * @param tx
-	 * @param pageId
-	 * @param data
-	 * @return Whether the log was written sucessfully or not
-	 */
-	private boolean writeLogEntry(int tx, int pageId, String data) {
-		try {
-			FileWriter fw = new FileWriter(Constants.getLogPath() + tx + "."
-					+ pageId + Constants.getFileExtensionLogEntry());
-
-			fw.write(tx + Constants.getSeparator() + pageId
-					+ Constants.getSeparator() + getNextLSN()
-					+ Constants.getSeparator() + data);
-			fw.flush();
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		// Log successfully written
-		return true;
-	}
-
-	/**
-	 * Return the next unused transaction ID
+	 * Returns an random unused Transaction ID
 	 * 
 	 * @return
 	 */
 	private int getNextTransactionID() {
-		// TODO return correct TransactionID not already in use
-		return 0;
+		int i = _transactRandom.nextInt();
+		
+		while (_ongoingTransactions.contains(i))
+		{
+			i = _transactRandom.nextInt();
+		}
+		
+		return i;
 	}
 }

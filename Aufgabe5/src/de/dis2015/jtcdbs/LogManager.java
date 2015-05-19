@@ -17,4 +17,6 @@ public interface LogManager {
     boolean isRecoveryNeeded();
 
     void doRecovery();
+    
+    LogEntry createLogEntry(int lsn, String className);
 }

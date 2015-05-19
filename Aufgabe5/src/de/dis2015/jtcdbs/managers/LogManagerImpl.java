@@ -1,15 +1,11 @@
 package de.dis2015.jtcdbs.managers;
 
-import de.dis2015.jtcdbs.LogEntry;
-import de.dis2015.jtcdbs.LogManager;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+
+import de.dis2015.jtcdbs.LogEntry;
+import de.dis2015.jtcdbs.LogManager;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -72,13 +68,16 @@ public class LogManagerImpl implements LogManager {
     /**
      * Creates a log entry for a LSN and a class name.
      */
-    private LogEntry createLogEntry(int lsn, String className) {
+    @Override
+    public LogEntry createLogEntry(int lsn, String className) {
         try {
             Class<?> clazz = Class.forName(className);
             LogEntry entry = (LogEntry) clazz.newInstance();
             entry.setLSN(lsn);
+            return entry;
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
