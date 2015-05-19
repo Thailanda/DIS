@@ -2,9 +2,7 @@ package de.dis2015.jtcdbs.recovery;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 
 import com.google.inject.Inject;
 
