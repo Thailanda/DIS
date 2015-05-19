@@ -1,14 +1,15 @@
 package de.dis2015.jtcdbs.managers;
 
+import com.google.inject.Singleton;
+import de.dis2015.jtcdbs.Constants;
+import de.dis2015.jtcdbs.PersistenceManager;
+import de.dis2015.jtcdbs.page.Page;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import de.dis2015.jtcdbs.Constants;
-import de.dis2015.jtcdbs.PersistenceManager;
-import de.dis2015.jtcdbs.page.Page;
-
+@Singleton
 public class PersistenceManagerImpl implements PersistenceManager {
 
 	private static HashMap<Integer, Page> _buffer; // The buffer containing all
