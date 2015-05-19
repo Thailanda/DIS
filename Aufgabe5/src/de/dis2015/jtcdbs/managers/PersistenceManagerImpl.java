@@ -86,15 +86,10 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 * @return Whether the page was written sucessfully or not
 	 */
 	private boolean writePage(int pageId, int lsn, String data) {
-		try {
-			FileWriter fw = new FileWriter(
-					Constants.getPersistancestoragepath() + pageId
-							+ Constants.getFileExtensionPage());
-
-			fw.write(pageId + Constants.getSeparator() + lsn
-					+ Constants.getSeparator() + data);
+		String fileName = Constants.getPersistenceStoragePath() + pageId + Constants.getFileExtensionPage();
+		try (FileWriter fw = new FileWriter(fileName)) {
+			fw.write(pageId + Constants.getSeparator() + lsn + Constants.getSeparator() + data);
 			fw.flush();
-			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
