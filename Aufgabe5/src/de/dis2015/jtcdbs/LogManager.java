@@ -1,7 +1,5 @@
 package de.dis2015.jtcdbs;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;

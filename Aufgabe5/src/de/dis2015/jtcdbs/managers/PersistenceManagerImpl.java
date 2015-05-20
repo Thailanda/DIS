@@ -82,8 +82,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
 			e.printStackTrace();
 		}
 
-//		insertIntoBuffer(page, true);
-//		checkBuffer();
+		insertIntoBuffer(page, true);
+		checkBuffer();
 	}
 
 	/**
