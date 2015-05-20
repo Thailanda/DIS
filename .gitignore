@@ -5,3 +5,4 @@ out
 .idea
 .metadata
 !*lib/*.jar
+jtc.log

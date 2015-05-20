@@ -9,7 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class LSNManagerImpl implements LSNManager {
 
-    private AtomicInteger lsn;
+    private final AtomicInteger lsn;
+
+    public LSNManagerImpl() {
+        this.lsn = new AtomicInteger();
+    }
 
     @Override
     public int nextLSN() {
