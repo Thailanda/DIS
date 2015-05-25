@@ -62,7 +62,14 @@ public class PersistenceManagerImpl implements PersistenceManager {
 					+ "!!");
 			return;
 		}
-
+		
+		//log commit so a redo is possible
+		int dummyPage = Constants.getCommitPage();
+		int lsn = lsnManager.nextLSN();
+		String commitMsg = Constants.getCommitMessage();
+		Page page = new Page(dummyPage, lsn, commitMsg);
+		writeLog(page, tx);
+		
 		_ongoingTransactions.remove(tx);
 		System.out.println("Transaction with ID " + tx + " is commited");
 
@@ -75,15 +82,20 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		Page page = new Page(pageId, lsn, data);
 
 		// Write a log entry.
+		writeLog(page, tx);
+
+		insertIntoBuffer(page, true);
+		checkBuffer();
+	}
+	
+	private void writeLog(Page page, int tx) {
+		
 		try (FileWriter writer = new FileWriter(LOG_FILE_NAME, true)) {
 			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page, tx);
 			logManager.writeLogEntry(writer, pageWriteLogEntry);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		insertIntoBuffer(page, true);
-		checkBuffer();
 	}
 
 	/**

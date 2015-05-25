@@ -30,12 +30,12 @@ public class RecoveryManager {
 	 * Decides, whether a recovery is necessary of the page given
 	 * @param fileContents
 	 */
-	private void decideUndo(String fileContents) {
+	private void decideRedo(String fileContents) {
 		String[] comp = fileContents.split(";");
 
-		// TODO Decide whether to perform an undo or not based on LSN in log and
+		// TODO Decide whether to perform an redo or not based on LSN in log and
 		// in pages in buffer
-		undo(Integer.parseInt(comp[0]), Integer.parseInt(comp[1]),
+		redo(Integer.parseInt(comp[0]), Integer.parseInt(comp[1]),
 				Integer.parseInt(comp[2]), comp[3]);
 	}
 
@@ -46,7 +46,7 @@ public class RecoveryManager {
 	 * @param lsn
 	 * @param data
 	 */
-	private void undo(int txId, int pageId, int lsn, String data) {
+	private void redo(int txId, int pageId, int lsn, String data) {
 		// TODO undo pages in buffer if lsn in log > lsn of page id in buffer
 	}
 
@@ -77,7 +77,7 @@ public class RecoveryManager {
 												// line in the file
 			rdr.close();
 
-			decideUndo(contents);
+			decideRedo(contents);
 		} catch (Exception e) {
 			System.out.println("Page could not be read at: " + page.getPath());
 			e.printStackTrace();
