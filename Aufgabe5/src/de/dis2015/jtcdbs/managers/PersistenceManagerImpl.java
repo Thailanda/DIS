@@ -45,7 +45,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	public int beginTransaction() {
 		int transactionId = getNextTransactionID();
 
-		// TODO Log BEGIN TRANSACTION
+		String beginMsg = Constants.getBeginTransactionMessage();
+		writeLogMessage(transactionId, beginMsg);
 
 		System.out.println("Begin Transaction with ID " + transactionId);
 		_ongoingTransactions.add(transactionId);
@@ -64,11 +65,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		}
 		
 		//log commit so a redo is possible
-		int dummyPage = Constants.getCommitPage();
-		int lsn = lsnManager.nextLSN();
 		String commitMsg = Constants.getCommitMessage();
-		Page page = new Page(dummyPage, lsn, commitMsg);
-		writeLog(page, tx);
+		writeLogMessage(tx, commitMsg);
 		
 		_ongoingTransactions.remove(tx);
 		System.out.println("Transaction with ID " + tx + " is commited");
@@ -88,16 +86,6 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		checkBuffer();
 	}
 	
-	private void writeLog(Page page, int tx) {
-		
-		try (FileWriter writer = new FileWriter(LOG_FILE_NAME, true)) {
-			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page, tx);
-			logManager.writeLogEntry(writer, pageWriteLogEntry);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Check, whether the buffer's threshold is reached and flushes its contents
 	 * to disk if it is
@@ -187,5 +175,31 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		}
 		
 		return i;
+	}
+
+	/**
+	 * Write page information into log
+	 */
+	private void writeLog(Page page, int tx) {
+		
+		try (FileWriter writer = new FileWriter(LOG_FILE_NAME, true)) {
+			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page, tx);
+			logManager.writeLogEntry(writer, pageWriteLogEntry);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Write messages related to a certain transaction into log 
+	 * @param tx id of the Transaction
+	 * @param msg message e.g. a commit message
+	 */
+	private void writeLogMessage(int tx, String msg) {
+		
+		int dummyPage = Constants.getCommitPage();
+		int lsn = lsnManager.nextLSN();
+		Page page = new Page(dummyPage, lsn, msg);
+		writeLog(page, tx);
 	}
 }

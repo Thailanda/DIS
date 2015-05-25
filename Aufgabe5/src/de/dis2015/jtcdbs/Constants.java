@@ -6,6 +6,7 @@ public class Constants {
 	private static final String _fileExtensionPage = ".ppg"; // ppg ~ PersistentPaGe
 	private static final String _fileExtensionLogEntry = ".plog"; // plog ~ PageLog
 	private static final String _separator = ";";
+	private static final String _beginTransactionMsg = "BOT";
 	private static final String _commitMsg = "commit";
 	private static final int _commitPage = 999; // used during the loging of a commit of a transaction
 	
@@ -27,6 +28,10 @@ public class Constants {
 
 	public static String getSeparator() {
 		return _separator;
+	}
+	
+	public static String getBeginTransactionMessage() {
+		return _beginTransactionMsg;
 	}
 	
 	public static String getCommitMessage() {
