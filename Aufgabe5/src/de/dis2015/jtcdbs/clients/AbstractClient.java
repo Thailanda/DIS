@@ -10,7 +10,7 @@ import java.util.Random;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-05-13
  */
-abstract class AbstractClient extends Thread implements Client {
+public abstract class AbstractClient extends Thread implements Client {
 
     @Inject PersistenceManager persistenceManager;
 
@@ -35,7 +35,7 @@ abstract class AbstractClient extends Thread implements Client {
 
     @Override
     public final void run() {
-        while (this.isShutdown) {
+        while (!this.isShutdown) {
             takeActions();
         }
     }

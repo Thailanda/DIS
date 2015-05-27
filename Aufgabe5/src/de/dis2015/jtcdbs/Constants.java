@@ -1,14 +1,14 @@
 package de.dis2015.jtcdbs;
 
 public class Constants {
-	private static final String _persistenceStoragePath = "persistentDataStorage/";
-	private static final String _logPath = "logStorage/";
+	private static final String _persistenceStoragePath = "resources/persistentDataStorage/";
+	private static final String _logPath = "resources/logStorage/";
 	private static final String _fileExtensionPage = ".ppg"; // ppg ~ PersistentPaGe
 	private static final String _fileExtensionLogEntry = ".plog"; // plog ~ PageLog
 	private static final String _separator = ";";
 	private static final String _beginTransactionMsg = "BOT";
 	private static final String _commitMsg = "commit";
-	private static final int _commitPage = 999; // used during the loging of a commit of a transaction
+	private static final int _commitPage = 999; // used during the logging of a commit of a transaction
 	
 	public static String getPersistenceStoragePath() {
 		return _persistenceStoragePath;

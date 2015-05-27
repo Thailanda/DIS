@@ -2,6 +2,7 @@ package de.dis2015.jtcdbs;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import  de.dis2015.jtcdbs.clients.AbstractClient;
 import de.dis2015.jtcdbs.clients.Alice;
 import de.dis2015.jtcdbs.clients.Bob;
 import de.dis2015.jtcdbs.clients.Caesar;
@@ -22,10 +23,16 @@ public class JtcDbsApplication {
         Injector injector = Guice.createInjector(new JtcDbsModule());
 
         // Create clients.
-        injector.getInstance(Alice.class);
-        injector.getInstance(Bob.class);
-        injector.getInstance(Caesar.class);
-        injector.getInstance(Dimitri.class);
-        injector.getInstance(Eberhardt.class);
+        AbstractClient a = injector.getInstance(Alice.class);
+        AbstractClient b = injector.getInstance(Bob.class);
+        AbstractClient c = injector.getInstance(Caesar.class);
+        AbstractClient d = injector.getInstance(Dimitri.class);
+        AbstractClient e = injector.getInstance(Eberhardt.class);
+
+        a.run();
+        b.run();
+        c.run();
+        d.run();
+        e.run();
     }
 }

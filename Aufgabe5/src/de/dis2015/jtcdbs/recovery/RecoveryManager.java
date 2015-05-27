@@ -33,7 +33,7 @@ public class RecoveryManager {
 	private void decideRedo(String fileContents) {
 		String[] comp = fileContents.split(";");
 
-		// TODO Decide whether to perform an redo or not based on LSN in log and
+		// TODO Decide whether to perform a redo or not based on LSN in log and
 		// in pages in buffer
 		redo(Integer.parseInt(comp[0]), Integer.parseInt(comp[1]),
 				Integer.parseInt(comp[2]), comp[3]);
@@ -47,7 +47,7 @@ public class RecoveryManager {
 	 * @param data
 	 */
 	private void redo(int txId, int pageId, int lsn, String data) {
-		// TODO undo pages in buffer if lsn in log > lsn of page id in buffer
+		// TODO redo pages in buffer if lsn in log > lsn of page id in buffer
 	}
 
 	

@@ -39,6 +39,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		System.out.println("PersistanceManagerImpl created");
 		
 		_transactRandom = new Random();
+		_ongoingTransactions = new HashSet<Integer>();
+		_buffer = new HashMap<Integer, Page>();
 	}
 
 	@Override
@@ -146,8 +148,10 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 * @return Whether the page was written successfully or not
 	 */
 	private boolean writePage(int pageId, int lsn, String data) {
-		String fileName = Constants.getPersistenceStoragePath() + pageId
+		 String fileName = Constants.getPersistenceStoragePath() + pageId
 				+ Constants.getFileExtensionPage();
+
+		//String fileName = new String(""+pageId+Constants.getFileExtensionPage());
 		try (FileWriter fw = new FileWriter(fileName)) {
 			fw.write(pageId + Constants.getSeparator() + lsn
 					+ Constants.getSeparator() + data);
