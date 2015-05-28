@@ -10,6 +10,13 @@ import java.io.Writer;
  */
 public interface LogManager {
 
+    /**
+     * Write a log entry with following information:
+     * lsn;pageId;transactionId;data followed by a new line
+     * (also using the separator from the Constants class)
+     *
+     * example: 1;999;261323948;BOT
+     */
     void writeLogEntry(Writer writer, LogEntry logEntry) throws IOException;
 
     LogEntry readLogEntry(Reader reader) throws IOException;

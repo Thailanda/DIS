@@ -2,6 +2,7 @@ package de.dis2015.jtcdbs.managers;
 
 import java.io.IOException;
 
+import de.dis2015.jtcdbs.Constants;
 import de.dis2015.jtcdbs.LogEntry;
 import de.dis2015.jtcdbs.LogManager;
 import java.io.Reader;
@@ -16,18 +17,21 @@ public class LogManagerImpl implements LogManager {
     @Override
     public void writeLogEntry(Writer writer, LogEntry logEntry) throws IOException {
         // Write LSN.
-        writer.write(logEntry.getLSN());
+        String lsn = logEntry.getLSNToStore();
+        writer.write(lsn + Constants.getSeparator());
 
         // Write log entry class name.
-        String className = logEntry.getClass().getName();
+        /** String className = logEntry.getClass().getName();
         writer.write(className.length());
         writer.write(className.toCharArray());
+         */
 
         // Write rest of log entry content.
         logEntry.write(writer);
 
         // New line to end it.
-        writer.write("\n");
+        //writer.write("\n");
+        writer.write(System.getProperty("line.separator"));
     }
 
     @Override

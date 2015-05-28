@@ -5,10 +5,11 @@ public class Constants {
 	private static final String _logPath = "resources/logStorage/";
 	private static final String _fileExtensionPage = ".ppg"; // ppg ~ PersistentPaGe
 	private static final String _fileExtensionLogEntry = ".plog"; // plog ~ PageLog
+	private static final String _logName = "jtc";
 	private static final String _separator = ";";
 	private static final String _beginTransactionMsg = "BOT";
 	private static final String _commitMsg = "commit";
-	private static final int _commitPage = 999; // used during the logging of a commit of a transaction
+	private static final int _defaultPageNumber = 999; // used during the logging of a commit of a transaction
 	
 	public static String getPersistenceStoragePath() {
 		return _persistenceStoragePath;
@@ -38,7 +39,7 @@ public class Constants {
 		return _commitMsg;
 	}
 	
-	public static int getCommitPage() {
-		return _commitPage;
-	}
+	public static int getDefaultPageNumber() { 	return _defaultPageNumber;	}
+
+	public static String getLogName() { return _logName;	}
 }

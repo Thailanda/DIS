@@ -1,5 +1,6 @@
 package de.dis2015.jtcdbs.log.entries;
 
+import de.dis2015.jtcdbs.Constants;
 import de.dis2015.jtcdbs.page.Page;
 import java.io.IOException;
 import java.io.Reader;
@@ -51,11 +52,13 @@ final public class PageWriteLogEntry extends AbstractLogEntry {
 
     @Override
     public void write(Writer writer) throws IOException {
-        writer.write(page.getPageId());
 
-        writer.write(transactionId);
+        String separator = Constants.getSeparator();
+        writer.write(page.getPageId()+separator);
 
-        writer.write(page.getData().length());
+        writer.write(transactionId+separator);
+
+        //writer.write(page.getData().length());
         writer.write(page.getData().toCharArray());
     }
 
@@ -68,5 +71,13 @@ final public class PageWriteLogEntry extends AbstractLogEntry {
         char[] dataArray = new char[reader.read()];
         reader.read(dataArray);
         page.setData(new String(dataArray));
+    }
+
+    @Override
+    public String getLSNToStore() {
+        Integer lsn = new Integer(page.getLSN());
+        String stringLsn = lsn.toString();
+
+        return stringLsn;
     }
 }

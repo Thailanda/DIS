@@ -35,4 +35,9 @@ public interface LogEntry {
      * @throws IOException when reading fails.
      */
     void read(Reader reader) throws IOException;
+
+    /**
+     * Returns a String representation of the lsn of the page instead of the int value
+     */
+    String getLSNToStore();
 }

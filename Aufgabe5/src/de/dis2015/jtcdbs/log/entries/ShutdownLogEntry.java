@@ -18,4 +18,10 @@ final public class ShutdownLogEntry extends AbstractLogEntry {
     public void read(Reader reader) throws IOException {
         /* Nothing to do */
     }
+
+    @Override
+    public String getLSNToStore()
+    {
+        return new String("0");
+    }
 }

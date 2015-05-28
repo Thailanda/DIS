@@ -1,5 +1,6 @@
 package de.dis2015.jtcdbs.managers;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,7 +20,7 @@ import de.dis2015.jtcdbs.page.Page;
 @Singleton
 public class PersistenceManagerImpl implements PersistenceManager {
 
-	private static String LOG_FILE_NAME = "jtc.log";
+	private static String LOG_FILE_NAME;
 
 	private static final int _bufferThreshold = 5;
 	
@@ -41,6 +42,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		_transactRandom = new Random();
 		_ongoingTransactions = new HashSet<Integer>();
 		_buffer = new HashMap<Integer, Page>();
+
+		LOG_FILE_NAME = Constants.getLogPath() + Constants.getLogName() + Constants.getFileExtensionLogEntry();
 	}
 
 	@Override
@@ -148,10 +151,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 * @return Whether the page was written successfully or not
 	 */
 	private boolean writePage(int pageId, int lsn, String data) {
-		 String fileName = Constants.getPersistenceStoragePath() + pageId
+		String fileName = Constants.getPersistenceStoragePath() + pageId
 				+ Constants.getFileExtensionPage();
-
-		//String fileName = new String(""+pageId+Constants.getFileExtensionPage());
 		try (FileWriter fw = new FileWriter(fileName)) {
 			fw.write(pageId + Constants.getSeparator() + lsn
 					+ Constants.getSeparator() + data);
@@ -185,7 +186,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 * Write page information into log
 	 */
 	private void writeLog(Page page, int tx) {
-		
+
 		try (FileWriter writer = new FileWriter(LOG_FILE_NAME, true)) {
 			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page, tx);
 			logManager.writeLogEntry(writer, pageWriteLogEntry);
@@ -201,9 +202,9 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 */
 	private void writeLogMessage(int tx, String msg) {
 		
-		int dummyPage = Constants.getCommitPage();
+		int pageNumber = Constants.getDefaultPageNumber();
 		int lsn = lsnManager.nextLSN();
-		Page page = new Page(dummyPage, lsn, msg);
+		Page page = new Page(pageNumber, lsn, msg);
 		writeLog(page, tx);
 	}
 }
