@@ -1,5 +1,6 @@
 package de.dis2015.jtcdbs.managers;
 
+import java.io.File;
 import java.io.IOException;
 
 import de.dis2015.jtcdbs.Constants;
@@ -57,7 +58,14 @@ public class LogManagerImpl implements LogManager {
     @Override
     public boolean isRecoveryNeeded() {
         // TODO
-        return true;
+        boolean recovery = true;
+        String logPath = Constants.getLogPath()+Constants.getLogName()+Constants.getFileExtensionLogEntry();
+        File logFile = new File(logPath);
+        if(!logFile.exists())
+        {
+            recovery = false;
+        }
+        return recovery;
     }
 
     @Override

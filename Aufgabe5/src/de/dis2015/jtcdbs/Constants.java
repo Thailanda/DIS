@@ -23,9 +23,7 @@ public class Constants {
 		return _fileExtensionPage;
 	}
 
-	public static String getFileExtensionLogEntry() {
-		return _fileExtensionLogEntry;
-	}
+	public static String getFileExtensionLogEntry() { return _fileExtensionLogEntry; }
 
 	public static String getSeparator() {
 		return _separator;

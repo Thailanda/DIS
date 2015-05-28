@@ -22,6 +22,12 @@ public class JtcDbsApplication {
     private JtcDbsApplication() {
         Injector injector = Guice.createInjector(new JtcDbsModule());
 
+        //Recovery
+        LogManager logManager = injector.getInstance(LogManager.class);
+        if (logManager.isRecoveryNeeded()) {
+            logManager.doRecovery();
+        }
+
         // Create clients.
         AbstractClient a = injector.getInstance(Alice.class);
         AbstractClient b = injector.getInstance(Bob.class);
