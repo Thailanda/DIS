@@ -22,10 +22,10 @@ public class LogManagerImpl implements LogManager {
         writer.write(lsn + Constants.getSeparator());
 
         // Write log entry class name.
-        /** String className = logEntry.getClass().getName();
+        String className = logEntry.getClass().getName();
         writer.write(className.length());
         writer.write(className.toCharArray());
-         */
+        writer.write(Constants.getSeparator());
 
         // Write rest of log entry content.
         logEntry.write(writer);
@@ -55,7 +55,7 @@ public class LogManagerImpl implements LogManager {
         return logEntry;
     }
 
-    @Override
+    /** @Override
     public boolean isRecoveryNeeded() {
         // TODO
         boolean recovery = true;
@@ -68,10 +68,11 @@ public class LogManagerImpl implements LogManager {
         return recovery;
     }
 
-    @Override
+     @Override
     public void doRecovery() {
         // TODO
     }
+    */
 
     /**
      * Creates a log entry for a LSN and a class name.

@@ -12,18 +12,18 @@ public interface LogManager {
 
     /**
      * Write a log entry with following information:
-     * lsn;pageId;transactionId;data followed by a new line
+     * lsn;class;pageId;transactionId;data followed by a new line
      * (also using the separator from the Constants class)
      *
-     * example: 1;999;261323948;BOT
+     * example: 1;/de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;999;-564834653;BOT
      */
     void writeLogEntry(Writer writer, LogEntry logEntry) throws IOException;
 
     LogEntry readLogEntry(Reader reader) throws IOException;
 
-    boolean isRecoveryNeeded();
+    //boolean isRecoveryNeeded();
 
-    void doRecovery();
+    //void doRecovery();
     
     LogEntry createLogEntry(int lsn, String className);
 }

@@ -8,6 +8,7 @@ import de.dis2015.jtcdbs.clients.Bob;
 import de.dis2015.jtcdbs.clients.Caesar;
 import de.dis2015.jtcdbs.clients.Dimitri;
 import de.dis2015.jtcdbs.clients.Eberhardt;
+import de.dis2015.jtcdbs.recovery.RecoveryManager;
 
 /**
  * @author Konstantin Simon Maria Moellers
@@ -23,9 +24,9 @@ public class JtcDbsApplication {
         Injector injector = Guice.createInjector(new JtcDbsModule());
 
         //Recovery
-        LogManager logManager = injector.getInstance(LogManager.class);
-        if (logManager.isRecoveryNeeded()) {
-            logManager.doRecovery();
+        RecoveryManager recoveryManager = injector.getInstance(RecoveryManager.class);
+        if (recoveryManager.isRecoveryNeeded()) {
+            recoveryManager.recover();
         }
 
         // Create clients.
