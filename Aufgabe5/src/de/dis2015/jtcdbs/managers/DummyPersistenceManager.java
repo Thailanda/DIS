@@ -21,4 +21,9 @@ public class DummyPersistenceManager implements PersistenceManager {
     public void write(int tx, int pageId, String data) {
 
     }
+
+    @Override
+    public void redoWrite(int pageId, int lsn, String data) {
+
+    }
 }

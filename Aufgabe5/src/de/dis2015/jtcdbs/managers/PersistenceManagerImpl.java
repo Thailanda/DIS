@@ -102,6 +102,10 @@ public class PersistenceManagerImpl implements PersistenceManager {
 			flushBufferToDisk();
 		}
 	}
+	@Override
+	public void redoWrite(int pageId, int lsn, String data){
+		writePage(pageId, lsn, data);
+	}
 
 	/**
 	 * Flushes all pages currently in buffer to disk and cleans the buffer

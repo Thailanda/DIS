@@ -1,18 +1,24 @@
 package de.dis2015.jtcdbs.recovery;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.LinkedList;
 
 import com.google.inject.Inject;
 
 import de.dis2015.jtcdbs.Constants;
+import de.dis2015.jtcdbs.LogEntry;
+import de.dis2015.jtcdbs.LogManager;
 import de.dis2015.jtcdbs.PersistenceManager;
+import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
+import de.dis2015.jtcdbs.managers.PersistenceManagerImpl;
+import de.dis2015.jtcdbs.page.Page;
 
 public class RecoveryManager {
 	@Inject
 	PersistenceManager manager;
+
+    @Inject
+    LogManager logManager;
 
 	public RecoveryManager() {
 		System.out.println("Recovery Manager created");
@@ -40,10 +46,15 @@ public class RecoveryManager {
         File log = new File(logPath);
         LinkedList<String> allLogEntries = readLogFile(log);
         LinkedList<String[]> winnerEntries = determineWinnerTransactions(allLogEntries);
-        decideRedo(winnerEntries);
-        //decide redo
-        //redo
-        //delete or rename the old log
+        decideRedo(winnerEntries); // also performs the redo
+
+        //backup the log and drop it
+        String oldPath = logPath + Constants.getFileExtensionBackup();
+        File oldLog = new File(oldPath);
+        if (oldLog.exists()) {
+            oldLog.delete();
+        }
+        log.renameTo(oldLog);
 		System.out.println("Recovery completed!");
 	}
 
@@ -54,19 +65,17 @@ public class RecoveryManager {
 	private void decideRedo(LinkedList<String[]> winnerContents) {
 
         while(!winnerContents.isEmpty()){
-            String[] entry = winnerContents.removeLast();
+            String[] entry = winnerContents.removeLast(); //newest winner transaction
             String lsn = entry[0];
-            String clazz = entry[1];
+            String clasName = entry[1];
             String pageNo = entry[2];
+            String transactionNo = entry[3];
             String content = entry[4];
 
             if(isWriteEntry(content) && isBetterLSN(lsn, pageNo)) {
-                //TODO
+                redo(Integer.parseInt(transactionNo), Integer.parseInt(pageNo), Integer.parseInt(lsn), content, clasName);
             }
         }
-
-        //TODO decide redo using the winner transactions and the lsn
-        //TODO redo
 	}
 
     /**
@@ -87,30 +96,34 @@ public class RecoveryManager {
      * Returns true if the lsn in the log is newer (bigger) than the one in the page
      */
     private boolean isBetterLSN(String logLSN, String pageNo) {
-        //TODO
+
         boolean isBetter = false;
         String path = Constants.getPersistenceStoragePath() + pageNo + Constants.getFileExtensionPage();
         File page = new File(path);
 
-        try {
+        if(page.exists()) {
 
-            BufferedReader rdr = new BufferedReader(new FileReader(page));
+            try {
 
-            String entry = rdr.readLine();
-            String[] comp = entry.split(Constants.getSeparator());
-            String pageLsn = comp[0];
-            rdr.close();
+                BufferedReader rdr = new BufferedReader(new FileReader(page));
 
-            isBetter = (new Integer(logLSN) > new Integer(pageLsn));
+                String entry = rdr.readLine();
+                String[] comp = entry.split(Constants.getSeparator());
+                String pageLsn = comp[0];
+                rdr.close();
 
-        } catch (Exception e) {
-            System.out.println("Page could not be read at: " + page.getPath());
-            e.printStackTrace();
+                isBetter = (new Integer(logLSN) > new Integer(pageLsn));
+
+            } catch (Exception e) {
+                System.out.println("Page could not be read at: " + page.getPath());
+                e.printStackTrace();
+            }
         }
+        else if (!page.exists()) { isBetter = true; }; //if no such page exists a redo is needed
 
         return isBetter;
-
     }
+
     /**
      * Finds out what data belongs to committed transactions
      *
@@ -120,12 +133,14 @@ public class RecoveryManager {
      */
     private LinkedList<String[]> determineWinnerTransactions(LinkedList<String> fileContents){
 
+        System.out.println("Determining winner transactions");
+
         LinkedList<String> winnerTransactions = new LinkedList<>(); //transaction id of all committed transactions
         LinkedList<String[]> winnerData = new LinkedList<>(); //data of all committed transactions
 
         while(fileContents.size() > 1) {
 
-            String entry = fileContents.removeLast();
+            String entry = fileContents.removeFirst();
             String[] comp = entry.split(Constants.getSeparator());
 
             String content = comp[4];
@@ -150,12 +165,21 @@ public class RecoveryManager {
 	 * @param lsn
 	 * @param data
 	 */
-	private void redo(int txId, int pageId, int lsn, String data) {
-		// TODO redo pages in buffer if lsn in log > lsn of page id in buffer
+	private void redo(int txId, int pageId, int lsn, String data, String cName) {
 
+        manager.redoWrite(pageId, lsn, data);
+        System.out.println("redo write on page " + pageId);
+
+        /**
+        LogEntry entry = logManager.createLogEntry(lsn, cName);
+
+        if(entry instanceof PageWriteLogEntry) {
+            manager.redoWrite(pageId, lsn, data);
+            System.out.println("redo write on page " + pageId);
+        }
+         */
 	}
 
-	
 	/**
 	 * Read all files 
 	 */
@@ -179,14 +203,13 @@ public class RecoveryManager {
 	 */
 	private LinkedList<String> readLogFile(File log) {
 
+        System.out.println("Reading log data");
+
         LinkedList<String> contents = new LinkedList<>();
         try {
 			BufferedReader rdr = new BufferedReader(new FileReader(log));
-
-
             String entry = null;
 			while((entry = rdr.readLine()) != null) {
-                entry = rdr.readLine();
                 contents.addFirst(entry); //TODO ordered entries
             }
 			rdr.close();

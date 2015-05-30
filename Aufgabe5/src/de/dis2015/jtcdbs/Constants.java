@@ -10,7 +10,8 @@ public class Constants {
 	private static final String _beginTransactionMsg = "BOT";
 	private static final String _commitMsg = "commit";
 	private static final int _defaultPageNumber = 999; // used during the logging of a commit of a transaction
-	
+	private static final String _fileExtensionBackup = ".bak";
+
 	public static String getPersistenceStoragePath() {
 		return _persistenceStoragePath;
 	}
@@ -40,4 +41,8 @@ public class Constants {
 	public static int getDefaultPageNumber() { 	return _defaultPageNumber;	}
 
 	public static String getLogName() { return _logName;	}
+
+	public static String getFileExtensionBackup() {
+		return _fileExtensionBackup;
+	}
 }

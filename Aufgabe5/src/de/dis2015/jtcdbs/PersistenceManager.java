@@ -31,4 +31,15 @@ public interface PersistenceManager {
      * @param data data to write
      */
     void write(int tx, int pageId, String data);
+
+    /**
+     * Writes the data to a given page
+     *
+     * @param pageId where to write
+     * @param lsn lsn to be overwritten in the page
+     * @param data content to be stored
+     */
+    void redoWrite(int pageId, int lsn, String data);
+
+
 }
