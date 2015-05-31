@@ -25,7 +25,7 @@ public class RecoveryManager {
 	}
 
 	public boolean isRecoveryNeeded() {
-		// TODO
+
 		boolean recovery = true;
 		String logPath = Constants.getLogPath()+Constants.getLogName()+Constants.getFileExtensionLogEntry();
 		File logFile = new File(logPath);
@@ -41,7 +41,7 @@ public class RecoveryManager {
 	public void recover() {
 		System.out.println("Starting recovery of pages...");
 		//readLogs();
-        //TODO recovery
+        //TODO undo?
         String logPath = Constants.getLogPath() + Constants.getLogName() + Constants.getFileExtensionLogEntry();
         File log = new File(logPath);
         LinkedList<String> allLogEntries = readLogFile(log);
@@ -58,7 +58,41 @@ public class RecoveryManager {
 		System.out.println("Recovery completed!");
 	}
 
-	/**
+    /**
+     * Finds out what data belongs to committed transactions
+     *
+     * @param fileContents in ascending order (by lsn)
+     * @return data of the winner transaction in descending order (lsn),
+     * the list entry is a String[] with the components of each line from fileContents
+     */
+    private LinkedList<String[]> determineWinnerTransactions(LinkedList<String> fileContents){
+
+        System.out.println("Determining winner transactions");
+
+        LinkedList<String> winnerTransactions = new LinkedList<>(); //transaction id of all committed transactions
+        LinkedList<String[]> winnerData = new LinkedList<>(); //data of all committed transactions
+
+        while(fileContents.size() > 1) {
+
+            String entry = fileContents.removeFirst();
+            String[] comp = entry.split(Constants.getSeparator());
+
+            String content = comp[4];
+            String transaction = comp[3];
+            if (content.equals(Constants.getCommitMessage()))  {
+                winnerTransactions.add(transaction);
+                winnerData.add(comp);
+            }
+            else if(winnerTransactions.contains(transaction)) {
+                winnerData.add(comp);
+            }
+
+        }
+
+        return winnerData;
+    }
+
+    /**
 	 * Decides, whether a recovery is necessary of the page given
 	 * @param winnerContents has to be ordered descending by the lsn
 	 */
@@ -124,40 +158,6 @@ public class RecoveryManager {
         return isBetter;
     }
 
-    /**
-     * Finds out what data belongs to committed transactions
-     *
-     * @param fileContents in ascending order (by lsn)
-     * @return data of the winner transaction in descending order (lsn),
-     * the list entry is a String[] with the components of each line from fileContents
-     */
-    private LinkedList<String[]> determineWinnerTransactions(LinkedList<String> fileContents){
-
-        System.out.println("Determining winner transactions");
-
-        LinkedList<String> winnerTransactions = new LinkedList<>(); //transaction id of all committed transactions
-        LinkedList<String[]> winnerData = new LinkedList<>(); //data of all committed transactions
-
-        while(fileContents.size() > 1) {
-
-            String entry = fileContents.removeFirst();
-            String[] comp = entry.split(Constants.getSeparator());
-
-            String content = comp[4];
-            String transaction = comp[3];
-            if (content.equals(Constants.getCommitMessage()))  {
-                winnerTransactions.add(transaction);
-                winnerData.add(comp);
-            }
-            else if(winnerTransactions.contains(transaction)) {
-                winnerData.add(comp);
-            }
-
-        }
-
-        return winnerData;
-    }
-
 	/**
 	 * Redoes a transaction in the buffer
 	 * @param txId
@@ -185,7 +185,7 @@ public class RecoveryManager {
 	 */
 	private void readLogs() {
 
-        //TODO use only the new log file that was not recovered
+        //TODO use only the new log file that was not recovered (implemented in readLogFile(File log))
         for (final File log : new File(Constants.getLogPath()).listFiles()) {
 			if (!log.isDirectory()) {
 				readLogFile(log);
@@ -210,7 +210,7 @@ public class RecoveryManager {
 			BufferedReader rdr = new BufferedReader(new FileReader(log));
             String entry = null;
 			while((entry = rdr.readLine()) != null) {
-                contents.addFirst(entry); //TODO ordered entries
+                contents.addFirst(entry);
             }
 			rdr.close();
 

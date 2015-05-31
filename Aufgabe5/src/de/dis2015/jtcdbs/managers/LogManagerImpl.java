@@ -57,7 +57,7 @@ public class LogManagerImpl implements LogManager {
 
     /** @Override
     public boolean isRecoveryNeeded() {
-        // TODO
+        // TODO moved to RecoveryManager
         boolean recovery = true;
         String logPath = Constants.getLogPath()+Constants.getLogName()+Constants.getFileExtensionLogEntry();
         File logFile = new File(logPath);
@@ -70,7 +70,7 @@ public class LogManagerImpl implements LogManager {
 
      @Override
     public void doRecovery() {
-        // TODO
+        // TODO  moved to RecoveryManager
     }
     */
 

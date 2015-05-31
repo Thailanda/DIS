@@ -1,6 +1,5 @@
 package de.dis2015.jtcdbs.managers;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
 import java.io.FileWriter;
 import java.io.IOException;
