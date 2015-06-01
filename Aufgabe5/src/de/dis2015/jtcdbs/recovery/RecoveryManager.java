@@ -1,17 +1,15 @@
 package de.dis2015.jtcdbs.recovery;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.LinkedList;
 
 import com.google.inject.Inject;
 
 import de.dis2015.jtcdbs.Constants;
-import de.dis2015.jtcdbs.LogEntry;
 import de.dis2015.jtcdbs.LogManager;
 import de.dis2015.jtcdbs.PersistenceManager;
-import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
-import de.dis2015.jtcdbs.managers.PersistenceManagerImpl;
-import de.dis2015.jtcdbs.page.Page;
 
 public class RecoveryManager {
 	@Inject
@@ -180,21 +178,21 @@ public class RecoveryManager {
          */
 	}
 
-	/**
-	 * Read all files 
-	 */
-	private void readLogs() {
-
-        //TODO use only the new log file that was not recovered (implemented in readLogFile(File log))
-        for (final File log : new File(Constants.getLogPath()).listFiles()) {
-			if (!log.isDirectory()) {
-				readLogFile(log);
-			} else {
-				// There is a directory that does not belong here...
-				System.out.println(log.getName());
-			}
-		}
-	}
+//	/**
+//	 * Read all files 
+//	 */
+//	private void readLogs() {
+//
+//        //TODO use only the new log file that was not recovered (implemented in readLogFile(File log))
+//        for (final File log : new File(Constants.getLogPath()).listFiles()) {
+//			if (!log.isDirectory()) {
+//				readLogFile(log);
+//			} else {
+//				// There is a directory that does not belong here...
+//				System.out.println(log.getName());
+//			}
+//		}
+//	}
 
 	/**
 	 * Read a log-file and decide what to do with it

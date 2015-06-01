@@ -1,13 +1,12 @@
 package de.dis2015.jtcdbs.managers;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 import de.dis2015.jtcdbs.Constants;
 import de.dis2015.jtcdbs.LogEntry;
 import de.dis2015.jtcdbs.LogManager;
-import java.io.Reader;
-import java.io.Writer;
 
 /**
  * @author Konstantin Simon Maria Moellers

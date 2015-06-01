@@ -1,10 +1,10 @@
 package de.dis2015.jtcdbs.managers;
 
-import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 
 import com.google.inject.Inject;
@@ -14,6 +14,7 @@ import de.dis2015.jtcdbs.Constants;
 import de.dis2015.jtcdbs.LSNManager;
 import de.dis2015.jtcdbs.LogManager;
 import de.dis2015.jtcdbs.PersistenceManager;
+import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
 import de.dis2015.jtcdbs.page.Page;
 
 @Singleton
@@ -22,7 +23,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	private static String LOG_FILE_NAME;
 
 	private static final int _bufferThreshold = 5;
-	
+
 	private static Random _transactRandom;
 
 	@Inject
@@ -32,17 +33,23 @@ public class PersistenceManagerImpl implements PersistenceManager {
 
 	private static HashMap<Integer, Page> _buffer; // The buffer containing all
 													// currently used pages
-	private static HashSet<Integer> _ongoingTransactions; // A list of ongoing
-															// transaction
+	private static HashMap<Integer, ArrayList<Integer>> _ongoingTransactions; // A
+																				// list
+																				// of
+																				// ongoing
+
+	// transaction
 
 	public PersistenceManagerImpl() {
 		System.out.println("PersistanceManagerImpl created");
-		
+
 		_transactRandom = new Random();
-		_ongoingTransactions = new HashSet<Integer>();
+		// Ongoing transaction IDs and corresponding pageIds
+		_ongoingTransactions = new HashMap<Integer, ArrayList<Integer>>();
 		_buffer = new HashMap<Integer, Page>();
 
-		LOG_FILE_NAME = Constants.getLogPath() + Constants.getLogName() + Constants.getFileExtensionLogEntry();
+		LOG_FILE_NAME = Constants.getLogPath() + Constants.getLogName()
+				+ Constants.getFileExtensionLogEntry();
 	}
 
 	@Override
@@ -53,7 +60,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		writeLogMessage(transactionId, beginMsg);
 
 		System.out.println("Begin Transaction with ID " + transactionId);
-		_ongoingTransactions.add(transactionId);
+		_ongoingTransactions.put(transactionId, new ArrayList<Integer>());
 
 		return transactionId;
 	}
@@ -62,17 +69,18 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	public void commit(int tx) {
 		System.out.println("Commit Transaction with ID " + tx);
 
-		if (!_ongoingTransactions.contains(tx)) {
+		if (!_ongoingTransactions.containsKey(tx)) {
 			System.out.println("No ongoing transaction found with ID: " + tx
 					+ "!!");
 			return;
 		}
-		
-		//log commit so a redo is possible
+
+		// log commit so a redo is possible
 		String commitMsg = Constants.getCommitMessage();
 		writeLogMessage(tx, commitMsg);
-		
+
 		_ongoingTransactions.remove(tx);
+
 		System.out.println("Transaction with ID " + tx + " is commited");
 
 		checkBuffer();
@@ -86,10 +94,15 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		// Write a log entry.
 		writeLog(page, tx);
 
+		// Add pageId to transaction
+		if (!_ongoingTransactions.get(tx).contains(pageId)) {
+			_ongoingTransactions.get(tx).add(pageId);
+		}
+
 		insertIntoBuffer(page, true);
 		checkBuffer();
 	}
-	
+
 	/**
 	 * Check, whether the buffer's threshold is reached and flushes its contents
 	 * to disk if it is
@@ -97,12 +110,14 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	public void checkBuffer() {
 		System.out.println("Checking buffer...");
 		if (isBufferThresholdReached()) {
-			System.out.println("Threshold is reached, flushing buffer is mandatory...F");
+			System.out
+					.println("Threshold is reached, flushing buffer is mandatory");
 			flushBufferToDisk();
 		}
 	}
+
 	@Override
-	public void redoWrite(int pageId, int lsn, String data){
+	public void redoWrite(int pageId, int lsn, String data) {
 		writePage(pageId, lsn, data);
 	}
 
@@ -112,10 +127,16 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	private void flushBufferToDisk() {
 		System.out.println("Flushing buffer to disk...");
 		for (Page p : _buffer.values()) {
-			writePage(p.getPageId(), p.getLSN(), p.getData());
+			// Write only pages from committed transaction to disk
+			if (isPageComitted(p.getPageId())) {
+				writePage(p.getPageId(), p.getLSN(), p.getData());
+			}
+			else {
+				System.out.println("Transaction with Page (Id " + p.getPageId() + ") is not yet committed");
+			}
 		}
 		System.out.println("Flushing done");
-		
+
 		System.out.println("Clearing buffer...");
 		_buffer.clear();
 		System.out.println("Clearing buffer done");
@@ -127,22 +148,46 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 * @return
 	 */
 	private boolean isBufferThresholdReached() {
-		return _buffer.size() >= _bufferThreshold;
+		int pUncommitted = 0;
+
+		for (Page p : _buffer.values()) {
+			if (!isPageComitted(p.getPageId())) {
+				pUncommitted++;
+			}
+		}
+
+		// Pages in buffer - uncommitted = committed
+		return (_buffer.size() - pUncommitted) >= _bufferThreshold;
+	}
+
+	private boolean isPageComitted(int pageID) {
+		boolean result = true;
+
+		for (ArrayList<Integer> ong : _ongoingTransactions.values()) {
+			if (ong.contains(pageID)) {
+				result = false;
+			}
+		}
+
+		return result;
 	}
 
 	/**
 	 * Insert a page into the buffer
 	 * 
-	 * @param page The page to be written
-	 * @param overwrite Whether a page should be overwritten in the buffer
+	 * @param page
+	 *            The page to be written
+	 * @param overwrite
+	 *            Whether a page should be overwritten in the buffer
 	 */
 	private void insertIntoBuffer(Page page, boolean overwrite) {
 		if (_buffer.containsKey(page.getPageId()) && !overwrite) {
 			return;
 		}
 
-		System.out.println("Page with ID " + page.getPageId() + " stored in buffer");
-		_buffer.put(page.getPageId(), page); 
+		System.out.println("Page with ID " + page.getPageId()
+				+ " stored in buffer");
+		_buffer.put(page.getPageId(), page);
 	}
 
 	/**
@@ -156,7 +201,20 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	private boolean writePage(int pageId, int lsn, String data) {
 		String fileName = Constants.getPersistenceStoragePath() + pageId
 				+ Constants.getFileExtensionPage();
-		try (FileWriter fw = new FileWriter(fileName)) {
+		System.out.println(fileName);
+
+		File f = new File(fileName);
+		if (!f.exists()) {
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		try (FileWriter fw = new FileWriter(f)) {
 			fw.write(pageId + Constants.getSeparator() + lsn
 					+ Constants.getSeparator() + data);
 			fw.flush();
@@ -176,12 +234,11 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 */
 	private int getNextTransactionID() {
 		int i = _transactRandom.nextInt();
-		
-		while (_ongoingTransactions.contains(i))
-		{
+
+		while (_ongoingTransactions.containsKey(i)) {
 			i = _transactRandom.nextInt();
 		}
-		
+
 		return i;
 	}
 
@@ -190,21 +247,37 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 */
 	private void writeLog(Page page, int tx) {
 
-		try (FileWriter writer = new FileWriter(LOG_FILE_NAME, true)) {
-			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page, tx);
+		System.out.println(LOG_FILE_NAME);
+
+		File f = new File(LOG_FILE_NAME);
+		if (!f.exists()) {
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+
+		try (FileWriter writer = new FileWriter(f, true)) {
+			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page,
+					tx);
 			logManager.writeLogEntry(writer, pageWriteLogEntry);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Write messages related to a certain transaction into log 
-	 * @param tx id of the Transaction
-	 * @param msg message e.g. a commit message
+	 * Write messages related to a certain transaction into log
+	 * 
+	 * @param tx
+	 *            id of the Transaction
+	 * @param msg
+	 *            message e.g. a commit message
 	 */
 	private void writeLogMessage(int tx, String msg) {
-		
+
 		int pageNumber = Constants.getDefaultPageNumber();
 		int lsn = lsnManager.nextLSN();
 		Page page = new Page(pageNumber, lsn, msg);
