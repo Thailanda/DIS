@@ -204,15 +204,9 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		System.out.println(fileName);
 
 		File f = new File(fileName);
-		if (!f.exists()) {
-			try {
-				f.createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return false;
-			}
-		}
+
+		// Check whether file already exists, create it if not
+		ensureFileExists(f);
 
 		try (FileWriter fw = new FileWriter(f)) {
 			fw.write(pageId + Constants.getSeparator() + lsn
@@ -225,6 +219,25 @@ public class PersistenceManagerImpl implements PersistenceManager {
 
 		// Page successfully written
 		return true;
+	}
+
+	private void ensureFileExists(File f) {
+		if (!f.exists()) {
+			try {
+				// Create parent directories
+				if (!f.getParentFile().isDirectory() && !f.getParentFile().mkdirs()) {
+					throw new IOException("Could not create parent directories for persistence!");
+				}
+
+				// Create file itself
+				if (!f.createNewFile()) {
+					throw new IOException("Could not create file for persistence!");
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -250,14 +263,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		System.out.println(LOG_FILE_NAME);
 
 		File f = new File(LOG_FILE_NAME);
-		if (!f.exists()) {
-			try {
-				f.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return;
-			}
-		}
+		ensureFileExists(f);
 
 		try (FileWriter writer = new FileWriter(f, true)) {
 			PageWriteLogEntry pageWriteLogEntry = new PageWriteLogEntry(page,
