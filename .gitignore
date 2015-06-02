@@ -6,3 +6,7 @@ out
 .metadata
 !*lib/*.jar
 jtc.log
+
+# Application log
+logStorage/
+persistentDataStorage/
