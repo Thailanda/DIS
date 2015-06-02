@@ -1,21 +1,20 @@
 package de.dis2015.jtcdbs.managers;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import de.dis2015.jtcdbs.Constants;
 import de.dis2015.jtcdbs.LSNManager;
 import de.dis2015.jtcdbs.LogManager;
 import de.dis2015.jtcdbs.PersistenceManager;
 import de.dis2015.jtcdbs.log.entries.PageWriteLogEntry;
 import de.dis2015.jtcdbs.page.Page;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class PersistenceManagerImpl implements PersistenceManager {
@@ -31,9 +30,9 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	@Inject
 	LogManager logManager;
 
-	private static HashMap<Integer, Page> _buffer; // The buffer containing all
+	private static Map<Integer, Page> _buffer; // The buffer containing all
 													// currently used pages
-	private static HashMap<Integer, ArrayList<Integer>> _ongoingTransactions; // A
+	private static Map<Integer, ArrayList<Integer>> _ongoingTransactions; // A
 																				// list
 																				// of
 																				// ongoing
@@ -45,8 +44,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
 
 		_transactRandom = new Random();
 		// Ongoing transaction IDs and corresponding pageIds
-		_ongoingTransactions = new HashMap<Integer, ArrayList<Integer>>();
-		_buffer = new HashMap<Integer, Page>();
+		_ongoingTransactions = new ConcurrentHashMap<>();
+		_buffer = new ConcurrentHashMap<>();
 
 		LOG_FILE_NAME = Constants.getLogPath() + Constants.getLogName()
 				+ Constants.getFileExtensionLogEntry();
@@ -124,11 +123,11 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	/**
 	 * Flushes all pages currently in buffer to disk and cleans the buffer
 	 */
-	private void flushBufferToDisk() {
+	private synchronized void flushBufferToDisk() {
 		System.out.println("Flushing buffer to disk...");
 		for (Page p : _buffer.values()) {
 			// Write only pages from committed transaction to disk
-			if (isPageComitted(p.getPageId())) {
+			if (isPageCommitted(p.getPageId())) {
 				writePage(p.getPageId(), p.getLSN(), p.getData());
 			}
 			else {
@@ -147,11 +146,11 @@ public class PersistenceManagerImpl implements PersistenceManager {
 	 * 
 	 * @return
 	 */
-	private boolean isBufferThresholdReached() {
+	private synchronized boolean isBufferThresholdReached() {
 		int pUncommitted = 0;
 
 		for (Page p : _buffer.values()) {
-			if (!isPageComitted(p.getPageId())) {
+			if (!isPageCommitted(p.getPageId())) {
 				pUncommitted++;
 			}
 		}
@@ -160,7 +159,7 @@ public class PersistenceManagerImpl implements PersistenceManager {
 		return (_buffer.size() - pUncommitted) >= _bufferThreshold;
 	}
 
-	private boolean isPageComitted(int pageID) {
+	private synchronized boolean isPageCommitted(int pageID) {
 		boolean result = true;
 
 		for (ArrayList<Integer> ong : _ongoingTransactions.values()) {

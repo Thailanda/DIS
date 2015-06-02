@@ -36,10 +36,10 @@ public class JtcDbsApplication {
         AbstractClient d = injector.getInstance(Dimitri.class);
         AbstractClient e = injector.getInstance(Eberhardt.class);
 
-        a.run();
-        b.run();
-        c.run();
-        d.run();
-        e.run();
+        a.start();
+        b.start();
+        c.start();
+        d.start();
+        e.start();
     }
 }
