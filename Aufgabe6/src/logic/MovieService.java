@@ -1,16 +1,6 @@
 package logic;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import twitter4j.GeoLocation;
-import twitter4j.Status;
-import twitter4j.json.DataObjectFactory;
-
+import com.google.inject.Inject;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
@@ -23,6 +13,15 @@ import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.mongodb.util.JSON;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import twitter4j.GeoLocation;
+import twitter4j.Status;
+import twitter4j.json.DataObjectFactory;
 
 /**
  * This class holds the data/backend logic for the Movie Web-App. It uses
@@ -39,15 +38,11 @@ public class MovieService extends MovieServiceBase {
 	/**
 	 * Create a new MovieService by connecting to MongoDB.
 	 */
-	public MovieService() {
+	@Inject
+	public MovieService(MongoClient mongo) {
+		this.mongo = mongo;
 		// Connect to local machine
-		try {
-			// TODO: connect to MongoDB
-			mongo = null;
-		} catch (Exception e) {
-			System.out.println("No MongoDB server running on localhost");
-		}
-		db = null;
+		db = mongo.getDB("imdb");
 		// Create a GriFS FileSystem Object using the db
 		fs = new GridFS(db);
 		// See this method on how to use GridFS
@@ -57,9 +52,9 @@ public class MovieService extends MovieServiceBase {
 		// Enable Full Text Search
 		enableTextSearch();
 
-		// TODO: Take "movies" and "tweets" collection
-		movies = null;
-		tweets = null;
+		// Take "movies" and "tweets" collection
+		movies = db.getCollection("movies");
+		tweets = db.getCollection("tweets");
 
 		// If movie database isn't filled (has less than 10000 documents) delete
 		// everything and fill it

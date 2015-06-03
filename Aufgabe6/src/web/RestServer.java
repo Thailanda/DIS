@@ -1,16 +1,19 @@
 package web;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.util.JSON;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import logic.MovieService;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -28,14 +31,8 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.Resource;
-
 import twitter.MovieTweetHandler;
 import twitter.TweetStream;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
-import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.util.JSON;
 
 public class RestServer {
 
@@ -44,8 +41,12 @@ public class RestServer {
 	 * handles REST API requests.
 	 */
 	public static void main(String[] args) throws Exception {
+		// Start Dependency Injection
+		Injector injector = Guice.createInjector(new ServerModule());
+
+		// Start server
 		Server server = new Server(5900);
-		final MovieService ms = new MovieService();
+		final MovieService ms = injector.getInstance(MovieService.class);
 
 		// Serve static files
 		ResourceHandler resource_handler = new ResourceHandler();
