@@ -65,8 +65,8 @@ public class MovieService extends MovieServiceBase {
 
 		// Create indexes
 		movies.createIndex(new BasicDBObject("title", "text"));
-		movies.createIndex(new BasicDBObject("rating", "hashed"));
-		movies.createIndex(new BasicDBObject("votes", "hashed"));
+		movies.createIndex(new BasicDBObject("rating", 1));
+		movies.createIndex(new BasicDBObject("votes", 1));
 		tweets.createIndex(new BasicDBObject("coordinates", "2dsphere"));
 	}
 
@@ -135,9 +135,7 @@ public class MovieService extends MovieServiceBase {
 	 */
 	public DBCursor getByGenre(String genreList, int limit) {
 		String[] genres = genreList.split(",");
-		//TODO: implement
-		DBCursor result = null;
-		return result;
+		return movies.find(new BasicDBObject("genre", new BasicDBObject("$all", genres))).limit(limit);
 	}
 
 	/**
@@ -153,8 +151,8 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor searchByPrefix(String titlePrefix, int limit) {
-		//TODO: implement
-		DBObject prefixQuery = null;
+		Pattern prefixPattern = Pattern.compile("^" + titlePrefix, Pattern.CASE_INSENSITIVE);
+		DBObject prefixQuery = new BasicDBObject("title", new BasicDBObject("regex", prefixPattern));
 		return movies.find(prefixQuery).limit(limit);
 	}
 
@@ -179,8 +177,7 @@ public class MovieService extends MovieServiceBase {
 	public DBCursor suggest(String prefix, int limit) {
 		DBObject query = new BasicDBObject("title", Pattern.compile("^" + prefix + ".*"));
 		DBObject projection = new BasicDBObject("title", true);
-		DBCursor suggestions = movies.find(query, projection).limit(limit);
-		return suggestions;
+		return movies.find(query, projection).limit(limit);
 	}
 
 	/**
@@ -190,9 +187,8 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getTweetedMovies() {
-		//TODO: implement
-		DBCursor results = null;
-		return results;
+		DBObject query = new BasicDBObject("tweets", new BasicDBObject("$exists", true));
+		return movies.find(query);
 	}
 
 	/**
@@ -205,8 +201,9 @@ public class MovieService extends MovieServiceBase {
 	 *            the comment to save
 	 */
 	public void saveMovieComment(String id, String comment) {
-		//TODO: implement
-
+		DBObject query = new BasicDBObject("_id", id);
+		DBObject update = new BasicDBObject("$set", new BasicDBObject("comment", comment));
+		movies.update(query, update);
 	}
 
 	/**
