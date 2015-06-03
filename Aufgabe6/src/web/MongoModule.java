@@ -9,7 +9,7 @@ import java.net.UnknownHostException;
  * @author Konstantin Simon Maria Moellers
  * @version 2015-06-03
  */
-public class ServerModule extends AbstractModule {
+public class MongoModule extends AbstractModule {
 
     @Override
     protected void configure() {

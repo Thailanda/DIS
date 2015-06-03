@@ -1,7 +1,7 @@
 package web;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -34,20 +34,24 @@ import org.eclipse.jetty.util.resource.Resource;
 import twitter.MovieTweetHandler;
 import twitter.TweetStream;
 
-public class RestServer {
+public class RestServerModule extends AbstractModule {
+
+	@Override
+	protected void configure() {
+	}
 
 	/**
 	 * A very simple Jetty-based REST server that serves static content and
 	 * handles REST API requests.
 	 */
-	public static void main(String[] args) throws Exception {
-		// Start Dependency Injection
-		Injector injector = Guice.createInjector(new ServerModule());
-
+	@Provides
+	public Server provideServer() {
 		// Start server
-		Server server = new Server(5900);
-		final MovieService ms = injector.getInstance(MovieService.class);
+		return new Server(5900);
+	}
 
+	@Provides
+	public Handler provideHandler(final MovieService ms) {
 		// Serve static files
 		ResourceHandler resource_handler = new ResourceHandler();
 		resource_handler.setDirectoriesListed(true);
@@ -73,7 +77,7 @@ public class RestServer {
 				return MovieService.extract(ms.suggest(query, 8), "title");
 			}
 		});
-		
+
 		ContextHandler comment = handle("/comment", new MongoHandler() {
 			@Override
 			public Object getData(HttpServletRequest request) {
@@ -133,7 +137,7 @@ public class RestServer {
 					} else {
 						DBCursor cursor = ms.searchByPrefix(title, 1);
 						//Extract a single object
-						if(cursor.hasNext())
+						if (cursor.hasNext())
 							return cursor.next();
 						else
 							return null;
@@ -174,8 +178,7 @@ public class RestServer {
 					return ms.getGeotaggedTweets(limit);
 				else if (type.equals("fts")) {
 					return ms.searchTweets(query);
-				}
-				else if (type.equals("near")) {
+				} else if (type.equals("near")) {
 					String[] parts = query.split(",");
 					return ms.getTweetsNear(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]),
 							Integer.parseInt(parts[2]));
@@ -183,55 +186,55 @@ public class RestServer {
 					return ms.getNewestTweets(limit);
 			}
 		});
-		
+
 		ContextHandler images = handle("/images", new AbstractHandler() {
 			@Override
 			public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-				    throws IOException, ServletException {
+					throws IOException, ServletException {
 				try {
-				String name = request.getParameter("name");
-				String url = request.getParameter("url");
-				if (request.getMethod().equals("GET")) {
-					//Serve from Gridfs
-					if(url == null) {
-						GridFSDBFile file = ms.getFile(name);
-						response.setStatus(HttpServletResponse.SC_OK);
-						response.setContentLength((int) file.getLength());
-						response.setContentType(file.getContentType());
-						file.writeTo(response.getOutputStream());
-						baseRequest.setHandled(true);
-						return;
-					}
-					//Import from IMDB
-					else {
-						HttpClient client = new HttpClient();
-						client.start();
-						ContentResponse r = client.GET(url);
-						byte[] content = r.getContent();
-						String contentType = r.getHeaders().get("Content-Type");
-						InputStream stream = new ByteArrayInputStream(content);
-						ms.saveFile(name, stream, contentType);
-					}
-				}
-				//Upload to GridFS
-				else if (request.getMethod().equals("POST")) {
-					FileItemFactory factory = new DiskFileItemFactory();
-					ServletFileUpload upload = new ServletFileUpload(factory);
-					List<FileItem> items = upload.parseRequest(request);
-					for(FileItem item : items) {
-						System.out.println(item.getName());
-						if(!item.isFormField()) {
-						    String contentType = item.getContentType();
-						    System.out.println(item.getName());
-							ms.saveFile(name, item.getInputStream(), contentType);
-						    return;
+					String name = request.getParameter("name");
+					String url = request.getParameter("url");
+					if (request.getMethod().equals("GET")) {
+						//Serve from Gridfs
+						if (url == null) {
+							GridFSDBFile file = ms.getFile(name);
+							response.setStatus(HttpServletResponse.SC_OK);
+							response.setContentLength((int) file.getLength());
+							response.setContentType(file.getContentType());
+							file.writeTo(response.getOutputStream());
+							baseRequest.setHandled(true);
+							return;
+						}
+						//Import from IMDB
+						else {
+							HttpClient client = new HttpClient();
+							client.start();
+							ContentResponse r = client.GET(url);
+							byte[] content = r.getContent();
+							String contentType = r.getHeaders().get("Content-Type");
+							InputStream stream = new ByteArrayInputStream(content);
+							ms.saveFile(name, stream, contentType);
 						}
 					}
-				}
-				response.setContentType("application/json;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
-				response.getWriter().print(JSON.serialize(new BasicDBObject("name", name)));
-				baseRequest.setHandled(true);
+					//Upload to GridFS
+					else if (request.getMethod().equals("POST")) {
+						FileItemFactory factory = new DiskFileItemFactory();
+						ServletFileUpload upload = new ServletFileUpload(factory);
+						List<FileItem> items = upload.parseRequest(request);
+						for (FileItem item : items) {
+							System.out.println(item.getName());
+							if (!item.isFormField()) {
+								String contentType = item.getContentType();
+								System.out.println(item.getName());
+								ms.saveFile(name, item.getInputStream(), contentType);
+								return;
+							}
+						}
+					}
+					response.setContentType("application/json;charset=utf-8");
+					response.setStatus(HttpServletResponse.SC_OK);
+					response.getWriter().print(JSON.serialize(new BasicDBObject("name", name)));
+					baseRequest.setHandled(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -241,20 +244,19 @@ public class RestServer {
 		//Enable Logging
 		RequestLogHandler logging = new RequestLogHandler();
 		logging.setRequestLog(new NCSARequestLog());
-		
+
 		// Register all Resources
 		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[] { logging, tweetedMovies, stream, comment, movieSearch, images, searchSuggestions, tweetSearch,
-				resource_handler,  new DefaultHandler() });
-		server.setHandler(handlers);
+		handlers.setHandlers(new Handler[]{logging, tweetedMovies, stream, comment, movieSearch, images,
+				searchSuggestions, tweetSearch,
+				resource_handler, new DefaultHandler()});
 
-		server.start();
-		server.join();
+		return handlers;
 	}
 
 	/**
 	 * Define a new resource
-	 * 
+	 *
 	 * @param path
 	 *            URL path of the resource
 	 * @param mongoHandler
@@ -288,5 +290,4 @@ public class RestServer {
 		abstract public Object getData(HttpServletRequest request);
 
 	}
-
 }
