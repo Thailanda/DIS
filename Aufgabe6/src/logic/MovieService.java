@@ -1,5 +1,6 @@
 package logic;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -88,9 +89,7 @@ public class MovieService extends MovieServiceBase {
 	 * @return the matching DBObject
 	 */
 	public DBObject findMovieByTitle(String title) {
-		// TODO: implement
-		DBObject result = null;
-		return result;
+		return movies.findOne(new BasicDBObject("title", title));
 	}
 
 	/**
@@ -118,9 +117,10 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getBestMovies(int minVotes, double minRating, int limit) {
-		// TODO: implement
-		DBCursor best = null;
-		return best;
+		return movies.find(new BasicDBObject(ImmutableMap.of(
+						"votes", new BasicDBObject("$gte", minVotes),
+						"rating", new BasicDBObject("$gte", minRating)
+		))).limit(limit);
 	}
 
 	/**
