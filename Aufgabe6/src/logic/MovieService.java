@@ -9,7 +9,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
@@ -18,7 +17,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
@@ -30,28 +28,21 @@ import twitter4j.json.DataObjectFactory;
  */
 public class MovieService extends MovieServiceBase {
 
-	private MongoClient mongo;
-	private DB db;
-	private DBCollection movies;
-	private DBCollection tweets;
-	private GridFS fs;
+	private final DB db;
+	private final DBCollection movies;
+	private final DBCollection tweets;
+	private final GridFS fs;
 
 	/**
 	 * Create a new MovieService by connecting to MongoDB.
 	 */
 	@Inject
-	public MovieService(MongoClient mongo) {
-		this.mongo = mongo;
-		// Connect to local machine
-		db = mongo.getDB("imdb");
+	public MovieService(DB db) {
+		this.db = db;
 		// Create a GriFS FileSystem Object using the db
 		fs = new GridFS(db);
 		// See this method on how to use GridFS
 		createSampleImage();
-		// Print the name of all collections in that database
-		printCollections();
-		// Enable Full Text Search
-		enableTextSearch();
 
 		// Take "movies" and "tweets" collection
 		movies = db.getCollection("movies");
@@ -68,17 +59,6 @@ public class MovieService extends MovieServiceBase {
 		movies.createIndex(new BasicDBObject("rating", 1));
 		movies.createIndex(new BasicDBObject("votes", 1));
 		tweets.createIndex(new BasicDBObject("coordinates", "2dsphere"));
-	}
-
-	/**
-	 * Output all Collections known to the database.
-	 */
-	public void printCollections() {
-		Set<String> colls = db.getCollectionNames();
-		System.out.println("Connected to MongoDB\nCollections in imdb db: " + colls.size());
-		for (String s : colls) {
-			System.out.println("- " + s);
-		}
 	}
 
 	/**
@@ -511,16 +491,4 @@ public class MovieService extends MovieServiceBase {
 			saveTweet(movie, status);
 		}
 	}
-
-	/**
-	 * Enables Full Text Search.
-	 */
-	protected void enableTextSearch() {
-		DB admin = mongo.getDB("admin");
-		DBObject cmd = new BasicDBObject();
-		cmd.put("setParameter", 1);
-		cmd.put("textSearchEnabled", true);
-		admin.command(cmd);
-	}
-
 }
