@@ -62,9 +62,11 @@ public class MovieService extends MovieServiceBase {
 			createMovieData();
 		}
 
-		// TODO: Index Movie attributes "title", "rating", "votes", "tweets.coordinates"
-
-		tweets.ensureIndex(new BasicDBObject("coordinates", "2dsphere"));
+		// Create indexes
+		movies.createIndex(new BasicDBObject("title", "text"));
+		movies.createIndex(new BasicDBObject("rating", "hashed"));
+		movies.createIndex(new BasicDBObject("votes", "hashed"));
+		tweets.createIndex(new BasicDBObject("coordinates", "2dsphere"));
 	}
 
 	/**
