@@ -195,9 +195,8 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getGeotaggedTweets(int limit) {
-		//TODO : implement
-		DBCursor result = null;
-		return result;
+		DBObject query = new BasicDBObject("coordinates", new BasicDBObject("$exists", true));
+		return tweets.find(query).limit(limit);
 	}
 
 	/**
