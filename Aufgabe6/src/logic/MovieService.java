@@ -195,6 +195,7 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getGeotaggedTweets(int limit) {
+		//TODO Check
 		DBObject query = new BasicDBObject("coordinates", new BasicDBObject("$exists", true));
 		return tweets.find(query).limit(limit);
 	}
@@ -211,10 +212,10 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getTaggedTweets() {
-		//TODO : implement
-		DBObject projection = null;
-		DBObject query = null;
-		DBObject sort = null;
+		//TODO Check 
+		DBObject projection = new BasicDBObject("text", 1).append("movie", 1).append("user.name", 1).append("coordinates", 1);
+		DBObject query = new BasicDBObject("coordinates", new BasicDBObject("$exists", true));
+		DBObject sort = new BasicDBObject("_id", -1);
 		DBCursor results = tweets.find(query, projection).sort(sort);
 		return results;
 	}
