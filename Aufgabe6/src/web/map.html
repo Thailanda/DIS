@@ -166,7 +166,9 @@
                 data: data,
                 contentType: false,
                 processData: false
-            });
+            }).done(function (data) {
+				$('img#' + id).attr('src', $('img#' + id).attr('src') + '&' + new Date().getTime());
+			});
 		},
 		loadImdbPoster : function(event) {
 			event.preventDefault();

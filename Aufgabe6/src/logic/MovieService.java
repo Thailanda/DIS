@@ -398,6 +398,7 @@ public class MovieService extends MovieServiceBase {
 	 * be set, so the file can be retrieved and displayed by web clients.
 	 */
 	public void createSampleImage() {
+		fs.remove("sample.png");
 		// Create file
 		GridFSInputFile file = fs.createFile(MovieService.class.getResourceAsStream("/data/sample.png"));
 		// Set file name and content type
@@ -410,14 +411,13 @@ public class MovieService extends MovieServiceBase {
 	 * Retrieves a file from GridFS. If the file is not found (==null) the file
 	 * with the name "sample.png" should be loaded instead.
 	 * 
-	 * @param name
+	 * @param filename
 	 *            the name of the file
 	 * @return The retrieved GridFS File
 	 */
-	public GridFSDBFile getFile(String name) {
-		//TODO: implement
-		GridFSDBFile file = null;
-		return file;
+	public GridFSDBFile getFile(String filename) {
+		System.out.println();
+		return fs.findOne(filename);
 	}
 
 	/**
@@ -425,15 +425,20 @@ public class MovieService extends MovieServiceBase {
 	 * the provided InputStream. The given Content-Type has to be set on the
 	 * file.
 	 * 
-	 * @param name
+	 * @param filename
+	 * 		the name of the file
 	 * @param inputStream
+	 * 		stream containing data
 	 * @param contentType
+	 * 		content type of the file
 	 */
-	public void saveFile(String name, InputStream inputStream, String contentType) {
-		GridFSInputFile gFile = null;
-		//Remove old versions
-		fs.remove(name);
-		//TODO: implement
+	public void saveFile(String filename, InputStream inputStream, String contentType) {
+		// Remove old versions.
+		fs.remove(filename);
+		// Creating the file.
+		GridFSInputFile gFile = fs.createFile(inputStream, filename);
+		gFile.setContentType(contentType);
+		gFile.save();
 	}
 
 	// Given Helper Functions:

@@ -194,10 +194,16 @@ public class RestServerModule extends AbstractModule {
 				try {
 					String name = request.getParameter("name");
 					String url = request.getParameter("url");
+					System.out.println(request.getMethod());
 					if (request.getMethod().equals("GET")) {
 						//Serve from Gridfs
 						if (url == null) {
 							GridFSDBFile file = ms.getFile(name);
+
+							if (file == null) {
+								file = ms.getFile("sample.png");
+							}
+
 							response.setStatus(HttpServletResponse.SC_OK);
 							response.setContentLength((int) file.getLength());
 							response.setContentType(file.getContentType());
@@ -226,7 +232,13 @@ public class RestServerModule extends AbstractModule {
 							if (!item.isFormField()) {
 								String contentType = item.getContentType();
 								System.out.println(item.getName());
+								System.out.println(contentType);
 								ms.saveFile(name, item.getInputStream(), contentType);
+
+								response.setStatus(HttpServletResponse.SC_OK);
+								response.setContentType(item.getContentType());
+								org.apache.commons.io.IOUtils.copy(item.getInputStream(), response.getOutputStream());
+								baseRequest.setHandled(true);
 								return;
 							}
 						}
