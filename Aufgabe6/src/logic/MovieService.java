@@ -132,7 +132,7 @@ public class MovieService extends MovieServiceBase {
 	 */
 	public DBCursor searchByPrefix(String titlePrefix, int limit) {
 		Pattern prefixPattern = Pattern.compile("^" + titlePrefix, Pattern.CASE_INSENSITIVE);
-		DBObject prefixQuery = new BasicDBObject("title", new BasicDBObject("regex", prefixPattern));
+		DBObject prefixQuery = new BasicDBObject("title", prefixPattern);
 		return movies.find(prefixQuery).limit(limit);
 	}
 
@@ -155,7 +155,7 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor suggest(String prefix, int limit) {
-		DBObject query = new BasicDBObject("title", Pattern.compile("^" + prefix + ".*"));
+		DBObject query = new BasicDBObject("title", Pattern.compile(prefix, Pattern.CASE_INSENSITIVE));
 		DBObject projection = new BasicDBObject("title", true);
 		return movies.find(query, projection).limit(limit);
 	}
