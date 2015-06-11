@@ -195,7 +195,6 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getGeotaggedTweets(int limit) {
-		//TODO Check
 		DBObject query = new BasicDBObject("coordinates", new BasicDBObject("$exists", true));
 		return tweets.find(query).limit(limit);
 	}
@@ -212,7 +211,6 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getTaggedTweets() {
-		//TODO Check 
 		DBObject projection = new BasicDBObject("text", 1).append("movie", 1).append("user.name", 1).append("coordinates", 1);
 		DBObject query = new BasicDBObject("coordinates", new BasicDBObject("$exists", true));
 		DBObject sort = new BasicDBObject("_id", -1);
@@ -220,7 +218,7 @@ public class MovieService extends MovieServiceBase {
 		return results;
 	}
 
-	/**
+	/**query
 	 * Save a tweet emitted by the Twitter Stream. The tweet has to be saved
 	 * twice: 1) in the movie document that has a title that matches the keyword
 	 * using the "tweets" list of each movie. 2) in the separate tweets
@@ -302,8 +300,12 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getByTweetsKeywordRegex(String keyword, int limit) {
-		//TODO : implement
-		DBCursor result = null;
+		//TODO Ich weiss nicht, was die hier wollen, aber das funktioniert nicht...
+		Pattern keywordPattern = Pattern.compile(".*" + keyword + ".*", Pattern.CASE_INSENSITIVE);
+		DBObject keywordQuery = new BasicDBObject();
+		keywordQuery.put("text", keywordPattern);
+		DBCursor result = tweets.find(keywordQuery).limit(limit);
+		System.out.println(result.count());
 		return result;
 	}
 
@@ -353,8 +355,10 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getNewestTweets(int limit) {
-		//TODO : implement
-		DBCursor result = null;
+		BasicDBObject query = new BasicDBObject("_id", new BasicDBObject("$exists", true));
+		BasicDBObject sort = new BasicDBObject("_id", -1); 
+		DBCursor result = tweets.find(query).sort(sort).limit(limit > 0 ? limit : 0);
+		System.out.println(result.count());
 		return result;
 	}
 
