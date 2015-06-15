@@ -300,11 +300,11 @@ public class MovieService extends MovieServiceBase {
 	 * @return the DBCursor for the query
 	 */
 	public DBCursor getByTweetsKeywordRegex(String keyword, int limit) {
-		//TODO Ich weiss nicht, was die hier wollen, aber das funktioniert nicht...
 		Pattern keywordPattern = Pattern.compile(".*" + keyword + ".*", Pattern.CASE_INSENSITIVE);
-		DBObject keywordQuery = new BasicDBObject();
-		keywordQuery.put("text", keywordPattern);
-		DBCursor result = tweets.find(keywordQuery).limit(limit);
+		//DBObject keywordQuery = new BasicDBObject("text", keywordPattern);
+		//DBCursor result = tweets.find(keywordQuery).limit(limit);
+		DBObject query = new BasicDBObject("tweets.text", keywordPattern);
+		DBCursor result = movies.find(query).limit(limit);
 		System.out.println(result.count());
 		return result;
 	}
