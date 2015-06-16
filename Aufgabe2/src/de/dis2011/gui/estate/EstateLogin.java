@@ -59,7 +59,6 @@ public class EstateLogin extends JFrame {
 				try {
 					login(txtFieldName.getText(), new String(txtFieldPassword.getPassword()));
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
