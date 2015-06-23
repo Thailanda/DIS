@@ -1,0 +1,15 @@
+CREATE TABLE Products (ArticleID Integer NOT NULL, ArticleName varchar(255) NOT NULL, Price double NOT NULL, 
+					PRODUCTFAMILYID Integer, PRODUCTFAMILYNAME varchar(255) NOT NULL,
+					CATEGORYID Integer NOT NULL, CATEGORYNAME varchar(255) NOT NULL,
+					GROUPID Integer NOT NULL, GROUPNAME varchar(255) NOT NULL,
+					DAY Integer, MONTH Integer, YEAR Integer, 
+					SHOPNAME varchar(255), NUMBER Integer, SALES double); 
+
+
+CREATE TABLE PLACES (LANDID Integer NOT NULL, LANDNAME varchar(255) NOT NULL, 
+					REGIONID Integer, REGIONNAME varchar(255) NOT NULL,
+					CITYID Integer NOT NULL, CITYNAME varchar(255) NOT NULL,
+					SHOP varchar(255) NOT NULL,
+					DAY Integer, MONTH Integer, YEAR Integer, 
+					ARTICLEID Integer NOT NULL, ARTICLENAME varchar(255),
+					SHOPNAME varchar(255), NUMBER Integer, SALES double); 
