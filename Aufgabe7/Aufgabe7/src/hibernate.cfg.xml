@@ -12,10 +12,13 @@
         <property name="connection.password">eCULVnyP</property>
 
         <!-- DB schema will be updated if needed -->
-        <property name="hbm2ddl.auto">create-drop</property>
+        <property name="hbm2ddl.auto">create</property>
 
         <property name="hibernate.show_sql">true</property>
 
-        <mapping class="de.dis2015.entities.Place"/>
+        <mapping class="de.dis2015.entities.Sale"/>
+        <mapping class="de.dis2015.entities.Article"/>
+        <mapping class="de.dis2015.entities.Shop"/>
+        <mapping class="de.dis2015.entities.Star"/>
     </session-factory>
 </hibernate-configuration>
