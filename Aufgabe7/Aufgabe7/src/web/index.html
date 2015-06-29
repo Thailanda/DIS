@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+        <!-- jQuery -->
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <h1>Hello, World!</h1>
+        <p class="lead">Amazing things are going to happen here!</p>
+
+        <script type="text/javascript">
+            (function ($) {
+                $(function () {
+
+                    $.ajax('/data').done(function (data) {
+                        alert(data.hello);
+                    });
+
+                });
+            })(jQuery);
+        </script>
+    </body>
+</html>
