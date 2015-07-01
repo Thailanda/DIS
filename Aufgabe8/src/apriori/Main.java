@@ -1,12 +1,11 @@
 package apriori;
 public class Main {
-	public static void main(String[] args) {
-		System.out.println("Starting...");
+	public static void main(String[] args) {	
+	    
+	    String[] inputFiles = new String[] { "trans_test", "transactions.txt", "transactionslarge.txt"};	    		
+		double minSup = 0.01d;
 		
-		AprioriProvider provider = new AprioriProvider();
-		provider.readTransactions("transactions.txt");
-		provider.run();
-		
-		System.out.println("Done!");
+		Apriori algo = new Apriori(inputFiles[0], minSup);
+		algo.execute();		
 	}
 }
