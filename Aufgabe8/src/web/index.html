@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+        <!-- jQuery -->
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <script src="sockjs.min.js"></script>
+
+        <style>
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">DIS 2015</a>
+                </div>
+            </div><!-- /.container-fluid -->
+        </nav>
+
+        <div class="container">
+            <div class="jumbotron">
+                <h1>Apriori</h1>
+                <form>
+                    <form id="form-apriori">
+                        <div class="form-group">
+                            <label for="form-file">File name</label>
+                            <select class="form-control" name="file" id="form-file">
+                                <option>trans_test</option>
+                                <option>transactions.txt</option>
+                                <option>transactionslarge.txt</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-min-sup">Minimum Supply</label>
+                            <input class="form-control" type="number" min="0.001" step="0.001" name="min_sup" value="0.01" id="form-min-sup" />
+                        </div>
+
+                        <button class="btn btn-default" type="button" id="btn">Send</button>
+                    </form>
+                </form>
+            </div>
+
+            <div id="content"></div>
+        </div>
+
+
+        <script type="text/javascript">
+            (function ($) {
+                $.fn.serializeObject = function()
+                {
+                    var o = {};
+                    var a = this.serializeArray();
+                    $.each(a, function() {
+                        if (o[this.name] !== undefined) {
+                            if (!o[this.name].push) {
+                                o[this.name] = [o[this.name]];
+                            }
+                            o[this.name].push(this.value || '');
+                        } else {
+                            o[this.name] = this.value || '';
+                        }
+                    });
+                    return o;
+                };
+
+                var sock = new WebSocket('ws://localhost:1337/data/apriori');
+
+                $('#btn').click(function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var $this = $('form');
+                    var file = $this.serializeObject();
+
+                    var $content = $('#content').empty();
+                    $content.append($('<h1>').text('Showing "' + file.file + '" with min_sup = ' + (file.min_sup * 100) + '%'));
+
+                    sock.send(JSON.stringify(file));
+                });
+
+                // When the connection is open, send some data to the server
+                sock.onopen = function () {
+//                    sock.send('trans_test'); // Send the message 'Ping' to the server
+                };
+
+// Log errors
+                sock.onerror = function (error) {
+                    console.log('WebSocket Error ' + error);
+                };
+
+// Log messages from the server
+                sock.onmessage = function (e) {
+                    var data = $.parseJSON(e.data);
+                    var size = data.size;
+                    var itemSets = data.item_sets;
+
+                    var $content = $('#content');
+
+                    var h2 = $('<h2>').text('Frequent item sets with ' + size + ' elements').appendTo($content);
+                    var $table = $('<table class="table table-bordered">').appendTo($content);
+                    $('<tr>').append($('<th>Set</th>').attr('colspan', size))
+                            .append('<th>Confidence</th>')
+                            .append('<th>Occurrences</th>')
+                            .appendTo($table);
+
+                    for (var x in itemSets) {
+                        var itemSet = itemSets[x];
+                        var $tr = $('<tr>');
+
+                        for (var y in itemSet.set) {
+                            var item = itemSet.set[y];
+                            $tr.append($('<th>').text(item));
+                        }
+
+                        $tr.append($('<td>').text((itemSet.confidence * 100) + '%'));
+                        $tr.append($('<td>').text(itemSet.occurrences));
+                        $tr.appendTo($table);
+                    }
+
+                    $('html, body').animate({ scrollTop: (h2.offset().top)}, 'slow');
+                };
+            })(jQuery);
+        </script>
+    </body>
+</html>

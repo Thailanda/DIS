@@ -1,130 +1,113 @@
 package apriori;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class Apriori
-{
+public class Apriori {
+
     // List structure to work with
     private List<int[]> _ItemSets;
 
-    // The input file
-    private String _InputFile = "trans_test";
-
-    // No of different elements in transactions
-    private int _noItems = 0;
-
-    // No of different transactions in file
-    private int _noTransactions = 0;
-
-    // MIN_SUP
-    private double MIN_SUP = 0.01;
-
-    public Apriori(String filename, double minSup)
-    {
-        _InputFile = filename;
-        MIN_SUP = minSup;
-        prepare();
+    public Apriori() {
     }
 
-    public void execute()
-    {
-        System.out.println("Starting Apriori Algorithm on file: " + _InputFile);
-        System.out.println("MIN_SUP is " + MIN_SUP + " (" + (MIN_SUP * 100) + "%)");
+    public void execute(Reader reader, double minSup, FrequentItemSetListener listener) {
+        final List<int[]> transactions = readTransactions(reader);
+        final int itemSetCount = countItemSets(transactions);
+
+        System.out.println("Starting Apriori Algorithm on reader, item set count: " + itemSetCount);
+        System.out.println("MIN_SUP is " + minSup + " (" + (minSup * 100) + "%)");
         System.out.println("");
 
         // start timer
         long start = System.currentTimeMillis();
 
-        // initial 1-itemsets
-        findFrequentOneItemsets();
+        // initial 1-item sets
+        findFrequentOneItemSets(itemSetCount);
 
-        int itemsetNumber = 1; // Start with the first itemset
-        int countFrequentSetsFound = 0; // Number of frequent itemsets found
+        int itemSetNumber = 1; // Start with the first item set
+        int countFrequentSetsFound = 0; // Number of frequent item sets found
 
-        while (_ItemSets.size() > 0)
-        {
+        while (_ItemSets.size() > 0) {
 
-            // all Lk-1 possible k-itemsets
-            calculateFrequentItemsets();
+            // all Lk-1 possible k-item sets
+            calculateFrequentItemSets(itemSetNumber, transactions, minSup, itemSetCount, listener);
 
-            if (_ItemSets.size() != 0)
-            {
+            if (_ItemSets.size() != 0) {
                 countFrequentSetsFound += _ItemSets.size();
-                System.out.println(_ItemSets.size() + " ItemSets were frequent with size: " + itemsetNumber);
+                System.out.println(_ItemSets.size() + " ItemSets were frequent with size: " + itemSetNumber);
 
                 createPermutationsFromPrevious();
             }
 
             // Continue with the next set
-            itemsetNumber++;
+            itemSetNumber++;
         }
 
         long end = System.currentTimeMillis();
 
-        System.out.println("Found " + countFrequentSetsFound + " frequents sets for support " + (MIN_SUP * 100)
-                + "% (absolute " + Math.round(_noTransactions * MIN_SUP) + ")");
+        System.out.println("Found " + countFrequentSetsFound + " frequents sets for support " + (minSup * 100)
+                + "% (absolute " + Math.round(transactions.size() * minSup) + ")");
 
         System.out.println("Computation took " + ((double) (end - start) / 1000) + " seconds");
         System.out.println("Finished!");
     }
 
-    private void prepare()
-    {
+    private List<int[]> readTransactions(Reader reader) {
+        List<int[]> transactions = new ArrayList<>();
         // Read number of transactions from file beforehand
         // TODO Inefficient as f**k
-        try
-        {
-            BufferedReader data_in = new BufferedReader(new FileReader(_InputFile));
-            while (data_in.ready())
-            {
-                String line = data_in.readLine();
-                _noTransactions++;
+        try (BufferedReader br = new BufferedReader(reader)) {
+            while (br.ready()) {
+                String line = br.readLine();
 
                 String[] transaction = line.split(" ");
-
-                for (String elem : transaction)
-                {
-                    int parsedInt = Integer.parseInt(elem);
-
-                    if (parsedInt + 1 > _noItems)
-                        _noItems = parsedInt + 1;
+                int[] numbers = new int[transaction.length];
+                for (int i = 0; i < transaction.length; i++) {
+                    numbers[i] = Integer.parseInt(transaction[i]);
                 }
-            }
 
-            data_in.close();
-        }
-        catch (Exception e)
-        {
+                transactions.add(numbers);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return transactions;
     }
 
-    private void findFrequentOneItemsets()
-    {
-        System.out.println("Creating initial Itemsets of size 1...");
-        // Create an itemset for each element
-        // Therefore creating itemsets containing one item each
-        _ItemSets = new ArrayList<int[]>();
-        for (int i = 0; i < _noItems; i++)
-        {
-            int[] item = { i };
-            _ItemSets.add(item);
+    private int countItemSets(List<int[]> transactions) {
+        int itemSetCount = 0;
+        for (int[] transaction : transactions) {
+            for (int elem : transaction) {
+                if (elem + 1 > itemSetCount) {
+                    itemSetCount = elem + 1;
+                }
+            }
         }
 
-        System.out.println(_ItemSets.size() + " itemsets of size one created");
-        System.out.println("");
+        return itemSetCount;
     }
 
-    private void createPermutationsFromPrevious()
-    {
-        System.out.println("Creating permuted itemsets from previous results...");
+    private void findFrequentOneItemSets(int itemSetCount) {
+        System.out.println("Creating initial item sets of size 1...");
+        // Create an item set for each element
+        // Therefore creating item sets containing one item each
+        _ItemSets = new ArrayList<>();
+        for (int i = 0; i < itemSetCount; i++) {
+            _ItemSets.add(new int[]{i});
+        }
+
+        System.out.println(_ItemSets.size() + " item sets of size one created");
+        System.out.println();
+    }
+
+    private void createPermutationsFromPrevious() {
+        System.out.println("Creating permuted item sets from previous results...");
 
         // New sets have a fixed size
         int size = _ItemSets.get(0).length;
@@ -136,43 +119,33 @@ public class Apriori
         HashMap<String, int[]> possibleElements = new HashMap<String, int[]>();
 
         // compare elements pairwise to find possible permutations
-        for (int i = 0; i < _ItemSets.size(); i++)
-        {
-            for (int j = i + 1; j < _ItemSets.size(); j++)
-            {
+        for (int i = 0; i < _ItemSets.size(); i++) {
+            for (int j = i + 1; j < _ItemSets.size(); j++) {
                 int[] elemA = _ItemSets.get(i);
                 int[] elemB = _ItemSets.get(j);
 
                 int[] possibleE = new int[size + 1];
-                for (int s = 0; s < possibleE.length - 1; s++)
-                {
-                    possibleE[s] = elemA[s];
-                }
+                System.arraycopy(elemA, 0, possibleE, 0, possibleE.length - 1);
 
                 int diff = 0;
                 // Search for missing value
-                for (int s1 = 0; s1 < elemB.length; s1++)
-                {
+                for (int anElemB : elemB) {
                     boolean found = false;
                     // is elemB[s1] in elemA?
-                    for (int s2 = 0; s2 < elemA.length; s2++)
-                    {
-                        if (elemA[s2] == elemB[s1])
-                        {
+                    for (int anElemA : elemA) {
+                        if (anElemA == anElemB) {
                             found = true;
                             break;
                         }
                     }
-                    if (!found)
-                    { // elemB[s1] is not in elemA
+                    if (!found) { // elemB[s1] is not in elemA
                         diff++;
                         // append possible element
-                        possibleE[possibleE.length - 1] = elemB[s1];
+                        possibleE[possibleE.length - 1] = anElemB;
                     }
 
                 }
-                if (diff == 1)
-                {
+                if (diff == 1) {
                     // System.out.println(Arrays.toString(possibleE)); // We
                     // don't need to see the permutations
                     Arrays.sort(possibleE);
@@ -181,106 +154,67 @@ public class Apriori
             }
         }
 
-        // set the new itemsets
+        // set the new item sets
         _ItemSets = new ArrayList<int[]>(possibleElements.values());
-        System.out.println("Created " + _ItemSets.size() + " unique itemsets with size " + (size + 1));
+        System.out.println("Created " + _ItemSets.size() + " unique item sets with size " + (size + 1));
         System.out.println("");
     }
 
-    private void convTransactionString(String line, boolean[] transBoolArray)
-    {
+    private boolean[] makeTransactionMask(int[] transaction, int itemSetCount) {
+        boolean[] transBoolArray = new boolean[itemSetCount];
         Arrays.fill(transBoolArray, false);
 
-        // Split Transaction
-        String[] spl = line.split(" ");
-
         // Parse each value and set its index in the array to true
-        for (String s : spl)
-        {
-            int valuee = Integer.parseInt(s);
-            transBoolArray[valuee] = true;
+        for (int item : transaction) {
+            transBoolArray[item] = true;
         }
+
+        return transBoolArray;
     }
 
-    private void calculateFrequentItemsets()
-    {
-        List<int[]> frequentElements = new ArrayList<int[]>();
+    private void calculateFrequentItemSets(int itemSetNumber, List<int[]> transactions, double minSup, int itemSetCount,
+                                           FrequentItemSetListener listener) {
+        List<int[]> frequentElements = new ArrayList<>();
 
         boolean match; // true if this transaction has all demanded elements
 
         int count[] = new int[_ItemSets.size()]; // counts of found matches
 
-        // read file
-        BufferedReader rdr = null;
-        try
-        {
-            rdr = new BufferedReader(new InputStreamReader(new FileInputStream(_InputFile)));
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        for (int[] transaction : transactions) {
 
-        boolean[] transBoolArray = new boolean[_noItems];
+            // read each line
+            boolean[] transBoolArray = makeTransactionMask(transaction, itemSetCount);
 
-        // read each line
-        for (int i = 0; i < _noTransactions; i++)
-        {
-            String line = "";
-            try
-            {
-                line = rdr.readLine();
-                convTransactionString(line, transBoolArray);
+            // check each candidate
+            for (int c = 0; c < _ItemSets.size(); c++) {
+                match = true;
+                int[] candidates = _ItemSets.get(c);
 
-                // check each candidate
-                for (int c = 0; c < _ItemSets.size(); c++)
-                {
-                    match = true;
-                    int[] cand = _ItemSets.get(c);
-
-                    for (int elem : cand)
-                    {
-                        if (transBoolArray[elem] == false)
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (match)
-                    {
-                        count[c]++;
+                for (int elem : candidates) {
+                    if (!transBoolArray[elem]) {
+                        match = false;
+                        break;
                     }
                 }
+                if (match) {
+                    count[c]++;
+                }
             }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
         }
 
-        try
-        {
-            rdr.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        System.out.println("Following frequent ItemSets were found (<Set> : <Confidence> - <Occurences>):");
-
-        for (int i = 0; i < _ItemSets.size(); i++)
-        {
-            // if the percentage in count is larger than the one in minsup, add
+        List<FrequentItemSet> itemSets = new ArrayList<>(_ItemSets.size());
+        for (int i = 0; i < _ItemSets.size(); i++) {
+            // if the percentage in count is larger than the one in min sup, add
             // to frequent elements
-            if ((count[i] / (double) (_noTransactions)) >= MIN_SUP)
-            {
-                System.out.println(String.format("%s : %s - %d", Arrays.toString(_ItemSets.get(i)), count[i] / (double) _noTransactions, count[i]));
-//                System.out.println(Arrays.toString(_ItemSets.get(i)) + "  " + ((count[i] / (double) _noTransactions))
-//                        + " - " + count[i]);
+            final int occurrences = count[i];
+            final double confidence = occurrences / (double) (transactions.size());
+            if (confidence >= minSup) {
+                itemSets.add(new FrequentItemSet(_ItemSets.get(i), confidence, occurrences));
                 frequentElements.add(_ItemSets.get(i));
             }
         }
+
+        listener.foundItemSet(itemSetNumber, itemSets);
 
         // new candidates are only the frequent candidates
         _ItemSets = frequentElements;
